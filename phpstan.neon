@@ -1,0 +1,98 @@
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    tmpDir: .build/phpstan/
+    banned_code:
+        nodes:
+            # enable detection of echo
+            -
+                type: Stmt_Echo
+                functions: null
+            # enable detection of eval
+            -
+                type: Expr_Eval
+                functions: null
+            # enable detection of die/exit
+            -
+                type: Expr_Exit
+                functions: null
+            # enable detection of a set of functions
+            -
+                type: Expr_FuncCall
+                functions:
+                    - dd
+                    - debug_backtrace
+                    - dump
+                    - exec
+                    - passthru
+                    - phpinfo
+                    - print_r
+                    - proc_open
+                    - shell_exec
+                    - system
+                    - var_dump
+        # enable detection of `use Tests\Foo\Bar` in a non-test file
+        use_from_tests: true
+    checkUninitializedProperties: true
+
+includes:
+    - phpstan-baseline.neon
+    - vendor/ekino/phpstan-banned-code/extension.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+    - vendor/phpstan/phpstan-webmozart-assert/extension.neon
+    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
+    - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
+
+rules:
+## copied from vendor/ergebnis/phpstan-rules/rules.neon
+	- Ergebnis\PHPStan\Rules\Closures\NoNullableReturnTypeDeclarationRule
+	- Ergebnis\PHPStan\Rules\Closures\NoParameterWithNullableTypeDeclarationRule
+	- Ergebnis\PHPStan\Rules\Expressions\NoCompactRule
+	- Ergebnis\PHPStan\Rules\Expressions\NoEmptyRule
+	- Ergebnis\PHPStan\Rules\Expressions\NoErrorSuppressionRule
+	- Ergebnis\PHPStan\Rules\Expressions\NoEvalRule
+	- Ergebnis\PHPStan\Rules\Expressions\NoIssetRule
+	- Ergebnis\PHPStan\Rules\Files\DeclareStrictTypesRule
+	- Ergebnis\PHPStan\Rules\Functions\NoNullableReturnTypeDeclarationRule
+	- Ergebnis\PHPStan\Rules\Functions\NoParameterWithNullableTypeDeclarationRule
+	- Ergebnis\PHPStan\Rules\Functions\NoParameterWithNullDefaultValueRule
+#	- Ergebnis\PHPStan\Rules\Methods\FinalInAbstractClassRule
+	- Ergebnis\PHPStan\Rules\Methods\NoConstructorParameterWithDefaultValueRule
+	- Ergebnis\PHPStan\Rules\Methods\NoNullableReturnTypeDeclarationRule
+#	- Ergebnis\PHPStan\Rules\Methods\NoParameterWithNullableTypeDeclarationRule
+#	- Ergebnis\PHPStan\Rules\Methods\NoParameterWithNullDefaultValueRule
+	- Ergebnis\PHPStan\Rules\Methods\PrivateInFinalClassRule
+	- Ergebnis\PHPStan\Rules\Statements\NoSwitchRule
+
+services:
+## copied from vendor/ergebnis/phpstan-rules/rules.neon
+	-
+		class: Ergebnis\PHPStan\Rules\Classes\FinalRule
+		arguments:
+			allowAbstractClasses: true
+			classesNotRequiredToBeAbstractOrFinal: []
+		tags:
+			- phpstan.rules.rule
+#	-
+#		class: Ergebnis\PHPStan\Rules\Classes\NoExtendsRule
+#		arguments:
+#			classesAllowedToBeExtended: %ergebnis.classesAllowedToBeExtended%
+#		tags:
+#			- phpstan.rules.rule
+	-
+		class: Ergebnis\PHPStan\Rules\Classes\PHPUnit\Framework\TestCaseWithSuffixRule
+		tags:
+			- phpstan.rules.rule
+#	-
+#		class: Ergebnis\PHPStan\Rules\Methods\NoParameterWithContainerTypeDeclarationRule
+#		arguments:
+#			interfacesImplementedByContainers: %ergebnis.interfacesImplementedByContainers%
+#		tags:
+#			- phpstan.rules.rule

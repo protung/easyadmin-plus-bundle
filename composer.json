@@ -1,0 +1,119 @@
+{
+  "name": "protung/easyadmin-plus-bundle",
+  "type": "symfony-bundle",
+  "description": "This bundle provides some extensions to easycorp/easyadmin-bundle",
+  "keywords": [
+    "backend",
+    "admin",
+    "generator"
+  ],
+  "homepage": "https://github.com/protung/easyadmin-plus-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dragos Protung",
+      "email": "dragos@protung.de"
+    },
+    {
+      "name": "Cezary Stepkowski",
+      "email": "cezary.stepkowski@protonmail.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "azjezz/psl": "^1.6",
+    "easycorp/easyadmin-bundle": "^3.3.0",
+    "symfony/asset": "^5.2",
+    "symfony/cache": "^5.2",
+    "symfony/config": "^5.2",
+    "symfony/dependency-injection": "^5.2",
+    "symfony/event-dispatcher": "^5.2",
+    "symfony/filesystem": "^5.2",
+    "symfony/form": "^5.2",
+    "symfony/framework-bundle": "^5.2",
+    "symfony/http-foundation": "^5.2",
+    "symfony/http-kernel": "^5.2",
+    "symfony/property-access": "^5.2",
+    "symfony/translation": "^5.2",
+    "symfony/twig-bundle": "^5.2"
+  },
+  "require-dev": {
+    "doctrine/coding-standard": "^9.0.0",
+    "ekino/phpstan-banned-code": "^0.4.0",
+    "ergebnis/composer-normalize": "^2.13.3",
+    "ergebnis/phpstan-rules": "^0.15.3",
+    "php-standard-library/psalm-plugin": "^1.1",
+    "phpstan/phpstan": "^0.12.87",
+    "phpstan/phpstan-deprecation-rules": "^0.12.6",
+    "phpstan/phpstan-doctrine": "^0.12.33",
+    "phpstan/phpstan-phpunit": "^0.12.19",
+    "phpstan/phpstan-strict-rules": "^0.12.9",
+    "phpstan/phpstan-symfony": "^0.12.33",
+    "phpstan/phpstan-webmozart-assert": "^0.12.12",
+    "phpunit/phpunit": "^9.5.4",
+    "psalm/plugin-phpunit": "^0.15.1",
+    "psalm/plugin-symfony": "^2.3.0",
+    "speicher210/functional-test-bundle": "^1.1.2",
+    "thecodingmachine/phpstan-safe-rule": "^1.0.1",
+    "thecodingmachine/phpstan-strict-rules": "^0.12.1",
+    "vimeo/psalm": "^4.7.2"
+  },
+  "suggest": {
+    "speicher210/functional-test-bundle": "For testing support."
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "extra": {
+    "composer-normalize": {
+      "indent-size": 2,
+      "indent-style": "space"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Protung\\EasyAdminPlusBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Protung\\EasyAdminPlusBundle\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "analyse": [
+      "@analyse-phpstan",
+      "@analyse-psalm"
+    ],
+    "analyse-phpstan": [
+      "phpstan analyse --ansi --memory-limit=2048M"
+    ],
+    "analyse-phpstan-update": [
+      "phpstan analyse --ansi --generate-baseline"
+    ],
+    "analyse-psalm": [
+      "psalm --no-cache --show-info=false"
+    ],
+    "analyse-psalm-fix": [
+      "psalm --no-cache --alter --issues=MissingImmutableAnnotation"
+    ],
+    "analyse-psalm-update": [
+      "psalm --no-cache --set-baseline=psalm.baseline.xml"
+    ],
+    "check": [
+      "composer validate",
+      "composer normalize --dry-run",
+      "@cs-check",
+      "@analyse",
+      "@test"
+    ],
+    "cs-check": "phpcs -p",
+    "cs-fix": "phpcbf -p",
+    "test": "phpunit --testdox --color=always"
+  },
+  "support": {
+    "issues": "https://github.com/protung/easyadmin-plus-bundle/issues",
+    "source": "https://github.com/protung/easyadmin-plus-bundle"
+  }
+}

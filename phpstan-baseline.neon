@@ -1,0 +1,17 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method object\\:\\:getContext\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/BaseCrudController.php
+
+		-
+			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Controller\\\\BaseCrudController\\:\\:adminUrlGenerator\\(\\) should return EasyCorp\\\\Bundle\\\\EasyAdminBundle\\\\Router\\\\AdminUrlGenerator but returns object\\.$#"
+			count: 1
+			path: src/Controller/BaseCrudController.php
+
+		-
+			message: "#^Parameter \\#1 \\$translator of method Symfony\\\\Contracts\\\\Translation\\\\TranslatableInterface\\:\\:trans\\(\\) expects Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface, object given\\.$#"
+			count: 1
+			path: src/Controller/BaseCrudController.php
+
