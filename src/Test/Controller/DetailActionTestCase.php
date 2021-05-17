@@ -59,18 +59,6 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         return static::$expectedEntityIdUnderTest;
     }
 
-    public function testPageLoadsForShow(): void
-    {
-        $queryParameters = [EA::CRUD_ACTION => Action::DETAIL, EA::ENTITY_ID => $this->entityIdUnderTest()];
-
-        $this->assertRequestGet($queryParameters);
-
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
-    }
-
     /**
      * @param array<string,string> $expectedDetails
      * @param array<mixed>         $queryParameters
