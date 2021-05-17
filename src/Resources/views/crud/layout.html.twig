@@ -1,0 +1,60 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block wrapper %}
+    {{ parent() }}
+    <div id="protung-easyadmin-plus-extension-modal-action-custom-confirmation" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h4 id="protung-easyadmin-plus-extension-modal-action-custom-confirmation-title"></h4>
+                    <p id="protung-easyadmin-plus-extension-modal-action-custom-confirmation-description"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">
+                        <span class="btn-label">{{ 'label.false'|trans([], 'EasyAdminBundle') }}</span>
+                    </button>
+
+                    <a id="protung-easyadmin-plus-extension-modal-action-custom-confirmation-button">
+                        <span class="btn-label">{{ 'label.true'|trans([], 'EasyAdminBundle') }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock wrapper %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    <script>
+        $(function () {
+            const confirmationActionButton = $('#protung-easyadmin-plus-extension-modal-action-custom-confirmation-button');
+            $('[data-protung-easyadmin-plus-extension-modal-confirm-trigger=1]').click(
+                function (e) {
+                    e.preventDefault();
+                    const clickedAction = $(this);
+                    const title = clickedAction.data('protung-easyadmin-plus-extension-modal-confirm-title');
+                    const description = clickedAction.data('protung-easyadmin-plus-extension-modal-confirm-description');
+
+                    $('#protung-easyadmin-plus-extension-modal-action-custom-confirmation-title').text(title);
+                    $('#protung-easyadmin-plus-extension-modal-action-custom-confirmation-description').text(description);
+                    if (clickedAction.is('button')) {
+                        confirmationActionButton.click(
+                            function () {
+                                clickedAction.closest('form').submit();
+                            }
+                        );
+                    } else {
+                        // assume link
+                        confirmationActionButton.attr('href', clickedAction.attr('href'));
+                    }
+                    confirmationActionButton.attr('class', 'btn btn-' + (clickedAction.data('confirm-type') ?? 'primary'));
+
+                    $('#protung-easyadmin-plus-extension-modal-action-custom-confirmation').modal({
+                        backdrop: true,
+                        keyboard: true
+                    });
+                }
+            );
+        });
+    </script>
+{% endblock body_javascript %}
