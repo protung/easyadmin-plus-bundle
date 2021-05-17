@@ -16,6 +16,11 @@ parameters:
 			path: src/Controller/BaseCrudController.php
 
 		-
+			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Test\\\\Controller\\\\DetailActionTestCase\\:\\:expectedPageTitle\\(\\) has a nullable return type declaration\\.$#"
+			count: 1
+			path: src/Test/Controller/DetailActionTestCase.php
+
+		-
 			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Test\\\\Controller\\\\IndexActionTestCase\\:\\:expectedPageTitle\\(\\) has a nullable return type declaration\\.$#"
 			count: 1
 			path: src/Test/Controller/IndexActionTestCase.php
