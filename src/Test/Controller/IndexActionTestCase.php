@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use LogicException;
 use Symfony\Component\DomCrawler\Crawler;
 
 use function assert;
@@ -13,6 +14,7 @@ use function explode;
 use function implode;
 use function Psl\Iter\first;
 use function Psl\Vec\filter;
+use function Safe\sprintf;
 use function Safe\substr;
 use function str_starts_with;
 use function trim;
@@ -23,7 +25,25 @@ use function trim;
  */
 abstract class IndexActionTestCase extends AdminControllerWebTestCase
 {
-    abstract protected function expectedPageTitle(): string;
+    protected static ?string $expectedPageTitle = null;
+
+    protected function expectedPageTitle(): ?string
+    {
+        if (static::$expectedPageTitle === null) {
+            throw new LogicException(
+                sprintf(
+                    <<<'MSG'
+                        Expected page title was not set.
+                        Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
+                        If your index page does not have a title you need to overwrite %1$s method and return NULL.
+                    MSG,
+                    __METHOD__
+                )
+            );
+        }
+
+        return static::$expectedPageTitle;
+    }
 
     /**
      * @return list<string>
@@ -32,11 +52,12 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
     public function testPageLoadsWithEmptyList(): void
     {
-        $queryParameters = [EA::CRUD_ACTION => Action::INDEX];
+        $crawler = $this->assertRequestGet([EA::CRUD_ACTION => Action::INDEX]);
 
-        $crawler = $this->assertRequestGet($queryParameters);
-
-        $this->assertPageTitle($this->expectedPageTitle());
+        $expectedTitle = $this->expectedPageTitle();
+        if ($expectedTitle !== null) {
+            $this->assertPageTitle($expectedTitle);
+        }
 
         self::assertCount(1, $crawler->filter('#main table>tbody tr'));
         self::assertStringContainsString(
@@ -46,18 +67,39 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * @param list<list<string>> $expectedRows
+     * @param array<mixed>       $queryParameters
+     */
+    protected function assertPage(array $expectedRows, array $queryParameters = []): void
+    {
+        $queryParameters[EA::CRUD_ACTION] = Action::INDEX;
+        $this->assertRequestGet($queryParameters);
+
+        $expectedTitle = $this->expectedPageTitle();
+        if ($expectedTitle !== null) {
+            $this->assertPageTitle($expectedTitle);
+        }
+
+        $this->assertHeaders();
+
+        $this->assertRows(...$expectedRows);
+    }
+
+    /**
      * @param array<mixed> $filters
      * @param list<string> $expectedIds
+     * @param array<mixed> $queryParameters
      */
-    protected function assertFilter(array $filters, array $expectedIds): void
+    protected function assertFilters(array $filters, array $expectedIds, array $queryParameters = []): void
     {
-        $queryParameters = [
-            EA::CRUD_ACTION => Action::INDEX,
-            EA::FILTERS => $filters,
-        ];
+        $queryParameters[EA::CRUD_ACTION] = Action::INDEX;
+        $queryParameters[EA::FILTERS]     = $filters;
 
         $this->assertRequestGet($queryParameters);
-        $this->assertPageTitle($this->expectedPageTitle());
+        $expectedTitle = $this->expectedPageTitle();
+        if ($expectedTitle !== null) {
+            $this->assertPageTitle($expectedTitle);
+        }
 
         $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
             static fn (Crawler $row): string => $row->attr('data-id') ?? ''
@@ -113,6 +155,10 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
                 if ($actions->count() === 0) {
                     return $column->text();
+                }
+
+                if ($actions->filter('.dropdown-actions')->count() > 0) {
+                    $actions = $actions->filter('.dropdown-actions')->filter('.dropdown-menu');
                 }
 
                 return implode(

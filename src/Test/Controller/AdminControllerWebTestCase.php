@@ -27,7 +27,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     abstract protected function controllerUnderTest(): string;
 
     /**
-     * @param array<string,mixed> $queryParameters
+     * @param array<mixed> $queryParameters
      */
     protected function assertRequestGet(array $queryParameters): Crawler
     {
@@ -42,7 +42,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param array<string,mixed> $queryParameters
+     * @param array<mixed> $queryParameters
      */
     protected function prepareAdminUrl(array $queryParameters): string
     {
