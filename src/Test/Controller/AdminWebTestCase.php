@@ -49,6 +49,11 @@ abstract class AdminWebTestCase extends WebTestCase
         return $this->client;
     }
 
+    protected function followRedirect(): void
+    {
+        $this->getClient()->followRedirect();
+    }
+
     protected function loginAs(UserInterface $user): void
     {
         self::$authentication = $user;

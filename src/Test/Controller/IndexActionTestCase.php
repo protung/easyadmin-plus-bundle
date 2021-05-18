@@ -80,9 +80,9 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
             $this->assertPageTitle($expectedTitle);
         }
 
-        $this->assertHeaders();
+        $this->assertContentListHeaders();
 
-        $this->assertRows(...$expectedRows);
+        $this->assertContentListRows(...$expectedRows);
     }
 
     /**
@@ -108,15 +108,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         self::assertSame($expectedIds, $rowData);
     }
 
-    protected function assertPageTitle(string $expectedPageTitle): void
-    {
-        $crawler = $this->getClient()->getCrawler();
-
-        self::assertCount(1, $crawler->filter('h1'));
-        self::assertSame($expectedPageTitle, trim($crawler->filter('h1')->text()));
-    }
-
-    protected function assertHeaders(): void
+    protected function assertContentListHeaders(): void
     {
         $crawler = $this->getClient()->getCrawler();
 
@@ -129,7 +121,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     /**
      * @param list<string> ...$expectedRows
      */
-    protected function assertRows(array ...$expectedRows): void
+    protected function assertContentListRows(array ...$expectedRows): void
     {
         self::assertCount(
             $this->getClient()->getCrawler()->filter('#main table>tbody tr')->count(),
@@ -138,7 +130,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
         $rowNumber = 0;
         foreach ($expectedRows as $expectedRow) {
-            $this->assertRow($expectedRow, $rowNumber);
+            $this->assertContentListRow($expectedRow, $rowNumber);
             $rowNumber++;
         }
     }
@@ -147,7 +139,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      * @param list<string> $expectedRowData
      * @param int          $rowNumber       The row number in the list (zero based).
      */
-    private function assertRow(array $expectedRowData, int $rowNumber = 0): void
+    private function assertContentListRow(array $expectedRowData, int $rowNumber = 0): void
     {
         $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->eq($rowNumber)->filter('td')->each(
             static function (Crawler $column): string {

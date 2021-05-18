@@ -13,6 +13,7 @@ use function http_build_query;
 use function is_array;
 use function Psl\Dict\map;
 use function Safe\sprintf;
+use function trim;
 
 /**
  * @template TCrudController
@@ -79,5 +80,13 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         return $currentFormWidget
             ->filter('.invalid-feedback span.form-error-message')
             ->extract(['_text']);
+    }
+
+    protected function assertPageTitle(string $expectedPageTitle): void
+    {
+        $crawler = $this->getClient()->getCrawler();
+
+        self::assertCount(1, $crawler->filter('h1.title'));
+        self::assertSame($expectedPageTitle, trim($crawler->filter('h1.title')->text()));
     }
 }
