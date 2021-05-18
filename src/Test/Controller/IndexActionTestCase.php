@@ -7,9 +7,8 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use Psl\Str;
 use Symfony\Component\DomCrawler\Crawler;
-
-use function Safe\sprintf;
 
 /**
  * @template TCrudController
@@ -23,7 +22,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     {
         if (static::$expectedPageTitle === null) {
             throw new LogicException(
-                sprintf(
+                Str\format(
                     <<<'MSG'
                         Expected page title was not set.
                         Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
@@ -60,7 +59,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
     /**
      * @param list<list<string|array<string,string>>> $expectedRows
-     * @param array<mixed>                            $queryParameters
+     * @param array<array-key, mixed>                 $queryParameters
      */
     protected function assertPage(array $expectedRows, array $queryParameters = []): void
     {
@@ -78,9 +77,9 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<mixed> $filters
-     * @param list<string> $expectedIds
-     * @param array<mixed> $queryParameters
+     * @param array<array-key, mixed> $filters
+     * @param list<string>            $expectedIds
+     * @param array<array-key, mixed> $queryParameters
      */
     protected function assertFilters(array $filters, array $expectedIds, array $queryParameters = []): void
     {

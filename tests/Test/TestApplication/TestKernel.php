@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Generator;
 use Protung\EasyAdminPlusBundle\ProtungEasyAdminPlusBundle;
+use Psl\Env;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -17,8 +18,6 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Security\Core\User\User;
-
-use function sys_get_temp_dir;
 
 final class TestKernel extends SymfonyKernel
 {
@@ -44,12 +43,12 @@ final class TestKernel extends SymfonyKernel
 
     public function getCacheDir(): string
     {
-        return sys_get_temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->environment . '/cache';
+        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->environment . '/cache';
     }
 
     public function getLogDir(): string
     {
-        return sys_get_temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->environment . '/log';
+        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->environment . '/log';
     }
 
     public function configureRoutes(RoutingConfigurator $routes): void

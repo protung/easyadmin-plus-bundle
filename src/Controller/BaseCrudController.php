@@ -10,14 +10,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Psl\Dict;
+use Psl\Vec;
 use RuntimeException;
 use Stringable;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-
-use function array_diff;
-use function array_merge;
 
 abstract class BaseCrudController extends AbstractCrudController
 {
@@ -43,7 +42,7 @@ abstract class BaseCrudController extends AbstractCrudController
         ];
 
         return $actions->disable(
-            ...array_diff($allActions, $allowedActions)
+            ...Vec\concat($allActions, $allowedActions)
         );
     }
 
@@ -108,15 +107,12 @@ abstract class BaseCrudController extends AbstractCrudController
     }
 
     /**
-     * @return array<string>
+     * @return array<array-key, string>
      */
     public static function getSubscribedServices(): array
     {
-        return array_merge(
-            parent::getSubscribedServices(),
-            [
-                TranslatorInterface::class,
-            ]
-        );
+        return Dict\merge(parent::getSubscribedServices(), [
+            TranslatorInterface::class,
+        ]);
     }
 }

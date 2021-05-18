@@ -16,6 +16,26 @@ parameters:
 			path: src/Controller/BaseCrudController.php
 
 		-
+			message: "#^Cannot call method getName\\(\\) on array\\<array\\<Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\.$#"
+			count: 1
+			path: src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$first of function Psl\\\\Type\\\\union expects Psl\\\\Type\\\\TypeInterface\\<array\\<array\\<Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\>, Psl\\\\Type\\\\TypeInterface\\<array\\<Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\> given\\.$#"
+			count: 1
+			path: src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$iterable of function Psl\\\\Dict\\\\map expects iterable\\<\\(int\\|string\\), array\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>, array\\<array\\<Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField given\\.$#"
+			count: 1
+			path: src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			message: "#^Parameter \\#2 \\$second of function Psl\\\\Type\\\\union expects Psl\\\\Type\\\\TypeInterface\\<array\\<array\\<Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\|Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\>, Psl\\\\Type\\\\TypeInterface\\<array\\<array\\<Symfony\\\\Component\\\\DomCrawler\\\\Field\\\\FormField\\>\\>\\> given\\.$#"
+			count: 1
+			path: src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
 			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Test\\\\Controller\\\\CustomActionTestCase\\:\\:expectedPageTitle\\(\\) has a nullable return type declaration\\.$#"
 			count: 1
 			path: src/Test/Controller/CustomActionTestCase.php

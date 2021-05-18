@@ -7,9 +7,8 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use Psl\Str;
 use ReflectionProperty;
-
-use function Safe\sprintf;
 
 /**
  * @template TCrudController
@@ -25,7 +24,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     {
         if (static::$expectedPageTitle === null) {
             throw new LogicException(
-                sprintf(
+                Str\format(
                     <<<'MSG'
                         Expected page title was not set.
                         Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
@@ -45,7 +44,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         $rp->setAccessible(true);
         if (! $rp->isInitialized()) {
             throw new LogicException(
-                sprintf(
+                Str\format(
                     <<<'MSG'
                         Expected entity ID under test was not set.
                         Please set static::$expectedEntityIdUnderTest property in your test or overwrite %s method.
