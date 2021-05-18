@@ -10,7 +10,6 @@ use LogicException;
 use ReflectionProperty;
 
 use function Safe\sprintf;
-use function trim;
 
 /**
  * @template TCrudController
@@ -77,14 +76,6 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 
         $this->assertActions($expectedActions);
         $this->assertDetails($expectedDetails);
-    }
-
-    protected function assertPageTitle(string $expectedPageTitle): void
-    {
-        $crawler = $this->getClient()->getCrawler();
-
-        self::assertCount(1, $crawler->filter('h1'));
-        self::assertSame($expectedPageTitle, trim($crawler->filter('h1')->text()));
     }
 
     /**
