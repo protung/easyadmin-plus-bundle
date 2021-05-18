@@ -7,14 +7,9 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use function is_array;
-use function Psl\Dict\map;
-use function Safe\sprintf;
 
 /**
  * @template TCrudController
@@ -75,36 +70,6 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
 
         $formExpectedErrors['_token'] = [];
         $this->assertMatchesPattern($formExpectedErrors, $actual);
-    }
-
-    /**
-     * @param FormField|array<FormField>|FormField[][] $fields
-     *
-     * @return array<string|int,mixed>
-     */
-    protected function mapFieldsErrors(Crawler $crawler, FormField|array $fields): array
-    {
-        if (is_array($fields)) {
-            return map(
-                $fields,
-                /**
-                 * @param FormField|array<FormField>|FormField[][] $fields
-                 */
-                fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields)
-            );
-        }
-
-        $currentFormWidget = $crawler
-            ->filter(sprintf('input[name="%1$s"],select[name="%1$s"],textarea[name="%1$s"]', $fields->getName()))
-            ->closest('.form-widget');
-
-        if ($currentFormWidget === null) {
-            return [];
-        }
-
-        return $currentFormWidget
-            ->filter('.invalid-feedback span.form-error-message')
-            ->extract(['_text']);
     }
 
     /**
