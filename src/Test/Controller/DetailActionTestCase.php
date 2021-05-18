@@ -83,17 +83,11 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertActions(array $expectedActions): void
     {
-        self::assertCount(
-            $this->getClient()->getCrawler()->filter('.page-actions a')->count(),
-            $expectedActions
-        );
+        $actionsCrawler = $this->getClient()->getCrawler()->filter('.page-actions a');
 
-        foreach ($expectedActions as $actionName => $actionLabel) {
-            $action = $this->getClient()->getCrawler()->filter('.page-actions a.action-' . $actionName)->first();
+        $actualActions = $this->mapActions($actionsCrawler);
 
-            self::assertCount(1, $action, 'No action "' . $actionName . '" found.');
-            self::assertSame($actionLabel, $action->text());
-        }
+        self::assertSame($expectedActions, $actualActions);
     }
 
     /**

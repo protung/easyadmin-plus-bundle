@@ -9,15 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Symfony\Component\DomCrawler\Crawler;
 
-use function assert;
-use function explode;
-use function implode;
-use function Psl\Iter\first;
-use function Psl\Vec\filter;
 use function Safe\sprintf;
-use function Safe\substr;
-use function str_starts_with;
-use function trim;
 
 /**
  * @template TCrudController
@@ -67,8 +59,8 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<list<string>> $expectedRows
-     * @param array<mixed>       $queryParameters
+     * @param list<list<string|array<string,string>>> $expectedRows
+     * @param array<mixed>                            $queryParameters
      */
     protected function assertPage(array $expectedRows, array $queryParameters = []): void
     {
@@ -119,7 +111,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<string> ...$expectedRows
+     * @param list<string|array<string,string>> ...$expectedRows
      */
     protected function assertContentListRows(array ...$expectedRows): void
     {
@@ -136,13 +128,13 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<string> $expectedRowData
-     * @param int          $rowNumber       The row number in the list (zero based).
+     * @param list<string|array<string,string>> $expectedRowData
+     * @param int                               $rowNumber       The row number in the list (zero based).
      */
-    private function assertContentListRow(array $expectedRowData, int $rowNumber = 0): void
+    private function assertContentListRow(array $expectedRowData, int $rowNumber): void
     {
         $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->eq($rowNumber)->filter('td')->each(
-            static function (Crawler $column): string {
+            function (Crawler $column): array|string {
                 $actions = $column->filter('.actions');
 
                 if ($actions->count() === 0) {
@@ -153,23 +145,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
                     $actions = $actions->filter('.dropdown-actions')->filter('.dropdown-menu');
                 }
 
-                return implode(
-                    ' ',
-                    $actions->children()->each(
-                        static function (Crawler $crawler): string {
-                            $actionClassName = first(
-                                filter(
-                                    explode(' ', trim((string) first($crawler->extract(['class'])))),
-                                    static fn (string $class) => str_starts_with(trim($class), 'action-'),
-                                )
-                            );
-
-                            assert($actionClassName !== null);
-
-                            return substr($actionClassName, 7);
-                        }
-                    )
-                );
+                return $this->mapActions($actions->children());
             }
         );
 
