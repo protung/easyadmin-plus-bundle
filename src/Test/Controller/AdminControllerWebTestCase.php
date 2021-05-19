@@ -5,22 +5,16 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Psl\Dict;
+use Psl\Iter;
+use Psl\Str;
+use Psl\Type;
+use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\HttpFoundation\Request;
 
-use function assert;
-use function explode;
 use function http_build_query;
-use function is_array;
-use function Psl\Dict\associate;
-use function Psl\Dict\map;
-use function Psl\Iter\first;
-use function Psl\Vec\filter;
-use function Safe\sprintf;
-use function Safe\substr;
-use function str_starts_with;
-use function trim;
 
 /**
  * @template TCrudController
@@ -35,7 +29,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     abstract protected function controllerUnderTest(): string;
 
     /**
-     * @param array<mixed> $queryParameters
+     * @param array<array-key, mixed> $queryParameters
      */
     protected function assertRequestGet(array $queryParameters): Crawler
     {
@@ -43,14 +37,14 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
 
         self::assertTrue(
             $this->getClient()->getResponse()->isOk(),
-            sprintf('Expected response was 200, got %s', $this->getClient()->getResponse()->getStatusCode())
+            Str\format('Expected response was 200, got %s', $this->getClient()->getResponse()->getStatusCode())
         );
 
         return $crawler;
     }
 
     /**
-     * @param array<mixed> $queryParameters
+     * @param array<array-key, mixed> $queryParameters
      */
     protected function prepareAdminUrl(array $queryParameters): string
     {
@@ -60,33 +54,33 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param FormField|array<FormField>|FormField[][] $fields
+     * @param FormField|array<array-key, FormField>|array<array-key, array<array-key, FormField>> $fields
      *
-     * @return array<string|int,mixed>
+     * @return array<array-key, mixed>
      */
     protected function mapFieldsErrors(Crawler $crawler, FormField|array $fields): array
     {
-        if (is_array($fields)) {
-            return map(
-                $fields,
-                /**
-                 * @param FormField|array<FormField>|FormField[][] $fields
-                 */
-                fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields)
-            );
+        if ($fields instanceof FormField) {
+            $currentFormWidget = $crawler
+                ->filter(Str\format('input[name="%1$s"],select[name="%1$s"],textarea[name="%1$s"]', $fields->getName()))
+                ->closest('.form-widget');
+
+            if ($currentFormWidget === null) {
+                return [];
+            }
+
+            return $currentFormWidget
+                ->filter('.invalid-feedback span.form-error-message')
+                ->extract(['_text']);
         }
 
-        $currentFormWidget = $crawler
-            ->filter(sprintf('input[name="%1$s"],select[name="%1$s"],textarea[name="%1$s"]', $fields->getName()))
-            ->closest('.form-widget');
-
-        if ($currentFormWidget === null) {
-            return [];
-        }
-
-        return $currentFormWidget
-            ->filter('.invalid-feedback span.form-error-message')
-            ->extract(['_text']);
+        return Dict\map(
+            $fields,
+            /**
+             * @param FormField|array<array-key, FormField> $fields
+             */
+            fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields)
+        );
     }
 
     /**
@@ -97,23 +91,21 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         /** @var list<string> $actionsName */
         $actionsName = $actionsCrawler->each(
             static function (Crawler $crawler): string {
-                $actionClassName = first(
-                    filter(
-                        explode(' ', trim((string) first($crawler->extract(['class'])))),
-                        static fn (string $class) => str_starts_with(trim($class), 'action-'),
+                $actionClassName = Iter\first(
+                    Vec\filter(
+                        Str\split(Str\trim(Type\string()->assert(Iter\first($crawler->extract(['class'])))), ' '),
+                        static fn (string $class) => Str\starts_with(Str\trim($class), 'action-'),
                     )
                 );
 
-                assert($actionClassName !== null);
-
-                return substr($actionClassName, 7);
+                return Str\slice(Type\non_empty_string()->assert($actionClassName), 7);
             }
         );
 
         /** @var list<string> $actionsLabel */
         $actionsLabel = $actionsCrawler->each(static fn (Crawler $crawler): string => $crawler->text());
 
-        return associate($actionsName, $actionsLabel);
+        return Dict\associate($actionsName, $actionsLabel);
     }
 
     protected function assertPageTitle(string $expectedPageTitle): void
@@ -121,6 +113,6 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         $crawler = $this->getClient()->getCrawler();
 
         self::assertCount(1, $crawler->filter('h1.title'));
-        self::assertSame($expectedPageTitle, trim($crawler->filter('h1.title')->text()));
+        self::assertSame($expectedPageTitle, Str\trim($crawler->filter('h1.title')->text()));
     }
 }

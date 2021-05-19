@@ -48,7 +48,6 @@ includes:
     - vendor/phpstan/phpstan-symfony/rules.neon
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
-    - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon
 
 rules:
 ## copied from vendor/ergebnis/phpstan-rules/rules.neon

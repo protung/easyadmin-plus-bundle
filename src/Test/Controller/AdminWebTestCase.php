@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Router\UrlSigner;
+use Psl\Iter;
+use Psl\Type;
+use Psl\Vec;
 use Speicher210\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-
-use function assert;
-use function count;
-use function Psl\Vec\map;
-use function Psl\Vec\zip;
 
 abstract class AdminWebTestCase extends WebTestCase
 {
@@ -82,15 +80,16 @@ abstract class AdminWebTestCase extends WebTestCase
 
     private function assertFlashMessage(string $type, string ...$expectedMessages): void
     {
-        $crawler = $this->getClient()->getCrawler();
-        /** @var list<string> $actualMessages */
-        $actualMessages = $crawler->filter('#flash-messages .alert-' . $type)
-            ->each(static fn (Crawler $crawler): string => $crawler->text());
+        $crawler        = $this->getClient()->getCrawler();
+        $actualMessages = Type\vec(Type\string())->assert(
+            $crawler->filter('#flash-messages .alert-' . $type)
+                ->each(static fn (Crawler $crawler): string => $crawler->text())
+        );
 
-        self::assertCount(count($expectedMessages), $actualMessages);
+        self::assertCount(Iter\count($expectedMessages), $actualMessages);
 
-        map(
-            zip($actualMessages, $expectedMessages),
+        Vec\map(
+            Vec\zip($actualMessages, $expectedMessages),
             /**
              * @param array{0: string, 1: string} $data
              */
@@ -104,7 +103,7 @@ abstract class AdminWebTestCase extends WebTestCase
     protected function signUrl(string $url): string
     {
         $urlSigner = $this->getContainerService(UrlSigner::class);
-        assert($urlSigner instanceof UrlSigner);
+        $urlSigner = Type\object(UrlSigner::class)->assert($urlSigner);
 
         return $urlSigner->sign($url);
     }
@@ -112,7 +111,7 @@ abstract class AdminWebTestCase extends WebTestCase
     protected function getCsrfToken(string $tokenId): string
     {
         $tokenManager = $this->getContainerService(CsrfTokenManagerInterface::class);
-        assert($tokenManager instanceof CsrfTokenManagerInterface);
+        $tokenManager = Type\object(CsrfTokenManagerInterface::class)->assert($tokenManager);
 
         return $tokenManager->getToken($tokenId)->getValue();
     }
