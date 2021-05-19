@@ -60,32 +60,27 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function mapFieldsErrors(Crawler $crawler, FormField|array $fields): array
     {
-        $spec = Type\union(
-            Type\dict(Type\array_key(), Type\object(FormField::class)),
-            Type\dict(Type\array_key(), Type\dict(Type\array_key(), Type\object(FormField::class))),
+        if ($fields instanceof FormField) {
+            $currentFormWidget = $crawler
+                ->filter(Str\format('input[name="%1$s"],select[name="%1$s"],textarea[name="%1$s"]', $fields->getName()))
+                ->closest('.form-widget');
+
+            if ($currentFormWidget === null) {
+                return [];
+            }
+
+            return $currentFormWidget
+                ->filter('.invalid-feedback span.form-error-message')
+                ->extract(['_text']);
+        }
+
+        return Dict\map(
+            $fields,
+            /**
+             * @param FormField|array<array-key, FormField> $fields
+             */
+            fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields)
         );
-
-        if ($spec->matches($fields)) {
-            return Dict\map(
-                $fields,
-                /**
-                 * @param FormField|array<array-key, FormField> $fields
-                 */
-                fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields)
-            );
-        }
-
-        $currentFormWidget = $crawler
-            ->filter(Str\format('input[name="%1$s"],select[name="%1$s"],textarea[name="%1$s"]', $fields->getName()))
-            ->closest('.form-widget');
-
-        if ($currentFormWidget === null) {
-            return [];
-        }
-
-        return $currentFormWidget
-            ->filter('.invalid-feedback span.form-error-message')
-            ->extract(['_text']);
     }
 
     /**

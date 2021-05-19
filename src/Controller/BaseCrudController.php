@@ -42,7 +42,7 @@ abstract class BaseCrudController extends AbstractCrudController
         ];
 
         return $actions->disable(
-            ...Vec\concat($allActions, $allowedActions)
+            ...Vec\values(Dict\diff($allActions, $allowedActions))
         );
     }
 
@@ -111,8 +111,11 @@ abstract class BaseCrudController extends AbstractCrudController
      */
     public static function getSubscribedServices(): array
     {
-        return Dict\merge(parent::getSubscribedServices(), [
-            TranslatorInterface::class,
-        ]);
+        return Dict\merge(
+            parent::getSubscribedServices(),
+            [
+                TranslatorInterface::class => '?' . TranslatorInterface::class,
+            ]
+        );
     }
 }
