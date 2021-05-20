@@ -6,6 +6,17 @@
       <code>$queryParameters[EA::CRUD_CONTROLLER_FQCN]</code>
     </MixedAssignment>
   </file>
+  <file src="src/Test/Controller/DetailActionTestCase.php">
+    <MixedAssignment occurrences="1">
+      <code>$queryParameters[EA::ENTITY_ID]</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Test/Controller/EditActionTestCase.php">
+    <MixedAssignment occurrences="2">
+      <code>$queryParameters[EA::ENTITY_ID]</code>
+      <code>$queryParameters[EA::ENTITY_ID]</code>
+    </MixedAssignment>
+  </file>
   <file src="tests/Test/Resources/Views/TwigTemplateTestCase.php">
     <MixedAssignment occurrences="1">
       <code>$this-&gt;twig</code>

@@ -69,7 +69,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertPage(array $expectedDetails, array $expectedActions = [], array $queryParameters = []): void
     {
-        $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
 
         $this->assertRequestGet($queryParameters);
         $expectedTitle = $this->expectedPageTitle();
