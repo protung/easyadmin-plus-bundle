@@ -16,6 +16,21 @@ parameters:
 			path: src/Controller/BaseCrudController.php
 
 		-
+			message: "#^Access to an undefined property Protung\\\\EasyAdminPlusBundle\\\\Controller\\\\BaseCrudDtoController\\<TEntityClass of object, TDtoClass of object\\>\\:\\:\\$entityInstance\\.$#"
+			count: 2
+			path: src/Controller/BaseCrudDtoController.php
+
+		-
+			message: "#^Access to an undefined property Protung\\\\EasyAdminPlusBundle\\\\Controller\\\\BaseCrudDtoController\\<TEntityClass of object, TDtoClass of object\\>\\:\\:\\$instance\\.$#"
+			count: 2
+			path: src/Controller/BaseCrudDtoController.php
+
+		-
+			message: "#^Parameter \\#2 \\$entity of method Closure\\:\\:call\\(\\) expects object, TEntityClass of object\\|null given\\.$#"
+			count: 1
+			path: src/Controller/BaseCrudDtoController.php
+
+		-
 			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Test\\\\Controller\\\\CustomActionTestCase\\:\\:expectedPageTitle\\(\\) has a nullable return type declaration\\.$#"
 			count: 1
 			path: src/Test/Controller/CustomActionTestCase.php

@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.7.2@83a0325c0a95c0ab531d6b90c877068b464377b5">
+  <file src="src/Controller/BaseCrudDtoController.php">
+    <MixedMethodCall occurrences="1">
+      <code>new $className()</code>
+    </MixedMethodCall>
+    <UndefinedThisPropertyAssignment occurrences="4">
+      <code>$this-&gt;entityInstance</code>
+      <code>$this-&gt;entityInstance</code>
+      <code>$this-&gt;instance</code>
+      <code>$this-&gt;instance</code>
+    </UndefinedThisPropertyAssignment>
+  </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
     <MixedAssignment occurrences="2">
       <code>$queryParameters[EA::CRUD_ACTION]</code>
