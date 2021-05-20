@@ -25,16 +25,6 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<string,string> $queryParameters
-     */
-    protected function assertPageLoadsViewForAction(array $queryParameters = []): void
-    {
-        $queryParameters[EA::CRUD_ACTION] = $this->actionName();
-
-        $this->assertRequestGet($queryParameters);
-    }
-
-    /**
      * @param array<string,mixed>  $requestData
      * @param array<string,string> $queryParameters
      * @param array<string,mixed>  $files
