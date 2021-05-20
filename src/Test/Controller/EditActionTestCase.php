@@ -104,7 +104,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $queryParameters = [],
         array $redirectQueryParameters = []
     ): void {
-        $this->makeRequest($data, $files, $queryParameters);
+        $this->submitFormRequest($data, $files, $queryParameters);
 
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
         $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest(); // If there is no referrer query parameter set, the redirect will contain the entityId query parameter
@@ -122,13 +122,13 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertShowingValidationErrors(
+    protected function assertSubmittingFormAndShowingValidationErrors(
         array $formExpectedErrors,
         array $data,
         array $files = [],
         array $queryParameters = []
     ): void {
-        $crawler = $this->makeRequest($data, $files, $queryParameters);
+        $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
 
@@ -149,7 +149,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
      * @param array<array-key, mixed> $queryParameters
      * @param Action::SAVE_*          $submitButton
      */
-    protected function makeRequest(
+    protected function submitFormRequest(
         array $data,
         array $files = [],
         array $queryParameters = [],

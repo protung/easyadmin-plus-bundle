@@ -68,7 +68,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         array $queryParameters = [],
         array $redirectQueryParameters = []
     ): void {
-        $this->makeRequest($data, $files, $queryParameters);
+        $this->submitFormRequest($data, $files, $queryParameters);
 
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
 
@@ -85,13 +85,13 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertShowingValidationErrors(
+    protected function assertSubmittingFormAndShowingValidationErrors(
         array $formExpectedErrors,
         array $data,
         array $files = [],
         array $queryParameters = []
     ): void {
-        $crawler = $this->makeRequest($data, $files, $queryParameters);
+        $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
 
@@ -112,7 +112,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
      * @param array<array-key, mixed> $queryParameters
      * @param Action::SAVE_*          $submitButton
      */
-    protected function makeRequest(
+    protected function submitFormRequest(
         array $data,
         array $files = [],
         array $queryParameters = [],
