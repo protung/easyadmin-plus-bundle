@@ -35,3 +35,8 @@ parameters:
 			count: 1
 			path: src/Test/Controller/IndexActionTestCase.php
 
+		-
+			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Test\\\\Controller\\\\NewActionTestCase\\:\\:expectedPageTitle\\(\\) has a nullable return type declaration\\.$#"
+			count: 1
+			path: src/Test/Controller/NewActionTestCase.php
+

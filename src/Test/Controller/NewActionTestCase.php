@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Psl\Str;
-use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,15 +16,13 @@ use Symfony\Component\HttpFoundation\Response;
  * @template TCrudController
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
-abstract class EditActionTestCase extends AdminControllerWebTestCase
+abstract class NewActionTestCase extends AdminControllerWebTestCase
 {
-    protected static string $expectedEntityIdUnderTest;
-
     protected static ?string $expectedPageTitle = null;
 
     protected function actionName(): string
     {
-        return Action::EDIT;
+        return Action::NEW;
     }
 
     protected function expectedPageTitle(): ?string
@@ -46,49 +43,15 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         return static::$expectedPageTitle;
     }
 
-    protected function entityIdUnderTest(): string
+    public function testPageLoads(): void
     {
-        $rp = new ReflectionProperty($this, 'expectedEntityIdUnderTest');
-        $rp->setAccessible(true);
-        if (! $rp->isInitialized()) {
-            throw new LogicException(
-                Str\format(
-                    <<<'MSG'
-                        Expected entity ID under test was not set.
-                        Please set static::$expectedEntityIdUnderTest property in your test or overwrite %s method.
-                    MSG,
-                    __METHOD__
-                )
-            );
-        }
-
-        return static::$expectedEntityIdUnderTest;
-    }
-
-    /**
-     * @param array<string, mixed>    $formExpectedFields
-     * @param array<array-key, mixed> $queryParameters
-     */
-    protected function assertShowingEntityToEdit(array $formExpectedFields, array $queryParameters = []): void
-    {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        $queryParameters = [EA::CRUD_ACTION => Action::NEW];
 
         $this->assertRequestGet($queryParameters);
-
         $expectedTitle = $this->expectedPageTitle();
         if ($expectedTitle !== null) {
             $this->assertPageTitle($expectedTitle);
         }
-
-        $form     = $this->getClient()->getCrawler()->filter('#main form')->form();
-        $formName = $form->getFormNode()->getAttribute('name');
-
-        $formExpectedFields['_token'] = $this->getCsrfToken($formName);
-
-        $this->assertMatchesPattern(
-            $formExpectedFields,
-            $form->getPhpValues()[$formName]
-        );
     }
 
     /**
@@ -106,12 +69,11 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         $this->makeRequest($data, $files, $queryParameters);
 
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
-        $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest(); // If there is no referrer query parameter set, the redirect will contain the entityId query parameter
 
         $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
         self::assertTrue(
             $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
-            'Expected redirect to the index page after edit.'
+            'Expected redirect to the index page after create.'
         );
     }
 
@@ -154,8 +116,6 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $queryParameters = [],
         string $submitButton = Action::SAVE_AND_RETURN
     ): Crawler {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
-
         $crawler = $this->assertRequestGet($queryParameters);
 
         $expectedTitle = $this->expectedPageTitle();
