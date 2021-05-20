@@ -18,6 +18,11 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 {
     protected static ?string $expectedPageTitle = null;
 
+    protected function actionName(): string
+    {
+        return Action::INDEX;
+    }
+
     protected function expectedPageTitle(): ?string
     {
         if (static::$expectedPageTitle === null) {
@@ -43,7 +48,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
     public function testPageLoadsWithEmptyList(): void
     {
-        $crawler = $this->assertRequestGet([EA::CRUD_ACTION => Action::INDEX]);
+        $crawler = $this->assertRequestGet();
 
         $expectedTitle = $this->expectedPageTitle();
         if ($expectedTitle !== null) {
@@ -63,7 +68,6 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertPage(array $expectedRows, array $queryParameters = []): void
     {
-        $queryParameters[EA::CRUD_ACTION] = Action::INDEX;
         $this->assertRequestGet($queryParameters);
 
         $expectedTitle = $this->expectedPageTitle();
@@ -83,8 +87,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertFilters(array $filters, array $expectedIds, array $queryParameters = []): void
     {
-        $queryParameters[EA::CRUD_ACTION] = Action::INDEX;
-        $queryParameters[EA::FILTERS]     = $filters;
+        $queryParameters[EA::FILTERS] = $filters;
 
         $this->assertRequestGet($queryParameters);
         $expectedTitle = $this->expectedPageTitle();

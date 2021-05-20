@@ -13,6 +13,7 @@ use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use function http_build_query;
 
@@ -28,17 +29,17 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     abstract protected function controllerUnderTest(): string;
 
+    abstract protected function actionName(): string;
+
     /**
      * @param array<array-key, mixed> $queryParameters
+     * @param positive-int            $expectedResponseStatusCode
      */
-    protected function assertRequestGet(array $queryParameters): Crawler
+    protected function assertRequestGet(array $queryParameters = [], int $expectedResponseStatusCode = Response::HTTP_OK): Crawler
     {
         $crawler = $this->getClient()->request(Request::METHOD_GET, $this->prepareAdminUrl($queryParameters));
 
-        self::assertTrue(
-            $this->getClient()->getResponse()->isOk(),
-            Str\format('Expected response was 200, got %s', $this->getClient()->getResponse()->getStatusCode())
-        );
+        self::assertResponseStatusCode($this->getClient()->getResponse(), $expectedResponseStatusCode);
 
         return $crawler;
     }
@@ -48,7 +49,8 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function prepareAdminUrl(array $queryParameters): string
     {
-        $queryParameters[EA::CRUD_CONTROLLER_FQCN] = $this->controllerUnderTest();
+        $queryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $this->controllerUnderTest();
+        $queryParameters[EA::CRUD_ACTION]          ??= $this->actionName();
 
         return $this->signUrl(static::$easyAdminRoutePath . '?' . http_build_query($queryParameters));
     }

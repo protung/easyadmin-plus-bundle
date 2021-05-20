@@ -20,6 +20,11 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 
     protected static ?string $expectedPageTitle = null;
 
+    protected function actionName(): string
+    {
+        return Action::DETAIL;
+    }
+
     protected function expectedPageTitle(): ?string
     {
         if (static::$expectedPageTitle === null) {
@@ -64,8 +69,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertPage(array $expectedDetails, array $expectedActions = [], array $queryParameters = []): void
     {
-        $queryParameters[EA::CRUD_ACTION] = Action::DETAIL;
-        $queryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest();
+        $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
 
         $this->assertRequestGet($queryParameters);
         $expectedTitle = $this->expectedPageTitle();

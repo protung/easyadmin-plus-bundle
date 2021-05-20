@@ -19,8 +19,6 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
 {
     protected static ?string $expectedPageTitle = null;
 
-    abstract protected function actionName(): string;
-
     protected function expectedPageTitle(): ?string
     {
         return static::$expectedPageTitle;

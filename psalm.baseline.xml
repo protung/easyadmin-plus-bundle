@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.7.2@83a0325c0a95c0ab531d6b90c877068b464377b5">
+  <file src="src/Test/Controller/AdminControllerWebTestCase.php">
+    <MixedAssignment occurrences="2">
+      <code>$queryParameters[EA::CRUD_ACTION]</code>
+      <code>$queryParameters[EA::CRUD_CONTROLLER_FQCN]</code>
+    </MixedAssignment>
+  </file>
   <file src="tests/Test/Resources/Views/TwigTemplateTestCase.php">
     <MixedAssignment occurrences="1">
       <code>$this-&gt;twig</code>
