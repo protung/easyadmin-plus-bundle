@@ -10,6 +10,7 @@ use LogicException;
 use Psl\Str;
 use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -80,7 +81,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
             $this->assertPageTitle($expectedTitle);
         }
 
-        $form     = $this->getClient()->getCrawler()->filter('#main form')->form();
+        $form     = $this->findForm($this->getClient()->getCrawler());
         $formName = $form->getFormNode()->getAttribute('name');
 
         $formExpectedFields['_token'] = $this->getCsrfToken($formName);
@@ -129,10 +130,10 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     ): void {
         $crawler = $this->makeRequest($data, $files, $queryParameters);
 
-        $form     = $this->getClient()->getCrawler()->filter('#main form')->form();
-        $formName = $form->getFormNode()->getAttribute('name');
-
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
+
+        $form     = $this->findForm($crawler);
+        $formName = $form->getFormNode()->getAttribute('name');
 
         $fields = $form->get($formName);
 
@@ -163,7 +164,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
             $this->assertPageTitle($expectedTitle);
         }
 
-        $form     = $crawler->filter('#main form')->form();
+        $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
 
         $data['_token'] = $this->getCsrfToken($formName);
@@ -174,6 +175,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
                 'newForm' => ['btn' => $submitButton],
             ],
         ];
+        $files          = [$formName => $files];
 
         return $this->getClient()->request(
             Request::METHOD_POST,
@@ -181,5 +183,10 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
             $values,
             $files
         );
+    }
+
+    private function findForm(Crawler $crawler): Form
+    {
+        return $crawler->filter('#main form')->form();
     }
 }

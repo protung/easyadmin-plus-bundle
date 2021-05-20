@@ -25,27 +25,41 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<string,mixed>  $requestData
-     * @param array<string,string> $queryParameters
-     * @param array<string,mixed>  $files
+     * @param array<array-key, mixed> $data
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $redirectQueryParameters
      */
-    protected function assertSubmittingFormAndRedirectingToListView(array $requestData, array $queryParameters = [], array $files = []): void
-    {
-        $this->submitFormRequest($requestData, $queryParameters, $files);
+    protected function assertSubmittingFormAndRedirectingToIndexAction(
+        array $data,
+        array $files = [],
+        array $queryParameters = [],
+        array $redirectQueryParameters = []
+    ): void {
+        $this->submitFormRequest($data, $files, $queryParameters);
 
-        $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl([EA::CRUD_ACTION => Action::INDEX]);
-        self::assertTrue($this->getClient()->getResponse()->isRedirect($expectedRedirectUrl));
+        $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
+
+        $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
+        self::assertTrue(
+            $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
+            'Expected redirect to the index page.'
+        );
     }
 
     /**
-     * @param array<string,array<string|array>> $formExpectedErrors
-     * @param array<string,mixed>               $requestData
-     * @param array<string,string>              $queryParameters
-     * @param array<string,mixed>               $files
+     * @param array<array-key, mixed> $formExpectedErrors
+     * @param array<array-key, mixed> $data
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertSubmittingFormAndShowingValidationErrors(array $formExpectedErrors, array $requestData, array $queryParameters = [], array $files = []): void
-    {
-        $crawler = $this->submitFormRequest($requestData, $queryParameters, $files);
+    protected function assertSubmittingFormAndShowingValidationErrors(
+        array $formExpectedErrors,
+        array $data,
+        array $files = [],
+        array $queryParameters = []
+    ): void {
+        $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
 
@@ -61,15 +75,17 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<string,mixed>  $requestData
-     * @param array<string,string> $queryParameters
-     * @param array<string,mixed>  $files
+     * @param array<array-key, mixed> $data
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $queryParameters
      */
-    protected function submitFormRequest(array $requestData, array $queryParameters = [], array $files = []): Crawler
-    {
-        $queryParameters[EA::CRUD_ACTION] = $this->actionName();
+    protected function submitFormRequest(
+        array $data,
+        array $files = [],
+        array $queryParameters = []
+    ): Crawler {
+        $crawler = $this->assertRequestGet($queryParameters);
 
-        $crawler       = $this->assertRequestGet($queryParameters);
         $expectedTitle = $this->expectedPageTitle();
         if ($expectedTitle !== null) {
             $this->assertPageTitle($expectedTitle);
@@ -78,11 +94,17 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
         $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
 
-        $requestData['_token'] = $this->getCsrfToken($formName);
-        $values                = [$formName => $requestData];
-        $files                 = [$formName => $files];
+        $data['_token'] = $this->getCsrfToken($formName);
 
-        return $this->getClient()->request(Request::METHOD_POST, $this->prepareAdminUrl($queryParameters), $values, $files);
+        $values = [$formName => $data];
+        $files  = [$formName => $files];
+
+        return $this->getClient()->request(
+            Request::METHOD_POST,
+            $this->prepareAdminUrl($queryParameters),
+            $values,
+            $files
+        );
     }
 
     private function findForm(Crawler $crawler): Form

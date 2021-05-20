@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Psl\Str;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,6 +49,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         $queryParameters = [EA::CRUD_ACTION => Action::NEW];
 
         $this->assertRequestGet($queryParameters);
+
         $expectedTitle = $this->expectedPageTitle();
         if ($expectedTitle !== null) {
             $this->assertPageTitle($expectedTitle);
@@ -91,10 +93,10 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     ): void {
         $crawler = $this->makeRequest($data, $files, $queryParameters);
 
-        $form     = $this->getClient()->getCrawler()->filter('#main form')->form();
-        $formName = $form->getFormNode()->getAttribute('name');
-
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
+
+        $form     = $this->findForm($crawler);
+        $formName = $form->getFormNode()->getAttribute('name');
 
         $fields = $form->get($formName);
 
@@ -123,7 +125,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
             $this->assertPageTitle($expectedTitle);
         }
 
-        $form     = $crawler->filter('#main form')->form();
+        $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
 
         $data['_token'] = $this->getCsrfToken($formName);
@@ -134,6 +136,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
                 'newForm' => ['btn' => $submitButton],
             ],
         ];
+        $files          = [$formName => $files];
 
         return $this->getClient()->request(
             Request::METHOD_POST,
@@ -141,5 +144,10 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
             $values,
             $files
         );
+    }
+
+    private function findForm(Crawler $crawler): Form
+    {
+        return $crawler->filter('#main form')->form();
     }
 }
