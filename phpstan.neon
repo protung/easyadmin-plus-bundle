@@ -46,7 +46,6 @@ includes:
     - vendor/phpstan/phpstan-strict-rules/rules.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
     - vendor/phpstan/phpstan-symfony/rules.neon
-    - vendor/phpstan/phpstan-webmozart-assert/extension.neon
     - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
 
 rules:
@@ -89,9 +88,9 @@ services:
 		class: Ergebnis\PHPStan\Rules\Classes\PHPUnit\Framework\TestCaseWithSuffixRule
 		tags:
 			- phpstan.rules.rule
-#	-
-#		class: Ergebnis\PHPStan\Rules\Methods\NoParameterWithContainerTypeDeclarationRule
-#		arguments:
-#			interfacesImplementedByContainers: %ergebnis.interfacesImplementedByContainers%
-#		tags:
-#			- phpstan.rules.rule
+	-
+		class: Ergebnis\PHPStan\Rules\Methods\NoParameterWithContainerTypeDeclarationRule
+		arguments:
+			interfacesImplementedByContainers: []
+		tags:
+			- phpstan.rules.rule
