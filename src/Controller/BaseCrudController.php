@@ -6,11 +6,14 @@ namespace Protung\EasyAdminPlusBundle\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
+use Psl\Iter;
 use Psl\Vec;
 use RuntimeException;
 use Stringable;
@@ -60,6 +63,21 @@ abstract class BaseCrudController extends AbstractCrudController
     protected function allowOnlyDetailAction(Actions $actions): Actions
     {
         return $this->allowOnlyActions($actions, Action::DETAIL);
+    }
+
+    protected function setActionsPermissions(Actions $actions, string $permission): Actions
+    {
+        $pages = [Crud::PAGE_INDEX, Crud::PAGE_NEW, Crud::PAGE_DETAIL, Crud::PAGE_EDIT];
+        foreach ($pages as $page) {
+            Iter\apply(
+                $actions->getAsDto($page)->getActions(),
+                static function (ActionDto $actionDto) use ($actions, $permission): void {
+                    $actions->setPermission($actionDto->getName(), $permission);
+                }
+            );
+        }
+
+        return $actions;
     }
 
     protected function adminUrlGenerator(): AdminUrlGenerator
