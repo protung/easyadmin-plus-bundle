@@ -184,12 +184,12 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     public static function getSubscribedEvents(): array
     {
         return [
-            BeforeEntityPersistedEvent::class => 'convertDTOToEntityFromBeforeEntityPersistedEvent',
+            BeforeEntityPersistedEvent::class => 'convertDtoToEntityFromBeforeEntityPersistedEvent',
             BeforeCrudActionEvent::class => [
-                ['convertEntityToDTOFromBeforeCrudActionEvent'],
+                ['convertEntityToDtoFromBeforeCrudActionEvent'],
                 ['removeEntityFromContextOnBeforeCrudActionEvent'],
             ],
-            BeforeEntityUpdatedEvent::class => 'convertDTOToUpdatedEntityFromBeforeEntityUpdatedEvent',
+            BeforeEntityUpdatedEvent::class => 'convertDtoToUpdatedEntityFromBeforeEntityUpdatedEvent',
         ];
     }
 }
