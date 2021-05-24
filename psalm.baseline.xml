@@ -4,6 +4,9 @@
     <MixedArgumentTypeCoercion occurrences="1"/>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>$controller</code>
+    </ArgumentTypeCoercion>
     <MixedMethodCall occurrences="1">
       <code>new $className()</code>
     </MixedMethodCall>

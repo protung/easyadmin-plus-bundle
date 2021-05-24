@@ -26,7 +26,17 @@ parameters:
 			path: src/Controller/BaseCrudDtoController.php
 
 		-
+			message: "#^Parameter \\#1 \\$classname of function Psl\\\\Type\\\\object expects class\\-string\\<mixed\\>, string given\\.$#"
+			count: 1
+			path: src/Controller/BaseCrudDtoController.php
+
+		-
 			message: "#^Parameter \\#2 \\$entity of method Closure\\:\\:call\\(\\) expects object, TEntityClass of object\\|null given\\.$#"
+			count: 1
+			path: src/Controller/BaseCrudDtoController.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to function Psl\\\\Type\\\\object$#"
 			count: 1
 			path: src/Controller/BaseCrudDtoController.php
 

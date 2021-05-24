@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
+use Psl\Class;
 use Psl\Type;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -69,6 +70,10 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
 
     final public function convertDtoToEntityFromBeforeEntityPersistedEvent(BeforeEntityPersistedEvent $event): void
     {
+        if (! $this->matchesCrudController()) {
+            return;
+        }
+
         $dto = $event->getEntityInstance();
         if (! Type\object(static::getDtoFqcn())->matches($dto)) {
             return;
@@ -89,6 +94,10 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     {
         $adminContext = Type\object(AdminContext::class)->coerce($event->getAdminContext());
         $crud         = Type\object(CrudDto::class)->coerce($adminContext->getCrud());
+
+        if (! $this->matchesCrudController()) {
+            return;
+        }
 
         if ($crud->getCurrentAction() !== Action::EDIT) {
             return;
@@ -120,6 +129,10 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
 
     final public function convertDtoToUpdatedEntityFromBeforeEntityUpdatedEvent(BeforeEntityUpdatedEvent $event): void
     {
+        if (! $this->matchesCrudController()) {
+            return;
+        }
+
         $dto = $event->getEntityInstance();
         if (! Type\object(static::getDtoFqcn())->matches($dto)) {
             return;
@@ -148,6 +161,10 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
      */
     final public function removeEntityFromContextOnBeforeCrudActionEvent(BeforeCrudActionEvent $event): void
     {
+        if (! $this->matchesCrudController()) {
+            return;
+        }
+
         $adminContext = Type\object(AdminContext::class)->coerce($event->getAdminContext());
         $crud         = Type\object(CrudDto::class)->coerce($adminContext->getCrud());
 
@@ -191,5 +208,21 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
             ],
             BeforeEntityUpdatedEvent::class => 'convertDtoToUpdatedEntityFromBeforeEntityUpdatedEvent',
         ];
+    }
+
+    /**
+     * If multiple CRUD DTO controllers have the same EntityFQCN then we might need to skip handling the events.
+     */
+    private function matchesCrudController(): bool
+    {
+        $adminContext = $this->currentAdminContext();
+        $crud         = Type\object(CrudDto::class)->coerce($adminContext->getCrud());
+
+        $controller = $crud->getControllerFqcn();
+        if ($controller === null || ! Class\exists($controller)) {
+            return false;
+        }
+
+        return Type\object($controller)->matches($this);
     }
 }
