@@ -72,11 +72,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
 
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
 
-        $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
-        self::assertTrue(
-            $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
-            'Expected redirect to the index page after create.'
-        );
+        $this->assertResponseIsRedirect($redirectQueryParameters);
     }
 
     /**

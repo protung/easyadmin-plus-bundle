@@ -109,11 +109,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
         $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest(); // If there is no referrer query parameter set, the redirect will contain the entityId query parameter
 
-        $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
-        self::assertTrue(
-            $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
-            'Expected redirect to the index page after edit.'
-        );
+        $this->assertResponseIsRedirect($redirectQueryParameters);
     }
 
     /**

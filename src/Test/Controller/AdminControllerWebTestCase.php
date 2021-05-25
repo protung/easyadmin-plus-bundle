@@ -35,8 +35,10 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      * @param array<array-key, mixed> $queryParameters
      * @param positive-int            $expectedResponseStatusCode
      */
-    protected function assertRequestGet(array $queryParameters = [], int $expectedResponseStatusCode = Response::HTTP_OK): Crawler
-    {
+    protected function assertRequestGet(
+        array $queryParameters = [],
+        int $expectedResponseStatusCode = Response::HTTP_OK
+    ): Crawler {
         $crawler = $this->getClient()->request(Request::METHOD_GET, $this->prepareAdminUrl($queryParameters));
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), $expectedResponseStatusCode);
@@ -116,5 +118,17 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
 
         self::assertCount(1, $crawler->filter('h1.title'));
         self::assertSame($expectedPageTitle, Str\trim($crawler->filter('h1.title')->text()));
+    }
+
+    /**
+     * @param array<array-key, mixed> $redirectQueryParameters
+     */
+    protected function assertResponseIsRedirect(array $redirectQueryParameters): void
+    {
+        $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
+        self::assertTrue(
+            $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
+            Str\format('Expected redirect to %s.', $expectedRedirectUrl)
+        );
     }
 }
