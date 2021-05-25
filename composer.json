@@ -21,8 +21,8 @@
   ],
   "require": {
     "php": "^8.0",
-    "azjezz/psl": "^1.7.1",
-    "easycorp/easyadmin-bundle": "^3.3.0",
+    "azjezz/psl": "^1.7.2",
+    "easycorp/easyadmin-bundle": "^3.3.1",
     "symfony/asset": "^5.2",
     "symfony/cache": "^5.2",
     "symfony/config": "^5.2",
@@ -40,9 +40,9 @@
   "require-dev": {
     "doctrine/coding-standard": "^9.0.0",
     "ekino/phpstan-banned-code": "^0.4.0",
-    "ergebnis/composer-normalize": "^2.13.3",
+    "ergebnis/composer-normalize": "^2.13.4",
     "ergebnis/phpstan-rules": "^0.15.3",
-    "php-standard-library/psalm-plugin": "^1.1",
+    "php-standard-library/psalm-plugin": "^1.1.1",
     "phpstan/phpstan": "^0.12.88",
     "phpstan/phpstan-deprecation-rules": "^0.12.6",
     "phpstan/phpstan-doctrine": "^0.12.37",
@@ -54,7 +54,7 @@
     "psalm/plugin-symfony": "^2.3.0",
     "speicher210/functional-test-bundle": "^1.1.2",
     "thecodingmachine/phpstan-strict-rules": "^0.12.1",
-    "vimeo/psalm": "^4.7.2"
+    "vimeo/psalm": "^4.7.3"
   },
   "suggest": {
     "speicher210/functional-test-bundle": "For testing support."
