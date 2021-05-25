@@ -44,7 +44,10 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         return static::$expectedPageTitle;
     }
 
-    public function testPageLoads(): void
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    public function testPageLoads(array $queryParameters = []): void
     {
         $queryParameters = [EA::CRUD_ACTION => Action::NEW];
 

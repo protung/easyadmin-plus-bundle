@@ -46,9 +46,12 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     abstract protected function expectedListHeader(): array;
 
-    public function testPageLoadsWithEmptyList(): void
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    public function testPageLoadsWithEmptyList(array $queryParameters = []): void
     {
-        $crawler = $this->assertRequestGet();
+        $crawler = $this->assertRequestGet($queryParameters);
 
         $expectedTitle = $this->expectedPageTitle();
         if ($expectedTitle !== null) {
