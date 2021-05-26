@@ -7,8 +7,11 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use Psl\Iter;
 use Psl\Str;
 use ReflectionProperty;
+
+use function is_countable;
 
 /**
  * @template TCrudController
@@ -63,11 +66,11 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<string,string> $expectedDetails
-     * @param array<mixed>         $queryParameters
-     * @param array<string,string> $expectedActions
+     * @param iterable<string,string> $expectedDetails
+     * @param array<mixed>            $queryParameters
+     * @param array<string,string>    $expectedActions
      */
-    protected function assertPage(array $expectedDetails, array $expectedActions = [], array $queryParameters = []): void
+    protected function assertPage(iterable $expectedDetails, array $expectedActions = [], array $queryParameters = []): void
     {
         $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
 
@@ -94,10 +97,14 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<string,string> $expectedDetails
+     * @param iterable<string,string> $expectedDetails
      */
-    protected function assertDetails(array $expectedDetails): void
+    protected function assertDetails(iterable $expectedDetails): void
     {
+        if (! is_countable($expectedDetails)) {
+            $expectedDetails = Iter\to_iterator($expectedDetails);
+        }
+
         self::assertCount(
             $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->count(),
             $expectedDetails
