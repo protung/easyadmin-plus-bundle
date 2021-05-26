@@ -80,9 +80,19 @@ abstract class BaseCrudController extends AbstractCrudController
         return $actions;
     }
 
-    protected function adminUrlGenerator(): AdminUrlGenerator
-    {
-        return $this->get(AdminUrlGenerator::class);
+    protected function addConfirmationForAction(
+        Action $action,
+        string|Stringable|TranslatableInterface $title,
+        string|Stringable|TranslatableInterface $description
+    ): Action {
+        return $action
+            ->setHtmlAttributes(
+                [
+                    'data-protung-easyadmin-plus-extension-modal-confirm-trigger' => '1',
+                    'data-protung-easyadmin-plus-extension-modal-confirm-title' => $this->translate($title),
+                    'data-protung-easyadmin-plus-extension-modal-confirm-description' => $this->translate($description),
+                ]
+            );
     }
 
     protected function currentAdminContext(): AdminContext
@@ -112,16 +122,28 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function addFlashMessage(string $type, string|Stringable|TranslatableInterface $message): void
     {
+        $this->addFlash($type, $this->translate($message));
+    }
+
+    private function translate(string|Stringable|TranslatableInterface $message): string
+    {
         // We check against TranslatableInterface because the implementation might be Stringable as well.
         if (! $message instanceof TranslatableInterface) {
             $translationDomain = $this->currentAdminContext()->getI18n()->getTranslationDomain();
             $message           = new TranslatableMessage((string) $message, [], $translationDomain);
         }
 
-        $this->addFlash(
-            $type,
-            $message->trans($this->get(TranslatorInterface::class))
-        );
+        return $message->trans($this->translator());
+    }
+
+    protected function translator(): TranslatorInterface
+    {
+        return $this->get(TranslatorInterface::class);
+    }
+
+    protected function adminUrlGenerator(): AdminUrlGenerator
+    {
+        return $this->get(AdminUrlGenerator::class);
     }
 
     /**

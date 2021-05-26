@@ -11,7 +11,7 @@ parameters:
 			path: src/Controller/BaseCrudController.php
 
 		-
-			message: "#^Parameter \\#1 \\$translator of method Symfony\\\\Contracts\\\\Translation\\\\TranslatableInterface\\:\\:trans\\(\\) expects Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface, object given\\.$#"
+			message: "#^Method Protung\\\\EasyAdminPlusBundle\\\\Controller\\\\BaseCrudController\\:\\:translator\\(\\) should return Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface but returns object\\.$#"
 			count: 1
 			path: src/Controller/BaseCrudController.php
 
