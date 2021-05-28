@@ -21,6 +21,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function is_object;
+use function Psl\invariant;
+
 abstract class BaseCrudController extends AbstractCrudController
 {
     protected const FIELD_SORT_ASC  = 'ASC';
@@ -103,6 +106,18 @@ abstract class BaseCrudController extends AbstractCrudController
         }
 
         return $currentAdminContext;
+    }
+
+    /**
+     * @param object|class-string $entity
+     */
+    protected function getControllerFqcnForEntity(object|string $entity): string
+    {
+        $controllerClass = is_object($entity) ? $entity::class : $entity;
+        $controller      = $this->currentAdminContext()->getCrudControllers()->findCrudFqcnByEntityFqcn($controllerClass);
+        invariant($controller !== null, 'asd');
+
+        return $controller;
     }
 
     protected function addFlashMessageSuccess(string|Stringable|TranslatableInterface $message): void
