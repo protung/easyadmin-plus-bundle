@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Tests\Resources\Views\Crud\Field;
 
 use Generator;
+use Protung\EasyAdminPlusBundle\Field\JsonField;
 use Protung\EasyAdminPlusBundle\Tests\Test\Resources\Views\TwigTemplateTestCase;
 
 final class JsonFieldTest extends TwigTemplateTestCase
@@ -36,9 +37,13 @@ final class JsonFieldTest extends TwigTemplateTestCase
      */
     public function testOutput(array $context): void
     {
+        $actualTemplate = JsonField::new('test')->getAsDto()->getTemplatePath();
+
+        self::assertNotNull($actualTemplate);
+
         $this->assertTwigTemplateEqualsFile(
             $this->getExpectedContentFile('html'),
-            '@ProtungEasyAdminPlus/crud/field/json.html.twig',
+            $actualTemplate,
             $context
         );
     }

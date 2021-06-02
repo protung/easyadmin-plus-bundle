@@ -16,6 +16,6 @@ final class JsonField implements FieldInterface
         return (new self())
             ->setProperty($propertyName)
             ->setLabel($label)
-            ->setTemplatePath('@ProtungEasyAdminPlusBundle/crud/field/json.html.twig');
+            ->setTemplatePath('@ProtungEasyAdminPlus/crud/field/json.html.twig');
     }
 }
