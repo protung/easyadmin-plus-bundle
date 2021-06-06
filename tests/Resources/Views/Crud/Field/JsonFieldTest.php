@@ -16,10 +16,24 @@ final class JsonFieldTest extends TwigTemplateTestCase
     public static function dataProviderTestOutput(): Generator
     {
         yield 'no-data' => [[]];
-        yield 'with-data' => [
+
+        yield 'with-value' => [
             [
                 'field' => [
                     'value' => [
+                        123456,
+                        'string',
+                        true,
+                        ['array' => 'test'],
+                    ],
+                ],
+            ],
+        ];
+
+        yield 'with-formatted-value' => [
+            [
+                'field' => [
+                    'formattedValue' => [
                         123456,
                         'string',
                         true,
