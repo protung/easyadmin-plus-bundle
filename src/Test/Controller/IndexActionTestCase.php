@@ -84,6 +84,27 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * @param list<string>            $expectedIds
+     * @param array<array-key, mixed> $queryParameters
+     */
+    protected function assertSearch(string $searchQuery, array $expectedIds, array $queryParameters = []): void
+    {
+        $queryParameters[EA::QUERY] = $searchQuery;
+
+        $this->assertRequestGet($queryParameters);
+        $expectedTitle = $this->expectedPageTitle();
+        if ($expectedTitle !== null) {
+            $this->assertPageTitle($expectedTitle);
+        }
+
+        $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+            static fn (Crawler $row): string => $row->attr('data-id') ?? ''
+        );
+
+        self::assertSame($expectedIds, $rowData);
+    }
+
+    /**
      * @param array<array-key, mixed> $filters
      * @param list<string>            $expectedIds
      * @param array<array-key, mixed> $queryParameters
