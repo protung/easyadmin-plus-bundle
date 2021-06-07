@@ -8,8 +8,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Psl\Str;
+use Psl\Type;
 use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,7 +86,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         $form     = $this->findForm($this->getClient()->getCrawler());
         $formName = $form->getFormNode()->getAttribute('name');
 
-        $formExpectedFields['_token'] = $this->getCsrfToken($formName);
+        $formExpectedFields['_token'] = '@string@';
 
         $this->assertMatchesPattern(
             $formExpectedFields,
@@ -163,7 +165,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
 
-        $data['_token'] = $this->getCsrfToken($formName);
+        $data['_token'] = Type\object(FormField::class)->coerce($form->get($formName . '[_token]'))->getValue();
         $data['btn']    = $submitButton;
         $values         = [
             $formName => $data,

@@ -6,12 +6,14 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Router\UrlSigner;
 use Psl\Iter;
+use Psl\Str;
 use Psl\Type;
 use Psl\Vec;
 use Speicher210\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -47,6 +49,20 @@ abstract class AdminWebTestCase extends WebTestCase
         return $this->client;
     }
 
+    /**
+     * @param array<array-key, mixed> $data
+     */
+    protected function submitForm(string $url, string $formName, array $data): Crawler
+    {
+        $crawler = $this->getClient()->request(Request::METHOD_GET, $url);
+
+        $form = $crawler->filter(Str\format('form[name="%s"]', $formName))->form();
+
+        $formData = [$formName => $data];
+
+        return $this->getClient()->submit($form, $formData);
+    }
+
     protected function followRedirect(): void
     {
         $this->getClient()->followRedirect();
@@ -59,7 +75,7 @@ abstract class AdminWebTestCase extends WebTestCase
 
     protected function loginAsAdmin(): void
     {
-        $user = new User('admin-test', 'admin-test', ['ROLE_ADMIN']);
+        $user = new InMemoryUser('admin-test', 'admin-test', ['ROLE_ADMIN']);
         $this->loginAs($user);
     }
 

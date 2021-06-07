@@ -6,7 +6,9 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Psl\Type;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,7 +92,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
         $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
 
-        $data['_token'] = $this->getCsrfToken($formName);
+        $data['_token'] = Type\object(FormField::class)->coerce($form->get($formName . '[_token]'))->getValue();
 
         $values = [$formName => $data];
         $files  = [$formName => $files];

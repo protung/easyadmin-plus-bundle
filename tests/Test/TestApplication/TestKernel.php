@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\InMemoryUser;
 
 final class TestKernel extends SymfonyKernel
 {
@@ -43,12 +43,12 @@ final class TestKernel extends SymfonyKernel
 
     public function getCacheDir(): string
     {
-        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->environment . '/cache';
+        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->getEnvironment() . '/cache';
     }
 
     public function getLogDir(): string
     {
-        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->environment . '/log';
+        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->getEnvironment() . '/log';
     }
 
     public function configureRoutes(RoutingConfigurator $routes): void
@@ -95,7 +95,7 @@ final class TestKernel extends SymfonyKernel
         $container->extension(
             'security',
             [
-                'encoders' => [User::class => 'plaintext'],
+                'encoders' => [InMemoryUser::class => 'plaintext'],
                 'providers' => [
                     'test_users' => [
                         'memory' => [
