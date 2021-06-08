@@ -103,7 +103,7 @@ abstract class BaseCrudController extends AbstractCrudController
         $action
             ->getAsDto()
             ->addHtmlAttributes(
-                ['data-protung-easyadmin-plus-extension-action-render-in-dropdown' => $shouldRenderInDropdown]
+                ['data-protung-easyadmin-plus-extension-action-render-in-dropdown' => $shouldRenderInDropdown ? '1' : '-1']
             );
 
         if ($shouldRenderInDropdown === false) {
