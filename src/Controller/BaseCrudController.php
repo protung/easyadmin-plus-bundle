@@ -85,14 +85,17 @@ abstract class BaseCrudController extends AbstractCrudController
         string|Stringable|TranslatableInterface $title,
         string|Stringable|TranslatableInterface $description
     ): Action {
-        return $action
-            ->setHtmlAttributes(
+         $action
+            ->getAsDto()
+            ->addHtmlAttributes(
                 [
                     'data-protung-easyadmin-plus-extension-modal-confirm-trigger' => '1',
                     'data-protung-easyadmin-plus-extension-modal-confirm-title' => $this->translate($title),
                     'data-protung-easyadmin-plus-extension-modal-confirm-description' => $this->translate($description),
                 ]
             );
+
+         return $action;
     }
 
     protected function renderInDropdown(Action $action, bool $shouldRenderInDropdown): Action
