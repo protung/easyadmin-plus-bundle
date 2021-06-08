@@ -17,8 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function http_build_query;
 
-use const PHP_EOL;
-
 /**
  * @template TCrudController
  */
@@ -128,13 +126,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     protected function assertResponseIsRedirect(array $redirectQueryParameters): void
     {
         $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
-        self::assertTrue(
-            $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
-            Str\format(
-                'Expected redirect to "%s".' . PHP_EOL . 'Actual redirect url: "%s".',
-                $expectedRedirectUrl,
-                $this->getClient()->getResponse()->headers->get('Location') ?? ''
-            )
-        );
+
+        $this->assertResponseRedirectsToUrl($expectedRedirectUrl);
     }
 }
