@@ -167,11 +167,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
                     return $column->text();
                 }
 
-                if ($actions->filter('.dropdown-actions')->count() > 0) {
-                    $actions = $actions->filter('.dropdown-actions')->filter('.dropdown-menu');
-                }
-
-                return $this->mapActions($actions->children());
+                return $this->mapActions($actions->filter('a[class*="action-"],button[class*="action-"]'));
             }
         );
 
