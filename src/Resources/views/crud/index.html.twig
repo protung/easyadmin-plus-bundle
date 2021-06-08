@@ -1,0 +1,35 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{% extends '@!EasyAdmin/crud/index.html.twig' %}
+
+{% block entity_actions %}
+    <td class="actions text-left">
+        {% if not ea.crud.showEntityActionsAsDropdown %}
+            {% for action in entity.actions %}
+                {{ include(action.templatePath, { action: action, entity: entity, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
+            {% endfor %}
+        {% else %}
+            {% set dropdownActions = entity.actions|filter(action => action.getHtmlAttributes['data-protung-easyadmin-plus-extension-action-render-in-dropdown'] | default(1) == 1) %}
+            {% set notDropdownActions = entity.actions|filter(action => action.getHtmlAttributes['data-protung-easyadmin-plus-extension-action-render-in-dropdown'] | default(1) == -1)  %}
+
+            <div class="btn-group" role="group">
+                {% for action in notDropdownActions %}
+                    {{ include(action.templatePath, { action: action, entity: entity, isIncludedInDropdown: false }, with_context = false) }}
+                {% endfor %}
+                {% if dropdownActions|length > 0 %}
+                    <div class="dropdown dropdown-actions">
+                        <a class="dropdown-toggle btn btn-secondary btn-sm" href="#" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-fw fa-ellipsis-h"></i>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right">
+                            {% for action in dropdownActions %}
+                                {{ include(action.templatePath, { action: action, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </td>
+{% endblock entity_actions %}
