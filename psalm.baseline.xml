@@ -19,9 +19,6 @@
       <code>$entityDto-&gt;getPrimaryKeyValue()</code>
       <code>$field-&gt;getValue()</code>
     </MixedArgument>
-    <MixedAssignment occurrences="1">
-      <code>$value</code>
-    </MixedAssignment>
   </file>
   <file src="src/Form/DataTransformer/EntityFieldDataTransformer.php">
     <MixedReturnStatement occurrences="1"/>
@@ -47,6 +44,11 @@
     <MixedAssignment occurrences="2">
       <code>$queryParameters[EA::ENTITY_ID]</code>
       <code>$queryParameters[EA::ENTITY_ID]</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Test/Controller/NewActionTestCase.php">
+    <MixedAssignment occurrences="1">
+      <code>$queryParameters[EA::CRUD_ACTION]</code>
     </MixedAssignment>
   </file>
   <file src="tests/Test/Resources/Views/TwigTemplateTestCase.php">

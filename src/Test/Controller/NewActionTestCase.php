@@ -51,7 +51,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
      */
     public function testPageLoads(array $queryParameters = []): void
     {
-        $queryParameters = [EA::CRUD_ACTION => Action::NEW];
+        $queryParameters[EA::CRUD_ACTION] ??= $this->actionName();
 
         $this->assertRequestGet($queryParameters);
 
