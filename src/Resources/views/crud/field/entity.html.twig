@@ -1,0 +1,33 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+
+{% set formattedValue = field.formattedValue %}
+
+{% if 'toMany' == field.customOptions.get('associationType') %}
+    {% if formattedValue is iterable %}
+        {% if formattedValue | length > 0 %}
+            <ul>
+            {% for entity in formattedValue %}
+                <li>
+                    {% if entity.relatedUrl %}
+                        <a href="{{ entity.relatedUrl }}">{{ entity.formattedValue }}</a>
+                    {% else %}
+                        {{ entity.formattedValue }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% else %}
+            {% include '@EasyAdmin/label/null.html.twig' %}
+        {% endif %}
+        </ul>
+    {% else %}
+        <span class="badge badge-secondary">{{ formattedValue }}</span>
+    {% endif %}
+{% else %}
+    {% if field.customOptions.get('relatedUrl') is not null %}
+        <a href="{{ field.customOptions.get('relatedUrl') }}">{{ formattedValue }}</a>
+    {% else %}
+        {{ formattedValue }}
+    {% endif %}
+{% endif %}

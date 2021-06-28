@@ -39,21 +39,12 @@
   },
   "require-dev": {
     "doctrine/coding-standard": "^9.0.0",
-    "ekino/phpstan-banned-code": "^0.4.0",
     "ergebnis/composer-normalize": "^2.15.0",
-    "ergebnis/phpstan-rules": "^0.15.3",
     "php-standard-library/psalm-plugin": "^1.1.1",
-    "phpstan/phpstan": "^0.12.90",
-    "phpstan/phpstan-deprecation-rules": "^0.12.6",
-    "phpstan/phpstan-doctrine": "^0.12.39",
-    "phpstan/phpstan-phpunit": "^0.12.20",
-    "phpstan/phpstan-strict-rules": "^0.12.9",
-    "phpstan/phpstan-symfony": "^0.12.37",
     "phpunit/phpunit": "^9.5.6",
     "psalm/plugin-phpunit": "^0.15.2",
     "psalm/plugin-symfony": "^2.3.1",
     "speicher210/functional-test-bundle": "^1.1.2",
-    "thecodingmachine/phpstan-strict-rules": "^0.12.1",
     "vimeo/psalm": "^4.8.1"
   },
   "suggest": {
@@ -81,14 +72,7 @@
   },
   "scripts": {
     "analyse": [
-      "@analyse-phpstan",
       "@analyse-psalm"
-    ],
-    "analyse-phpstan": [
-      "phpstan analyse --ansi --memory-limit=2048M"
-    ],
-    "analyse-phpstan-update": [
-      "phpstan analyse --ansi --generate-baseline"
     ],
     "analyse-psalm": [
       "psalm --no-cache --show-info=false"

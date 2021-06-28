@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.7.3@38c452ae584467e939d55377aaf83b5a26f19dd1">
+<files psalm-version="4.8.1@f73f2299dbc59a3e6c4d66cff4605176e728ee69">
   <file src="src/Controller/BaseCrudController.php">
     <MixedArgumentTypeCoercion occurrences="1"/>
   </file>
@@ -13,6 +13,18 @@
       <code>$this-&gt;instance</code>
       <code>$this-&gt;instance</code>
     </UndefinedThisPropertyAssignment>
+  </file>
+  <file src="src/Field/Configurator/EntityConfigurator.php">
+    <MixedArgument occurrences="2">
+      <code>$entityDto-&gt;getPrimaryKeyValue()</code>
+      <code>$field-&gt;getValue()</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="1">
+      <code>$value</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Form/DataTransformer/EntityFieldDataTransformer.php">
+    <MixedReturnStatement occurrences="1"/>
   </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
     <MixedAssignment occurrences="2">
