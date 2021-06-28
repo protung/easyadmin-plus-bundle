@@ -9,7 +9,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Psl\Str;
 use ReflectionProperty;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
+
+use function array_merge;
 
 /**
  * @template TCrudController
@@ -23,17 +27,28 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
      * @param array<array-key, mixed> $queryParameters
      * @param array<array-key, mixed> $redirectQueryParameters
      */
-    protected function assertRemovingEntityAndRedirectingToIndexAction(array $queryParameters = [], array $redirectQueryParameters = []): void
-    {
+    protected function assertRemovingEntityFromIndexPageAndRedirectingToIndexAction(
+        array $queryParameters = [],
+        array $redirectQueryParameters = []
+    ): void {
+        $indexPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::INDEX]);
+        $crawler                  = $this->assertRequestGet($indexPageQueryParameters);
+
+        $form                             = $this->findForm($crawler);
         $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
         $this->getClient()->request(
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
-            ['token' => $this->getCsrfToken('ea-delete')]
+            $form->getValues()
         );
 
         $redirectQueryParameters[EA::CRUD_ACTION] ??= Action::INDEX;
         $this->assertResponseIsRedirect($redirectQueryParameters);
+    }
+
+    private function findForm(Crawler $crawler): Form
+    {
+        return $crawler->filter('#main form#delete-form')->form();
     }
 
     protected function entityIdUnderTest(): string

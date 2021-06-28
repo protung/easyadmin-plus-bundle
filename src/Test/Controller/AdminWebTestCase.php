@@ -15,7 +15,6 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 use const PHP_EOL;
 
@@ -136,13 +135,5 @@ abstract class AdminWebTestCase extends WebTestCase
         $urlSigner = Type\object(UrlSigner::class)->assert($urlSigner);
 
         return $urlSigner->sign($url);
-    }
-
-    protected function getCsrfToken(string $tokenId): string
-    {
-        $tokenManager = $this->getContainerService(CsrfTokenManagerInterface::class);
-        $tokenManager = Type\object(CsrfTokenManagerInterface::class)->assert($tokenManager);
-
-        return $tokenManager->getToken($tokenId)->getValue();
     }
 }
