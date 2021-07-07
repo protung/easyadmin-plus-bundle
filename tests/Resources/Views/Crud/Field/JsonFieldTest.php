@@ -42,6 +42,22 @@ final class JsonFieldTest extends TwigTemplateTestCase
                 ],
             ],
         ];
+
+        yield 'with-empty-array-value' => [
+            [
+                'field' => [
+                    'value' => [],
+                ],
+            ],
+        ];
+
+        yield 'with-empty-array-formatted-value' => [
+            [
+                'field' => [
+                    'formattedValue' => [],
+                ],
+            ],
+        ];
     }
 
     /**
