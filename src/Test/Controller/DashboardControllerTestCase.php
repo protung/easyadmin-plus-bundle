@@ -9,11 +9,11 @@ use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
 use function count;
+use function is_countable;
 
 /**
  * @template TDashboardController
@@ -21,9 +21,9 @@ use function count;
 abstract class DashboardControllerTestCase extends AdminWebTestCase
 {
     /**
-     * @param array<string,string|null> $expectedMenuItems
+     * @param iterable<string,string|null> $expectedMenuItems
      */
-    protected function assertMenu(array $expectedMenuItems): void
+    protected function assertMenu(iterable $expectedMenuItems): void
     {
         $router = Type\object(Router::class)->coerce($this->getContainerService('router'));
 
@@ -44,21 +44,29 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
 
         self::assertGreaterThan(0, $crawler->filter('#main-menu ul.menu')->count(), 'Menu DOM element does not exist.');
 
-        /** @var array<int,array<string,string|null>> $actualMenuItems */
-        $actualMenuItems = $crawler->filter('#main-menu ul.menu li')->each(
-            static function (Crawler $menuElement): array {
-                $url          = null;
-                $menuItemLink = $menuElement->filter('a')->first();
+        if (! is_countable($expectedMenuItems)) {
+            $expectedMenuItems = Iter\to_iterator($expectedMenuItems);
+        }
 
-                if (count($menuItemLink) > 0) {
-                    $url = $menuItemLink->attr('href');
-                }
-
-                return [$menuElement->text() => $url];
-            }
+        self::assertCount(
+            $crawler->filter('#main-menu ul.menu li')->count(),
+            $expectedMenuItems
         );
 
-        self::assertEquals($expectedMenuItems, Dict\flatten($actualMenuItems));
+        $index = 0;
+        foreach ($expectedMenuItems as $label => $value) {
+            $menuElement = $crawler->filter('#main-menu ul.menu li')->eq($index++);
+
+            $menuItemLink = $menuElement->filter('a')->first();
+
+            $url = null;
+            if (count($menuItemLink) > 0) {
+                $url = $menuItemLink->attr('href');
+            }
+
+            self::assertSame($label, $menuElement->text());
+            self::assertSame($value, $url);
+        }
     }
 
     /**
