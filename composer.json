@@ -22,7 +22,7 @@
   "require": {
     "php": "^8.0",
     "azjezz/psl": "^1.7.2",
-    "easycorp/easyadmin-bundle": "^3.3.2",
+    "easycorp/easyadmin-bundle": "^3.4.3",
     "symfony/asset": "^5.3",
     "symfony/cache": "^5.3",
     "symfony/config": "^5.3",
@@ -36,6 +36,9 @@
     "symfony/property-access": "^5.3",
     "symfony/translation": "^5.3",
     "symfony/twig-bundle": "^5.3"
+  },
+  "conflict": {
+    "easycorp/easyadmin-bundle": ">=3.5.0"
   },
   "require-dev": {
     "doctrine/coding-standard": "^9.0.0",

@@ -111,7 +111,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         $autocompleteMode = Type\bool()->coerce($field->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
         $widgetMode       = Type\string()->coerce($field->getCustomOption(EntityField::OPTION_WIDGET));
         if ($widgetMode === EntityField::WIDGET_AUTOCOMPLETE) {
-            $field->setFormTypeOption('attr.data-widget', 'select2');
+            $field->setFormTypeOption('attr.data-ea-widget', 'ea-autocomplete');
         } elseif ($widgetMode === EntityField::WIDGET_NATIVE) {
             $field->setFormTypeOption('class', $entityMetadata->targetEntityFqcn());
         }

@@ -2,7 +2,7 @@
 {% extends '@!EasyAdmin/crud/index.html.twig' %}
 
 {% block entity_actions %}
-    <td class="actions text-left">
+    <td class="actions text-start">
         {% if not ea.crud.showEntityActionsAsDropdown %}
             {% for action in entity.actions %}
                 {{ include(action.templatePath, { action: action, entity: entity, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
@@ -18,7 +18,7 @@
                 {% if dropdownActions|length > 0 %}
                     <div class="dropdown dropdown-actions">
                         <a class="dropdown-toggle btn btn-secondary btn-sm" href="#" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-fw fa-ellipsis-h"></i>
                         </a>
 
