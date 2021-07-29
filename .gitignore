@@ -1,6 +1,7 @@
 .idea/
 /.build/
 /.notes/
+/node_modules/
 /vendor/
 composer.lock
 .phpcs-cache

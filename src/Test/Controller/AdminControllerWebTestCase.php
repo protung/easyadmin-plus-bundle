@@ -74,7 +74,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
             }
 
             return $currentFormWidget
-                ->filter('.invalid-feedback span.form-error-message')
+                ->filter('.invalid-feedback')
                 ->extract(['_text']);
         }
 

@@ -112,7 +112,7 @@ abstract class AdminWebTestCase extends WebTestCase
              */
             static function (array $data): void {
                 [$actualMessage, $expectedMessage] = $data;
-                self::assertStringStartsWith('× ' . $expectedMessage, $actualMessage);
+                self::assertStringStartsWith($expectedMessage, $actualMessage);
             }
         );
     }

@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@popperjs/core": "^2.9.2",
+    "@symfony/webpack-encore": "^1.5.0",
+    "bootstrap": "^5.0.2"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev-server": "encore dev-server",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production"
+  }
+}

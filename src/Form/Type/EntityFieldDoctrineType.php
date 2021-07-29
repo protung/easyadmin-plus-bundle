@@ -48,13 +48,13 @@ final class EntityFieldDoctrineType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('select2', false);
-        $resolver->setAllowedTypes('select2', 'bool');
+        $resolver->setDefault('autocomplete', false);
+        $resolver->setAllowedTypes('autocomplete', 'bool');
         $resolver->setNormalizer(
             'attr',
             static function (Options $options, array $value): array {
-                if ($options['select2'] === true) {
-                    $value['data-widget'] = 'select2';
+                if ($options['autocomplete'] === true) {
+                    $value['data-ea-widget'] = 'ea-autocomplete';
                 }
 
                 return $value;
