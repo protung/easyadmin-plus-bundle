@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Psl\Str;
+use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -58,10 +59,9 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
             $this->assertPageTitle($expectedTitle);
         }
 
-        self::assertCount(1, $crawler->filter('#main table>tbody tr'));
-        self::assertStringContainsString(
-            'no-results',
-            (string) $crawler->filter('#main table>tbody tr td')->first()->attr('class')
+        self::assertSame(
+            Vec\concat(Vec\fill(3, 'empty-row'), ['no-results'], Vec\fill(11, 'empty-row')),
+            $crawler->filter('#main table>tbody tr')->extract(['class'])
         );
     }
 

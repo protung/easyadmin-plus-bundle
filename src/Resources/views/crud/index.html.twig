@@ -2,34 +2,37 @@
 {% extends '@!EasyAdmin/crud/index.html.twig' %}
 
 {% block entity_actions %}
-    <td class="actions text-start">
-        {% if not ea.crud.showEntityActionsAsDropdown %}
-            {% for action in entity.actions %}
-                {{ include(action.templatePath, { action: action, entity: entity, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
-            {% endfor %}
-        {% else %}
-            {% set dropdownActions = entity.actions|filter(action => action.getHtmlAttributes['data-protung-easyadmin-plus-extension-action-render-in-dropdown'] | default(1) == 1) %}
-            {% set notDropdownActions = entity.actions|filter(action => action.getHtmlAttributes['data-protung-easyadmin-plus-extension-action-render-in-dropdown'] | default(1) == -1)  %}
-
-            <div class="btn-group" role="group">
-                {% for action in notDropdownActions %}
+    {% if ea.crud.showEntityActionsAsDropdown %}
+        {% set dropdownActions = entity.actions|filter(action => action.getHtmlAttributes['data-protung-easyadmin-plus-extension-action-render-in-dropdown'] | default(1) == 1) %}
+        {% set notDropdownActions = entity.actions|filter(action => action.getHtmlAttributes['data-protung-easyadmin-plus-extension-action-render-in-dropdown'] | default(1) == -1) %}
+        <td class="actions {{ notDropdownActions|length is same as (0) ? 'actions-as-dropdown' }}">
+            {% for action in notDropdownActions %}
+                <div class="d-inline-block ms-2">
                     {{ include(action.templatePath, { action: action, entity: entity, isIncludedInDropdown: false }, with_context = false) }}
-                {% endfor %}
-                {% if dropdownActions|length > 0 %}
-                    <div class="dropdown dropdown-actions">
-                        <a class="dropdown-toggle btn btn-secondary btn-sm" href="#" role="button"
-                           data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-fw fa-ellipsis-h"></i>
-                        </a>
+                </div>
+            {% endfor %}
+            {% if dropdownActions|length > 0 %}
+                <div class="dropdown dropdown-actions ms-2 d-inline-block">
+                    <a class="dropdown-toggle btn btn-link" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {# don't use FontAwesome 'fa-ellipsis-h' icon here because it doesn't look good #}
+                        {# this icon is 'dots-horizontal' icon from https://heroicons.com/ #}
+                        <svg xmlns="http://www.w3.org/2000/svg" height="21" width="21" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/>
+                        </svg>
+                    </a>
 
-                        <div class="dropdown-menu dropdown-menu-right">
-                            {% for action in dropdownActions %}
-                                {{ include(action.templatePath, { action: action, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
-                            {% endfor %}
-                        </div>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        {% for action in dropdownActions %}
+                            {{ include(action.templatePath, { action: action, isIncludedInDropdown: ea.crud.showEntityActionsAsDropdown }, with_context = false) }}
+                        {% endfor %}
                     </div>
-                {% endif %}
-            </div>
-        {% endif %}
-    </td>
+                </div>
+            {% endif %}
+        </td>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
 {% endblock entity_actions %}
