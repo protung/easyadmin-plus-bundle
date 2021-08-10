@@ -174,7 +174,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                 Type\is_callable($entityDtoFactoryCallable),
                 Str\format('EntityDto factory callable option is not null or callable.')
             );
-            $targetEntityDto = Type\object(EntityDto::class)->coerce($entityDtoFactoryCallable($this->entityFactory, $entityMetadata));
+            $targetEntityDto = Type\nullable(Type\object(EntityDto::class))->coerce($entityDtoFactoryCallable($this->entityFactory, $entityMetadata));
         }
 
         if ($targetEntityDto === null) {
