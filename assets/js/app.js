@@ -1,3 +1,5 @@
+import '../css/app.css';
+
 import ConfirmationModal from './confirmation-modal';
 
 document.addEventListener('DOMContentLoaded', () => {

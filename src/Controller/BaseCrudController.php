@@ -106,10 +106,6 @@ abstract class BaseCrudController extends AbstractCrudController
                 ['data-protung-easyadmin-plus-extension-action-render-in-dropdown' => $shouldRenderInDropdown ? '1' : '-1']
             );
 
-        if ($shouldRenderInDropdown === false) {
-            $action->addCssClass('btn btn-link');
-        }
-
         return $action;
     }
 
