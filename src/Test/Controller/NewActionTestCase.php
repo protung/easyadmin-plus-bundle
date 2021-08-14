@@ -147,6 +147,30 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         );
     }
 
+    /**
+     * @param array<string, mixed>    $formExpectedFields
+     * @param array<array-key, mixed> $queryParameters
+     */
+    protected function assertShowingEntityDefaultData(array $formExpectedFields, array $queryParameters = []): void
+    {
+        $this->assertRequestGet($queryParameters);
+
+        $expectedTitle = $this->expectedPageTitle();
+        if ($expectedTitle !== null) {
+            $this->assertPageTitle($expectedTitle);
+        }
+
+        $form     = $this->findForm($this->getClient()->getCrawler());
+        $formName = $form->getFormNode()->getAttribute('name');
+
+        $formExpectedFields['_token'] = '@string@';
+
+        $this->assertMatchesPattern(
+            $formExpectedFields,
+            $form->getPhpValues()[$formName]
+        );
+    }
+
     private function findForm(Crawler $crawler): Form
     {
         return $crawler->filter('#main form')->form();
