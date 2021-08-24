@@ -20,6 +20,7 @@ use Stringable;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Webmozart\Assert\Assert;
 
 abstract class BaseCrudController extends AbstractCrudController
 {
@@ -96,6 +97,24 @@ abstract class BaseCrudController extends AbstractCrudController
             );
 
          return $action;
+    }
+
+    public function addCancelAction(
+        Actions $actions,
+        string $page,
+        string $targetAction,
+        string $actionName = 'cancel',
+        string $label = 'Cancel',
+        ?callable $callback = null
+    ): void {
+        Assert::oneOf($targetAction, [Action::INDEX, Action::DETAIL]);
+
+        $actions->add(
+            $page,
+            Action::new($actionName, $label)
+                ->linkToUrl($callback ?? fn () => $this->adminUrlGenerator()->setAction($targetAction)->generateUrl())
+                ->setCssClass('btn btn-secondary')
+        );
     }
 
     protected function renderInDropdown(Action $action, bool $shouldRenderInDropdown): Action
