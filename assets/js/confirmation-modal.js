@@ -16,11 +16,10 @@ export default class ConfirmationModal {
             confirmationActionDescription.textContent = description;
 
             if (element.tagName === 'BUTTON') {
-                confirmationActionButton.click(
-                    function () {
-                        element.closest('form').submit();
-                    }
-                );
+                confirmationActionButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    element.closest('form').submit();
+                });
             } else {
                 // assume link
                 confirmationActionButton.setAttribute('href', element.getAttribute('href'));
