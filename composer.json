@@ -21,8 +21,8 @@
   ],
   "require": {
     "php": "^8.0",
-    "azjezz/psl": "^1.7.2",
-    "easycorp/easyadmin-bundle": "^3.5.6",
+    "azjezz/psl": "^1.7.3",
+    "easycorp/easyadmin-bundle": "^3.5.7",
     "symfony/asset": "^5.3",
     "symfony/cache": "^5.3",
     "symfony/config": "^5.3",
@@ -43,7 +43,7 @@
     "php-standard-library/psalm-plugin": "^1.1.1",
     "phpunit/phpunit": "^9.5.8",
     "psalm/plugin-phpunit": "^0.16.1",
-    "psalm/plugin-symfony": "^2.4.0",
+    "psalm/plugin-symfony": "^2.5.1",
     "speicher210/functional-test-bundle": "^1.1.2",
     "vimeo/psalm": "^4.9.2"
   },
