@@ -61,12 +61,9 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
 
-        $form     = $this->findForm($crawler);
-        $formName = $form->getFormNode()->getAttribute('name');
+        $form = $this->findForm($crawler);
 
-        $fields = $form->get($formName);
-
-        $actual = $this->mapFieldsErrors($crawler, $fields);
+        $actual = $this->mapErrors($crawler, $form);
 
         $formExpectedErrors['_token'] = [];
         $this->assertMatchesPattern($formExpectedErrors, $actual);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
+use DOMElement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Psl\Dict;
 use Psl\Iter;
@@ -12,10 +13,14 @@ use Psl\Type;
 use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_merge;
 use function http_build_query;
+use function is_array;
+use function iterator_to_array;
 
 /**
  * @template TCrudController
@@ -58,6 +63,70 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
+     * @return array<array-key, mixed>
+     */
+    protected function mapErrors(Crawler $crawler, Form $form): array
+    {
+        $formName = $form->getFormNode()->getAttribute('name');
+
+        $fields = $form->get($formName);
+
+        $fieldErrors = $this->mapFieldsErrors($crawler, $fields);
+
+        $flatFieldErrors = $this->flattenFieldErrors($fieldErrors);
+
+        $genericErrors = $crawler->filter('.invalid-feedback')->reduce(
+            static fn (Crawler $crawler): bool => ! Iter\contains($flatFieldErrors, $crawler->getNode(0))
+        );
+
+        return array_merge(
+            $genericErrors->extract(['_text']),
+            $this->extractFieldErrorsTexts($fieldErrors)
+        );
+    }
+
+    /**
+     * @param array<DOMElement>|array<array<DOMElement>> $fieldErrors
+     *
+     * @return array<DOMElement>
+     */
+    private function flattenFieldErrors(array $fieldErrors): array
+    {
+        $flattenErrors = [];
+        foreach ($fieldErrors as $element) {
+            if (is_array($element)) {
+                $flattenErrors = array_merge($flattenErrors, $this->flattenFieldErrors($element));
+            } else {
+                $flattenErrors[] = $element;
+            }
+        }
+
+        return $flattenErrors;
+    }
+
+    /**
+     * @param array<DOMElement>|array<array<DOMElement>> $fieldErrors
+     *
+     * @return array<array-key, mixed>
+     */
+    private function extractFieldErrorsTexts(array $fieldErrors): array
+    {
+        return Dict\map(
+            $fieldErrors,
+            /**
+             * @param array<DOMElement>|DOMElement $element
+             */
+            function (DOMElement|array $element) {
+                if (is_array($element)) {
+                    return $this->extractFieldErrorsTexts($element);
+                }
+
+                return $element->textContent;
+            }
+        );
+    }
+
+    /**
      * @param FormField|array<array-key, FormField>|array<array-key, array<array-key, FormField>> $fields
      *
      * @return array<array-key, mixed>
@@ -73,9 +142,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
                 return [];
             }
 
-            return $currentFormWidget
-                ->filter('.invalid-feedback')
-                ->extract(['_text']);
+            return iterator_to_array($currentFormWidget->filter('.invalid-feedback'));
         }
 
         return Dict\map(
