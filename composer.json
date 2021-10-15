@@ -21,6 +21,7 @@
   ],
   "require": {
     "php": "^8.0",
+    "ext-dom": "*",
     "azjezz/psl": "^1.7.3",
     "easycorp/easyadmin-bundle": "^3.5.7",
     "symfony/asset": "^5.3",
