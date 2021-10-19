@@ -66,8 +66,8 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<list<string|array<string,string>>> $expectedRows
-     * @param array<array-key, mixed>                 $queryParameters
+     * @param list<list<string|array<string,string>|bool>> $expectedRows
+     * @param array<array-key, mixed>                      $queryParameters
      */
     protected function assertPage(array $expectedRows, array $queryParameters = []): void
     {
@@ -137,7 +137,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<string|array<string,string>> ...$expectedRows
+     * @param list<string|array<string,string>|bool> ...$expectedRows
      */
     protected function assertContentListRows(array ...$expectedRows): void
     {
@@ -154,20 +154,22 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<string|array<string,string>> $expectedRowData
-     * @param int                               $rowNumber       The row number in the list (zero based).
+     * @param list<string|array<string,string>|bool> $expectedRowData
+     * @param int                                    $rowNumber       The row number in the list (zero based).
      */
     private function assertContentListRow(array $expectedRowData, int $rowNumber): void
     {
         $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->eq($rowNumber)->filter('td')->each(
-            function (Crawler $column): array|string {
-                $actions = $column->filter('.actions');
-
-                if ($actions->count() === 0) {
-                    return $column->text();
+            function (Crawler $column): array|string|bool {
+                if ($column->matches('.actions')) {
+                    return $this->mapActions($column->filter('a[class*="action-"],button[class*="action-"]'));
                 }
 
-                return $this->mapActions($actions->filter('a[class*="action-"],button[class*="action-"]'));
+                if ($column->matches('.has-switch')) {
+                    return $column->filter('input.form-check-input:checked')->count() > 0;
+                }
+
+                return $column->text();
             }
         );
 
