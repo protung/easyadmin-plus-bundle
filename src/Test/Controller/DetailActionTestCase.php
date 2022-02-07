@@ -126,13 +126,13 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     {
         $field = $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->eq($index);
 
-        return $field->filter('dt')->text();
+        return $field->filter('dt')->text(normalizeWhitespace: true);
     }
 
     private function getDetailValue(int $index): string
     {
         $field = $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->eq($index);
 
-        return $field->filter('dd')->text();
+        return $field->filter('dd')->text(normalizeWhitespace: true);
     }
 }

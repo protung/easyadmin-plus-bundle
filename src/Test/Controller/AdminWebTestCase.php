@@ -100,7 +100,7 @@ abstract class AdminWebTestCase extends WebTestCase
         $crawler        = $this->getClient()->getCrawler();
         $actualMessages = Type\vec(Type\string())->assert(
             $crawler->filter('#flash-messages .alert-' . $type)
-                ->each(static fn (Crawler $crawler): string => $crawler->text())
+                ->each(static fn (Crawler $crawler): string => $crawler->text(normalizeWhitespace: true))
         );
 
         self::assertCount(Iter\count($expectedMessages), $actualMessages);

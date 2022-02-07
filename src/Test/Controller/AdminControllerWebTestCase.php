@@ -10,7 +10,6 @@ use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
-use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
@@ -155,36 +154,28 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @return array<string,string>
+     * @return array<string, string>
      */
     protected function mapActions(Crawler $actionsCrawler): array
     {
-        /** @var list<string> $actionsName */
-        $actionsName = $actionsCrawler->each(
-            static function (Crawler $crawler): string {
-                $actionClassName = Iter\first(
-                    Vec\filter(
-                        Str\split(Str\trim(Type\string()->assert(Iter\first($crawler->extract(['class'])))), ' '),
-                        static fn (string $class) => Str\starts_with(Str\trim($class), 'action-'),
-                    )
-                );
-
-                return Str\slice(Type\non_empty_string()->assert($actionClassName), 7);
-            }
+        return Dict\from_entries(
+            Type\vec(Type\shape([0 => Type\non_empty_string(), 1 => Type\string()]))->coerce(
+                $actionsCrawler->each(
+                    static fn (Crawler $crawler): array => [
+                        Type\non_empty_string()->assert($crawler->attr('data-action-name')),
+                        $crawler->text(normalizeWhitespace: true),
+                    ]
+                )
+            )
         );
-
-        /** @var list<string> $actionsLabel */
-        $actionsLabel = $actionsCrawler->each(static fn (Crawler $crawler): string => $crawler->text());
-
-        return Dict\associate($actionsName, $actionsLabel);
     }
 
     protected function assertPageTitle(string $expectedPageTitle): void
     {
-        $crawler = $this->getClient()->getCrawler();
+        $title = $this->getClient()->getCrawler()->filter('h1.title');
 
-        self::assertCount(1, $crawler->filter('h1.title'));
-        self::assertSame($expectedPageTitle, Str\trim($crawler->filter('h1.title')->text()));
+        self::assertCount(1, $title);
+        self::assertSame($expectedPageTitle, $title->text(normalizeWhitespace: true));
     }
 
     /**
