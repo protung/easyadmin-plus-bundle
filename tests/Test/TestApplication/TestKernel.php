@@ -95,7 +95,7 @@ final class TestKernel extends SymfonyKernel
         $container->extension(
             'security',
             [
-                'encoders' => [InMemoryUser::class => 'plaintext'],
+                'password_hashers' => [InMemoryUser::class => 'plaintext'],
                 'providers' => [
                     'test_users' => [
                         'memory' => [

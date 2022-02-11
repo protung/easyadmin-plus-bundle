@@ -196,7 +196,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     }
 
     /**
-     * @return array<string,list<list<string>>>
+     * {@inheritDoc}
      */
     public static function getSubscribedEvents(): array
     {

@@ -64,7 +64,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
                 $url = $menuItemLink->attr('href');
             }
 
-            self::assertSame($label, $menuElement->text());
+            self::assertSame($label, $menuElement->text(normalizeWhitespace: true));
             self::assertSame($value, $url);
         }
     }

@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
 use Psl\Iter;
@@ -111,7 +110,7 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function currentAdminContext(): AdminContext
     {
-        $currentAdminContext = $this->get(AdminContextProvider::class)->getContext();
+        $currentAdminContext = $this->getContext();
         if ($currentAdminContext === null) {
             throw new RuntimeException('Current request is not in an EasyAdmin context.');
         }
@@ -152,12 +151,12 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function translator(): TranslatorInterface
     {
-        return $this->get(TranslatorInterface::class);
+        return $this->container->get(TranslatorInterface::class);
     }
 
     protected function adminUrlGenerator(): AdminUrlGenerator
     {
-        return $this->get(AdminUrlGenerator::class);
+        return $this->container->get(AdminUrlGenerator::class);
     }
 
     /**

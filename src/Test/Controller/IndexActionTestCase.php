@@ -131,7 +131,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         $crawler = $this->getClient()->getCrawler();
 
         $actualHeaders = $crawler->filter('#main table>thead>tr>th')->each(
-            static fn (Crawler $th): string => $th->text()
+            static fn (Crawler $th): string => $th->text(normalizeWhitespace: true)
         );
         self::assertSame($this->expectedListHeader(), $actualHeaders);
     }
@@ -162,14 +162,14 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->eq($rowNumber)->filter('td')->each(
             function (Crawler $column): array|string|bool {
                 if ($column->matches('.actions')) {
-                    return $this->mapActions($column->filter('a[class*="action-"],button[class*="action-"]'));
+                    return $this->mapActions($column->filter('[data-action-name]'));
                 }
 
                 if ($column->matches('.has-switch')) {
                     return $column->filter('input.form-check-input:checked')->count() > 0;
                 }
 
-                return $column->text();
+                return $column->text(normalizeWhitespace: true);
             }
         );
 
