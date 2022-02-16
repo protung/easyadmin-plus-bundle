@@ -141,9 +141,9 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertContentListRows(array ...$expectedRows): void
     {
-        self::assertCount(
-            $this->getClient()->getCrawler()->filter('#main table>tbody tr')->count(),
-            $expectedRows
+        self::assertSameSize(
+            $expectedRows,
+            $this->getClient()->getCrawler()->filter('#main table>tbody tr'),
         );
 
         $rowNumber = 0;
