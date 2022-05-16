@@ -30,6 +30,14 @@ abstract class BaseCrudController extends AbstractCrudController
     private const FLASH_ERROR   = 'danger';
 
     /**
+     * Calling this method will disable all standard actions.
+     */
+    public function disableAllActions(Actions $actions): Actions
+    {
+        return $this->allowOnlyActions($actions);
+    }
+
+    /**
      * Calling this method will only disable the standard actions.
      */
     protected function allowOnlyActions(Actions $actions, string ...$allowedActions): Actions
@@ -84,7 +92,7 @@ abstract class BaseCrudController extends AbstractCrudController
         string|Stringable|TranslatableInterface $title,
         string|Stringable|TranslatableInterface $description
     ): Action {
-         $action
+        $action
             ->getAsDto()
             ->addHtmlAttributes(
                 [
@@ -94,7 +102,7 @@ abstract class BaseCrudController extends AbstractCrudController
                 ]
             );
 
-         return $action;
+        return $action;
     }
 
     protected function renderInDropdown(Action $action, bool $shouldRenderInDropdown): Action
