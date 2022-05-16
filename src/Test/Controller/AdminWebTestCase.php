@@ -131,9 +131,6 @@ abstract class AdminWebTestCase extends WebTestCase
 
     protected function signUrl(string $url): string
     {
-        $urlSigner = $this->getContainerService(UrlSigner::class);
-        $urlSigner = Type\object(UrlSigner::class)->assert($urlSigner);
-
-        return $urlSigner->sign($url);
+        return $this->getContainerService(UrlSigner::class)->sign($url);
     }
 }

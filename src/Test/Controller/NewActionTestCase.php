@@ -126,7 +126,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
 
-        $data['_token'] = Type\object(FormField::class)->coerce($form->get($formName . '[_token]'))->getValue();
+        $data['_token'] = Type\instance_of(FormField::class)->coerce($form->get($formName . '[_token]'))->getValue();
         $data['btn']    = $submitButton;
         $values         = [
             $formName => $data,

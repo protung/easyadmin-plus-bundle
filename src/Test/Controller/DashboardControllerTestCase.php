@@ -25,7 +25,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
      */
     protected function assertMenu(iterable $expectedMenuItems): void
     {
-        $router = Type\object(Router::class)->coerce($this->getContainerService('router'));
+        $router = Type\instance_of(Router::class)->coerce($this->getContainerService('router'));
 
         $dashboardRoutes = Dict\filter(
             $router->getRouteCollection()->all(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Tests\Test\Resources\Views;
 
+use Psl\Type;
 use Speicher210\FunctionalTestBundle\Test\KernelTestCase;
 use Twig\Environment;
 
@@ -15,7 +16,7 @@ abstract class TwigTemplateTestCase extends KernelTestCase
     {
         parent::setUp();
 
-        $this->twig = $this->getContainerService('twig');
+        $this->twig = Type\instance_of(Environment::class)->coerce($this->getContainerService('twig'));
     }
 
     /**

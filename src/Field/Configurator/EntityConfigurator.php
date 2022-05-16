@@ -28,6 +28,7 @@ use Stringable;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function is_callable;
 use function Psl\invariant;
 
 final class EntityConfigurator implements FieldConfiguratorInterface
@@ -75,7 +76,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             );
         }
 
-        $crud = Type\object(CrudDto::class)->coerce($context->getCrud());
+        $crud = Type\instance_of(CrudDto::class)->coerce($context->getCrud());
 
         $sourceCrudControllerFqcn = Type\string()->coerce($crud->getControllerFqcn());
 
@@ -148,7 +149,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                 $queryBuilderCallable = $field->getCustomOption(EntityField::OPTION_QUERY_BUILDER_CALLABLE);
                 if ($queryBuilderCallable !== null) {
                     invariant(
-                        Type\is_callable($queryBuilderCallable),
+                        is_callable($queryBuilderCallable),
                         Str\format('Query builder callable option is not null or callable.')
                     );
                     $queryBuilderCallable($queryBuilder, $context);
@@ -171,10 +172,10 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         $targetEntityDto = null;
         if ($entityDtoFactoryCallable !== null) {
             invariant(
-                Type\is_callable($entityDtoFactoryCallable),
+                is_callable($entityDtoFactoryCallable),
                 Str\format('EntityDto factory callable option is not null or callable.')
             );
-            $targetEntityDto = Type\nullable(Type\object(EntityDto::class))->coerce($entityDtoFactoryCallable($this->entityFactory, $entityMetadata));
+            $targetEntityDto = Type\nullable(Type\instance_of(EntityDto::class))->coerce($entityDtoFactoryCallable($this->entityFactory, $entityMetadata));
         }
 
         if ($targetEntityDto === null) {
@@ -199,7 +200,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setFormattedValue(
             $this->formatAsString(
-                Type\nullable(Type\object($entityMetadata->targetEntityFqcn()))->coerce($targetEntityDto->getInstance()),
+                Type\nullable(Type\instance_of($entityMetadata->targetEntityFqcn()))->coerce($targetEntityDto->getInstance()),
                 $entityMetadata,
                 $field
             )
@@ -208,14 +209,14 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
     private function configureToManyAssociation(FieldDto $field, EntityMetadata $entityMetadata, AdminContext $context): void
     {
-        $crud = Type\object(CrudDto::class)->coerce($context->getCrud());
+        $crud = Type\instance_of(CrudDto::class)->coerce($context->getCrud());
 
         $field->setSortable(false);
         $field->setFormTypeOptionIfNotSet('multiple', true);
 
         $sourceEntityId = $entityMetadata->sourceEntityId();
 
-        $targetEntityRepository = Type\object(EntityRepository::class)->coerce($this->entityManager->getRepository($entityMetadata->targetEntityFqcn()));
+        $targetEntityRepository = Type\instance_of(EntityRepository::class)->coerce($this->entityManager->getRepository($entityMetadata->targetEntityFqcn()));
         $criteria               = [$field->getProperty() => $sourceEntityId];
 
         $isDetailAction = $crud->getCurrentAction() === Action::DETAIL;
@@ -223,7 +224,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         if ($isDetailAction && $renderType === EntityField::OPTION_RENDER_TYPE_LIST) {
             $targetSingleIdentifierFieldName = $this->entityManager->getClassMetadata($entityMetadata->targetEntityFqcn())->getSingleIdentifierFieldName();
             $formattedValue                  = Vec\map(
-                Type\vec(Type\object($entityMetadata->targetEntityFqcn()))->coerce($targetEntityRepository->findBy($criteria)),
+                Type\vec(Type\instance_of($entityMetadata->targetEntityFqcn()))->coerce($targetEntityRepository->findBy($criteria)),
                 function (object $entity) use ($entityMetadata, $field, $targetSingleIdentifierFieldName): array {
                     $relatedUrl = null;
                     if ($field->getCustomOption(EntityField::OPTION_LINK_TO_ENTITY) === true) {
@@ -257,7 +258,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
         $targetEntityDisplayField = $entityMetadata->targetEntityDisplayField();
         if ($targetEntityDisplayField !== null) {
-            if (Type\is_callable($targetEntityDisplayField)) {
+            if (is_callable($targetEntityDisplayField)) {
                 return $targetEntityDisplayField($entityInstance);
             }
 
@@ -297,7 +298,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         }
 
         invariant(
-            Type\is_callable($onChangeCallable),
+            is_callable($onChangeCallable),
             Str\format('The "%s" field cannot be configured because the onChange option is not null or callable.', $field->getProperty())
         );
 
@@ -319,7 +320,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         /** @var string|(callable(object):?string)|null $value */
         $value = $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD);
 
-        if (Type\is_callable($value)) {
+        if (is_callable($value)) {
             return $value;
         }
 

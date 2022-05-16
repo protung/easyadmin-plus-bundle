@@ -75,7 +75,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         }
 
         $dto = $event->getEntityInstance();
-        if (! Type\object(static::getDtoFqcn())->matches($dto)) {
+        if (! Type\instance_of(static::getDtoFqcn())->matches($dto)) {
             return;
         }
 
@@ -92,8 +92,8 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
 
     final public function convertEntityToDtoFromBeforeCrudActionEvent(BeforeCrudActionEvent $event): void
     {
-        $adminContext = Type\object(AdminContext::class)->coerce($event->getAdminContext());
-        $crud         = Type\object(CrudDto::class)->coerce($adminContext->getCrud());
+        $adminContext = Type\instance_of(AdminContext::class)->coerce($event->getAdminContext());
+        $crud         = Type\instance_of(CrudDto::class)->coerce($adminContext->getCrud());
 
         if (! $this->matchesCrudController()) {
             return;
@@ -107,7 +107,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
 
         $instance = $entityDto->getInstance();
 
-        if (! Type\object(static::getEntityFqcn())->matches($instance)) {
+        if (! Type\instance_of(static::getEntityFqcn())->matches($instance)) {
             return;
         }
 
@@ -134,7 +134,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         }
 
         $dto = $event->getEntityInstance();
-        if (! Type\object(static::getDtoFqcn())->matches($dto)) {
+        if (! Type\instance_of(static::getDtoFqcn())->matches($dto)) {
             return;
         }
 
@@ -165,8 +165,8 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
             return;
         }
 
-        $adminContext = Type\object(AdminContext::class)->coerce($event->getAdminContext());
-        $crud         = Type\object(CrudDto::class)->coerce($adminContext->getCrud());
+        $adminContext = Type\instance_of(AdminContext::class)->coerce($event->getAdminContext());
+        $crud         = Type\instance_of(CrudDto::class)->coerce($adminContext->getCrud());
 
         if ($crud->getCurrentAction() !== Action::NEW) {
             return;
@@ -220,13 +220,13 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     private function matchesCrudController(): bool
     {
         $adminContext = $this->currentAdminContext();
-        $crud         = Type\object(CrudDto::class)->coerce($adminContext->getCrud());
+        $crud         = Type\instance_of(CrudDto::class)->coerce($adminContext->getCrud());
 
         $controller = $crud->getControllerFqcn();
         if ($controller === null || ! Class\exists($controller)) {
             return false;
         }
 
-        return Type\object($controller)->matches($this);
+        return Type\instance_of($controller)->matches($this);
     }
 }
