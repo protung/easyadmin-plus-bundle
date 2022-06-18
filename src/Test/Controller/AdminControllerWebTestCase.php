@@ -16,6 +16,7 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_key_exists;
 use function array_merge;
 use function http_build_query;
 use function is_array;
@@ -55,10 +56,19 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function prepareAdminUrl(array $queryParameters): string
     {
-        $queryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $this->controllerUnderTest();
-        $queryParameters[EA::CRUD_ACTION]          ??= $this->actionName();
+        // we need to prepare the URL having some query parameters in a specific order
+        $orderedQueryParameters = [
+            EA::CRUD_ACTION => $queryParameters[EA::CRUD_ACTION] ?? $this->actionName(),
+            EA::CRUD_CONTROLLER_FQCN => $queryParameters[EA::CRUD_CONTROLLER_FQCN] ?? $this->controllerUnderTest(),
+            ...$queryParameters, // phpcs:ignore Squiz.Arrays.ArrayDeclaration.NoKeySpecified
+        ];
+        if (array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $orderedQueryParameters[EA::ENTITY_ID] = $queryParameters[EA::ENTITY_ID];
+        }
 
-        return $this->signUrl(static::$easyAdminRoutePath . '?' . http_build_query($queryParameters));
+        $orderedQueryParameters = [...$orderedQueryParameters, ...$queryParameters];
+
+        return static::$easyAdminRoutePath . '?' . http_build_query($orderedQueryParameters);
     }
 
     /**
