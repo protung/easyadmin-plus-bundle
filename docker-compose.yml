@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  node:
+    container_name: protung-easy-admin-plus-extension
+    build:
+      context: .docker/dev/node
+    volumes:
+      - ./:/app

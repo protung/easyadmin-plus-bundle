@@ -5,6 +5,11 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 jobs:
   build:
@@ -14,6 +19,7 @@ jobs:
         dependencies: [lowest, highest]
         php-versions:
           - 8.1
+    if: github.event.pull_request.draft == false
     name: PHP ${{ matrix.php-versions }} checks with ${{ matrix.dependencies }} dependencies
     steps:
       - name: Checkout code

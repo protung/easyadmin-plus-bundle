@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
-use EasyCorp\Bundle\EasyAdminBundle\Router\UrlSigner;
 use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
@@ -127,10 +126,5 @@ abstract class AdminWebTestCase extends WebTestCase
                 $this->getClient()->getResponse()->headers->get('Location') ?? ''
             )
         );
-    }
-
-    protected function signUrl(string $url): string
-    {
-        return $this->getContainerService(UrlSigner::class)->sign($url);
     }
 }
