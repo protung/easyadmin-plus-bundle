@@ -34,8 +34,9 @@
       <code>$fieldErrors</code>
       <code>$fieldErrors</code>
     </MixedArgumentTypeCoercion>
-    <MixedAssignment occurrences="1">
-      <code>$orderedQueryParameters[EA::ENTITY_ID]</code>
+    <MixedAssignment occurrences="2">
+      <code>$queryParameters[EA::CRUD_ACTION]</code>
+      <code>$queryParameters[EA::CRUD_CONTROLLER_FQCN]</code>
     </MixedAssignment>
   </file>
   <file src="src/Test/Controller/DeleteActionTestCase.php">
