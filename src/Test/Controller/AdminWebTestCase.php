@@ -94,6 +94,19 @@ abstract class AdminWebTestCase extends WebTestCase
         $this->assertFlashMessage('danger', $expectedMessage, ...$expectedMessages);
     }
 
+    protected function assertNoFlashMessage(): void
+    {
+        $crawler = $this->getClient()->getCrawler();
+
+        $flashMessages = $crawler->filter('#flash-messages [class*="alert-"]');
+
+        self::assertCount(
+            0,
+            $flashMessages,
+            Str\format('Expected no flash messages, found %d.', $flashMessages->count())
+        );
+    }
+
     private function assertFlashMessage(string $type, string ...$expectedMessages): void
     {
         $crawler        = $this->getClient()->getCrawler();
