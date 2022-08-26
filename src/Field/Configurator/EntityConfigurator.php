@@ -48,7 +48,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         AdminUrlGenerator $adminUrlGenerator,
         TranslatorInterface $translator,
         PropertyAccessorInterface $propertyAccessor,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
     ) {
         $this->entityFactory     = $entityFactory;
         $this->adminUrlGenerator = $adminUrlGenerator;
@@ -71,8 +71,8 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             throw new RuntimeException(
                 Str\format(
                     'The "%s" field cannot be configured because it doesn\'t define the related CRUD controller FQCN with the "setCrudController()" method.',
-                    $field->getProperty()
-                )
+                    $field->getProperty(),
+                ),
             );
         }
 
@@ -90,7 +90,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             $targetCrudControllerFqcn,
             $targetEntityFqcn,
             $this->getEntityDisplayField($field),
-            $field->getValue()
+            $field->getValue(),
         );
 
         $this->configureOnChange($field, $entityMetadata);
@@ -122,8 +122,8 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                 throw new RuntimeException(
                     Str\format(
                         'The "%s" field cannot be configured with autocomplete mode for not autocomplete widget .',
-                        $field->getProperty()
-                    )
+                        $field->getProperty(),
+                    ),
                 );
             }
 
@@ -150,7 +150,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                 if ($queryBuilderCallable !== null) {
                     invariant(
                         is_callable($queryBuilderCallable),
-                        Str\format('Query builder callable option is not null or callable.')
+                        Str\format('Query builder callable option is not null or callable.'),
                     );
                     $queryBuilderCallable($queryBuilder, $context);
                 }
@@ -173,7 +173,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         if ($entityDtoFactoryCallable !== null) {
             invariant(
                 is_callable($entityDtoFactoryCallable),
-                Str\format('EntityDto factory callable option is not null or callable.')
+                Str\format('EntityDto factory callable option is not null or callable.'),
             );
             $targetEntityDto = Type\nullable(Type\instance_of(EntityDto::class))->coerce($entityDtoFactoryCallable($this->entityFactory, $entityMetadata));
         }
@@ -193,8 +193,8 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                 EntityField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity(
                     $entityMetadata->targetCrudControllerFqcn(),
-                    $targetEntityDto
-                )
+                    $targetEntityDto,
+                ),
             );
         }
 
@@ -202,8 +202,8 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             $this->formatAsString(
                 Type\nullable(Type\instance_of($entityMetadata->targetEntityFqcn()))->coerce($targetEntityDto->getInstance()),
                 $entityMetadata,
-                $field
-            )
+                $field,
+            ),
         );
     }
 
@@ -232,8 +232,8 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                             $entityMetadata->targetCrudControllerFqcn(),
                             $this->entityFactory->create(
                                 $entityMetadata->targetEntityFqcn(),
-                                $this->propertyAccessor->getValue($entity, $targetSingleIdentifierFieldName)
-                            )
+                                $this->propertyAccessor->getValue($entity, $targetSingleIdentifierFieldName),
+                            ),
                         );
                     }
 
@@ -241,7 +241,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                         'relatedUrl' => $relatedUrl,
                         'formattedValue' => $this->formatAsString($entity, $entityMetadata, $field),
                     ];
-                }
+                },
             );
         } else {
             $formattedValue = $sourceEntityId !== null ? $targetEntityRepository->count($criteria) : 0;
@@ -250,7 +250,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         $field->setFormattedValue($formattedValue);
     }
 
-    private function formatAsString(?object $entityInstance, EntityMetadata $entityMetadata, FieldDto $field): ?string
+    private function formatAsString(object|null $entityInstance, EntityMetadata $entityMetadata, FieldDto $field): string|null
     {
         if ($entityInstance === null) {
             return null;
@@ -272,8 +272,8 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         throw new RuntimeException(
             Str\format(
                 'The "%s" field cannot be configured because it doesn\'t define the related entity display value set with the "setEntityDisplayField()" method. or implement "__toString()".',
-                $field->getProperty()
-            )
+                $field->getProperty(),
+            ),
         );
     }
 
@@ -299,7 +299,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
         invariant(
             is_callable($onChangeCallable),
-            Str\format('The "%s" field cannot be configured because the onChange option is not null or callable.', $field->getProperty())
+            Str\format('The "%s" field cannot be configured because the onChange option is not null or callable.', $field->getProperty()),
         );
 
         $field->setFormTypeOption('attr.data-' . EntityField::PARAM_ON_CHANGE_CONTEXT_FIELD_PROPERTY, $field->getProperty());

@@ -29,7 +29,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
     ): void {
         $listingPageCrawler = $this->getClient()->request(
             Request::METHOD_GET,
-            $this->prepareAdminUrl($indexPageQueryParameters)
+            $this->prepareAdminUrl($indexPageQueryParameters),
         );
 
         $actionAnchorElement = $listingPageCrawler
@@ -47,7 +47,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
                     EA::ENTITY_FQCN => $actionAnchorElement->attr('data-entity-fqcn'),
                     EA::BATCH_ACTION_ENTITY_IDS => $entityIds,
                     EA::BATCH_ACTION_CSRF_TOKEN => $actionAnchorElement->attr('data-action-csrf-token'),
-                ]
+                ],
             );
 
         $this->assertResponseIsRedirect($expectedRedirectUrlParameters);

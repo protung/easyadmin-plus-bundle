@@ -41,7 +41,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function assertRequestGet(
         array $queryParameters = [],
-        int $expectedResponseStatusCode = Response::HTTP_OK
+        int $expectedResponseStatusCode = Response::HTTP_OK,
     ): Crawler {
         $crawler = $this->getClient()->request(Request::METHOD_GET, $this->prepareAdminUrl($queryParameters));
 
@@ -83,7 +83,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
 
         return array_merge(
             $genericErrors->extract(['_text']),
-            $this->extractFieldErrorsTexts($fieldErrors)
+            $this->extractFieldErrorsTexts($fieldErrors),
         );
     }
 
@@ -124,7 +124,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
                 }
 
                 return $element->textContent;
-            }
+            },
         );
     }
 
@@ -168,8 +168,8 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
                         Type\non_empty_string()->assert($crawler->attr('data-action-name')),
                         $crawler->text(normalizeWhitespace: true),
                     ]
-                )
-            )
+                ),
+            ),
         );
     }
 

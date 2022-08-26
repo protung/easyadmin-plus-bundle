@@ -25,13 +25,13 @@ abstract class TwigTemplateTestCase extends KernelTestCase
     protected function assertTwigTemplateEqualsString(
         string $expectedOutput,
         string $template,
-        array $context = []
+        array $context = [],
     ): void {
         $template = $this->twig->load($template);
 
         self::assertEquals(
             $expectedOutput,
-            $template->render($context)
+            $template->render($context),
         );
     }
 
@@ -41,13 +41,13 @@ abstract class TwigTemplateTestCase extends KernelTestCase
     protected function assertTwigTemplateEqualsFile(
         string $expectedOutputFile,
         string $template,
-        array $context = []
+        array $context = [],
     ): void {
         $template = $this->twig->load($template);
 
         self::assertStringEqualsFile(
             $expectedOutputFile,
-            $template->render($context)
+            $template->render($context),
         );
     }
 }

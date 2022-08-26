@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.23.0@f1fe6ff483bf325c803df9f510d09a03fd796f88">
+<files psalm-version="4.26.0@6998fabb2bf528b65777bf9941920888d23c03ac">
   <file src="src/Controller/BaseCrudController.php">
     <MixedArgumentTypeCoercion occurrences="1"/>
   </file>
@@ -25,7 +25,7 @@
       <code>$this-&gt;entityManager-&gt;find($this-&gt;class, $value)</code>
     </InvalidReturnStatement>
     <InvalidReturnType occurrences="1">
-      <code>?object</code>
+      <code>object|null</code>
     </InvalidReturnType>
     <MixedReturnStatement occurrences="1"/>
   </file>

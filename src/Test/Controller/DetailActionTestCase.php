@@ -21,14 +21,14 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 {
     protected static string $expectedEntityIdUnderTest;
 
-    protected static ?string $expectedPageTitle = null;
+    protected static string|null $expectedPageTitle = null;
 
     protected function actionName(): string
     {
         return Action::DETAIL;
     }
 
-    protected function expectedPageTitle(): ?string
+    protected function expectedPageTitle(): string|null
     {
         if (static::$expectedPageTitle === null) {
             throw new LogicException(
@@ -38,8 +38,8 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
                         Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
                         If your index page does not have a title you need to overwrite %1$s method and return NULL.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 
@@ -49,7 +49,6 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     protected function entityIdUnderTest(): string
     {
         $rp = new ReflectionProperty($this, 'expectedEntityIdUnderTest');
-        $rp->setAccessible(true);
         if (! $rp->isInitialized()) {
             throw new LogicException(
                 Str\format(
@@ -57,8 +56,8 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
                         Expected entity ID under test was not set.
                         Please set static::$expectedEntityIdUnderTest property in your test or overwrite %s method.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 
@@ -107,7 +106,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 
         self::assertCount(
             $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->count(),
-            $expectedDetails
+            $expectedDetails,
         );
 
         $index = 0;

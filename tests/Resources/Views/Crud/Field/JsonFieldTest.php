@@ -74,7 +74,7 @@ final class JsonFieldTest extends TwigTemplateTestCase
         $this->assertTwigTemplateEqualsFile(
             $this->getExpectedContentFile('html'),
             $actualTemplate,
-            $context
+            $context,
         );
     }
 }

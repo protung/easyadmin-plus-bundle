@@ -40,8 +40,8 @@ final class CrudAutocompleteType extends AbstractType
             new EntityFieldDataTransformer(
                 $this->entityManager,
                 $this->propertyAccessor,
-                $class
-            )
+                $class,
+            ),
         );
     }
 

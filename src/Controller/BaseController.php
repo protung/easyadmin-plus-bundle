@@ -43,7 +43,7 @@ abstract class BaseController extends AbstractController
 
         $this->addFlash(
             $type,
-            $message->trans($this->container->get(TranslatorInterface::class))
+            $message->trans($this->container->get(TranslatorInterface::class)),
         );
     }
 
@@ -56,7 +56,7 @@ abstract class BaseController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class => '?' . TranslatorInterface::class,
-            ]
+            ],
         );
     }
 }

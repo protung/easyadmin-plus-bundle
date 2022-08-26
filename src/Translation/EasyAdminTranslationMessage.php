@@ -33,7 +33,7 @@ final class EasyAdminTranslationMessage implements TranslatableInterface
         return new self($message, $parameters);
     }
 
-    public function trans(TranslatorInterface $translator, ?string $locale = null): string
+    public function trans(TranslatorInterface $translator, string|null $locale = null): string
     {
         return $this->message->trans($translator, $locale);
     }

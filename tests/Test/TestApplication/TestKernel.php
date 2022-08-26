@@ -74,7 +74,7 @@ final class TestKernel extends SymfonyKernel
                 ],
                 'csrf_protection' => true,
                 'test' => true,
-            ]
+            ],
         );
 
         $container->extension(
@@ -89,7 +89,7 @@ final class TestKernel extends SymfonyKernel
                     'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
                     'auto_mapping' => true,
                 ],
-            ]
+            ],
         );
 
         $container->extension(
@@ -119,12 +119,12 @@ final class TestKernel extends SymfonyKernel
                 'access_control' => [
                     ['path' => '^/', 'roles' => ['ROLE_ADMIN']],
                 ],
-            ]
+            ],
         );
 
         $container->extension(
             'twig',
-            []
+            [],
         );
     }
 }

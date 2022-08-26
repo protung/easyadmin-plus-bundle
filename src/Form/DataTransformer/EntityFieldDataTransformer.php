@@ -33,7 +33,7 @@ final class EntityFieldDataTransformer implements DataTransformerInterface
     /**
      * {@inheritDoc}
      */
-    public function transform($value): ?object
+    public function transform($value): object|null
     {
         if ($value === null || $value === '') {
             return null;
@@ -57,7 +57,7 @@ final class EntityFieldDataTransformer implements DataTransformerInterface
 
         return $this->propertyAccessor->getValue(
             $value,
-            $this->entityManager->getClassMetadata($this->class)->getSingleIdentifierFieldName()
+            $this->entityManager->getClassMetadata($this->class)->getSingleIdentifierFieldName(),
         );
     }
 }

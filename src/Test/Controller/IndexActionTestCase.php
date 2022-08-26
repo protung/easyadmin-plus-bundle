@@ -17,14 +17,14 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 abstract class IndexActionTestCase extends AdminControllerWebTestCase
 {
-    protected static ?string $expectedPageTitle = null;
+    protected static string|null $expectedPageTitle = null;
 
     protected function actionName(): string
     {
         return Action::INDEX;
     }
 
-    protected function expectedPageTitle(): ?string
+    protected function expectedPageTitle(): string|null
     {
         if (static::$expectedPageTitle === null) {
             throw new LogicException(
@@ -34,8 +34,8 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
                         Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
                         If your index page does not have a title you need to overwrite %1$s method and return NULL.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 
@@ -61,7 +61,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
         self::assertSame(
             Vec\concat(Vec\fill(3, 'empty-row'), ['no-results'], Vec\fill(11, 'empty-row')),
-            $crawler->filter('#main table>tbody tr')->extract(['class'])
+            $crawler->filter('#main table>tbody tr')->extract(['class']),
         );
     }
 
@@ -170,7 +170,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
                 }
 
                 return $column->text(normalizeWhitespace: true);
-            }
+            },
         );
 
         $this->assertMatchesPattern($expectedRowData, $rowData);

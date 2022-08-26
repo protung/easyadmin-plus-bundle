@@ -41,8 +41,8 @@ final class EntityFieldDoctrineType extends AbstractType
             new EntityFieldDataTransformer(
                 $this->entityManager,
                 $this->propertyAccessor,
-                $class
-            )
+                $class,
+            ),
         );
     }
 
@@ -58,7 +58,7 @@ final class EntityFieldDoctrineType extends AbstractType
                 }
 
                 return $value;
-            }
+            },
         );
     }
 

@@ -19,9 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class CustomActionTestCase extends AdminControllerWebTestCase
 {
-    protected static ?string $expectedPageTitle = null;
+    protected static string|null $expectedPageTitle = null;
 
-    protected function expectedPageTitle(): ?string
+    protected function expectedPageTitle(): string|null
     {
         return static::$expectedPageTitle;
     }
@@ -36,7 +36,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
         array $data,
         array $files = [],
         array $queryParameters = [],
-        array $redirectQueryParameters = []
+        array $redirectQueryParameters = [],
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
@@ -55,7 +55,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
         array $formExpectedErrors,
         array $data,
         array $files = [],
-        array $queryParameters = []
+        array $queryParameters = [],
     ): void {
         $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
@@ -77,7 +77,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     protected function submitFormRequest(
         array $data,
         array $files = [],
-        array $queryParameters = []
+        array $queryParameters = [],
     ): Crawler {
         $crawler = $this->assertRequestGet($queryParameters);
 
@@ -98,7 +98,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
             $values,
-            $files
+            $files,
         );
     }
 

@@ -50,7 +50,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
 
         self::assertCount(
             $crawler->filter('#main-menu ul.menu li')->count(),
-            $expectedMenuItems
+            $expectedMenuItems,
         );
 
         $index = 0;

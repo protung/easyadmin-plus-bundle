@@ -27,7 +27,7 @@ use Symfony\Component\Form\FormInterface;
 abstract class BaseCrudDtoController extends BaseCrudController implements EventSubscriberInterface
 {
     /** @var TEntityClass|null */
-    private ?object $temporaryEntityForEdit = null;
+    private object|null $temporaryEntityForEdit = null;
 
     /**
      * @return class-string<TEntityClass>

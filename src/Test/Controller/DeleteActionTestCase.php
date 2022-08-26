@@ -29,7 +29,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertRemovingEntityFromIndexPageAndRedirectingToIndexAction(
         array $queryParameters = [],
-        array $redirectQueryParameters = []
+        array $redirectQueryParameters = [],
     ): void {
         $indexPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::INDEX]);
         $crawler                  = $this->assertRequestGet($indexPageQueryParameters);
@@ -39,7 +39,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         $this->getClient()->request(
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
-            $form->getValues()
+            $form->getValues(),
         );
 
         $redirectQueryParameters[EA::CRUD_ACTION] ??= Action::INDEX;
@@ -54,7 +54,6 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
     protected function entityIdUnderTest(): string
     {
         $rp = new ReflectionProperty($this, 'expectedEntityIdUnderTest');
-        $rp->setAccessible(true);
         if (! $rp->isInitialized()) {
             throw new LogicException(
                 Str\format(
@@ -62,8 +61,8 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
                         Expected entity ID under test was not set.
                         Please set static::$expectedEntityIdUnderTest property in your test or overwrite %s method.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 

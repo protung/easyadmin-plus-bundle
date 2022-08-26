@@ -19,12 +19,12 @@ use const PHP_EOL;
 
 abstract class AdminWebTestCase extends WebTestCase
 {
-    private ?KernelBrowser $client = null;
+    private KernelBrowser|null $client = null;
 
     /**
      * The authenticated user for the test.
      */
-    private static ?UserInterface $authentication = null;
+    private static UserInterface|null $authentication = null;
 
     protected static string $authenticationFirewallContext = 'easyadmin';
 
@@ -68,7 +68,7 @@ abstract class AdminWebTestCase extends WebTestCase
         $this->getClient()->followRedirect();
     }
 
-    protected function loginAs(?UserInterface $user): void
+    protected function loginAs(UserInterface|null $user): void
     {
         self::$authentication = $user;
     }
@@ -103,7 +103,7 @@ abstract class AdminWebTestCase extends WebTestCase
         self::assertCount(
             0,
             $flashMessages,
-            Str\format('Expected no flash messages, found %d.', $flashMessages->count())
+            Str\format('Expected no flash messages, found %d.', $flashMessages->count()),
         );
     }
 
@@ -112,7 +112,7 @@ abstract class AdminWebTestCase extends WebTestCase
         $crawler        = $this->getClient()->getCrawler();
         $actualMessages = Type\vec(Type\string())->assert(
             $crawler->filter('#flash-messages .alert-' . $type)
-                ->each(static fn (Crawler $crawler): string => $crawler->text(normalizeWhitespace: true))
+                ->each(static fn (Crawler $crawler): string => $crawler->text(normalizeWhitespace: true)),
         );
 
         self::assertCount(Iter\count($expectedMessages), $actualMessages);
@@ -125,7 +125,7 @@ abstract class AdminWebTestCase extends WebTestCase
             static function (array $data): void {
                 [$actualMessage, $expectedMessage] = $data;
                 self::assertStringStartsWith($expectedMessage, $actualMessage);
-            }
+            },
         );
     }
 
@@ -136,8 +136,8 @@ abstract class AdminWebTestCase extends WebTestCase
             Str\format(
                 'Expected redirect to "%s".' . PHP_EOL . 'Actual redirect url: "%s".',
                 $expectedRedirectUrl,
-                $this->getClient()->getResponse()->headers->get('Location') ?? ''
-            )
+                $this->getClient()->getResponse()->headers->get('Location') ?? '',
+            ),
         );
     }
 }

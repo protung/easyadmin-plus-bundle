@@ -52,7 +52,7 @@ abstract class BaseCrudController extends AbstractCrudController
         ];
 
         return $actions->disable(
-            ...Vec\values(Dict\diff($allActions, $allowedActions))
+            ...Vec\values(Dict\diff($allActions, $allowedActions)),
         );
     }
 
@@ -80,7 +80,7 @@ abstract class BaseCrudController extends AbstractCrudController
                 $actions->getAsDto($page)->getActions(),
                 static function (ActionDto $actionDto) use ($actions, $permission): void {
                     $actions->setPermission($actionDto->getName(), $permission);
-                }
+                },
             );
         }
 
@@ -90,7 +90,7 @@ abstract class BaseCrudController extends AbstractCrudController
     protected function addConfirmationForAction(
         Action $action,
         string|Stringable|TranslatableInterface $title,
-        string|Stringable|TranslatableInterface $description
+        string|Stringable|TranslatableInterface $description,
     ): Action {
         $action
             ->getAsDto()
@@ -99,7 +99,7 @@ abstract class BaseCrudController extends AbstractCrudController
                     'data-protung-easyadmin-plus-extension-modal-confirm-trigger' => '1',
                     'data-protung-easyadmin-plus-extension-modal-confirm-title' => $this->translate($title),
                     'data-protung-easyadmin-plus-extension-modal-confirm-description' => $this->translate($description),
-                ]
+                ],
             );
 
         return $action;
@@ -110,7 +110,7 @@ abstract class BaseCrudController extends AbstractCrudController
         $action
             ->getAsDto()
             ->addHtmlAttributes(
-                ['data-protung-easyadmin-plus-extension-action-render-in-dropdown' => $shouldRenderInDropdown ? '1' : '-1']
+                ['data-protung-easyadmin-plus-extension-action-render-in-dropdown' => $shouldRenderInDropdown ? '1' : '-1'],
             );
 
         return $action;
@@ -176,7 +176,7 @@ abstract class BaseCrudController extends AbstractCrudController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class => '?' . TranslatorInterface::class,
-            ]
+            ],
         );
     }
 }

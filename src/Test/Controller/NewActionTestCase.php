@@ -21,14 +21,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class NewActionTestCase extends AdminControllerWebTestCase
 {
-    protected static ?string $expectedPageTitle = null;
+    protected static string|null $expectedPageTitle = null;
 
     protected function actionName(): string
     {
         return Action::NEW;
     }
 
-    protected function expectedPageTitle(): ?string
+    protected function expectedPageTitle(): string|null
     {
         if (static::$expectedPageTitle === null) {
             throw new LogicException(
@@ -38,8 +38,8 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
                         Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
                         If your index page does not have a title you need to overwrite %1$s method and return NULL.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 
@@ -71,7 +71,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         array $data,
         array $files = [],
         array $queryParameters = [],
-        array $redirectQueryParameters = []
+        array $redirectQueryParameters = [],
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
@@ -90,7 +90,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         array $formExpectedErrors,
         array $data,
         array $files = [],
-        array $queryParameters = []
+        array $queryParameters = [],
     ): void {
         $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
@@ -114,7 +114,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         array $data,
         array $files = [],
         array $queryParameters = [],
-        string $submitButton = Action::SAVE_AND_RETURN
+        string $submitButton = Action::SAVE_AND_RETURN,
     ): Crawler {
         $crawler = $this->assertRequestGet($queryParameters);
 
@@ -140,7 +140,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
             $values,
-            $files
+            $files,
         );
     }
 
@@ -164,7 +164,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
 
         $this->assertMatchesPattern(
             $formExpectedFields,
-            $form->getPhpValues()[$formName]
+            $form->getPhpValues()[$formName],
         );
     }
 

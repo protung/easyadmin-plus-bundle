@@ -10,10 +10,13 @@
     <arg name="parallel" value="80"/>
     <arg name="cache" value=".phpcs-cache"/>
     <arg name="colors"/>
-    <!-- Ignore warnings and show progress of the run -->
-    <arg value="np"/>
+    <!-- Ignore warnings, show progress of the run, show sniff name -->
+    <arg value="nps"/>
 
-    <rule ref="Doctrine"/>
+    <rule ref="Doctrine">
+        <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
+        <exclude name="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion.RequiredConstructorPropertyPromotion"/>
+    </rule>
     <!-- inherit rules from: -->
     <rule ref="Generic.Files.LineLength">
         <severity>0</severity>

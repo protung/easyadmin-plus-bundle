@@ -24,14 +24,14 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
 {
     protected static string $expectedEntityIdUnderTest;
 
-    protected static ?string $expectedPageTitle = null;
+    protected static string|null $expectedPageTitle = null;
 
     protected function actionName(): string
     {
         return Action::EDIT;
     }
 
-    protected function expectedPageTitle(): ?string
+    protected function expectedPageTitle(): string|null
     {
         if (static::$expectedPageTitle === null) {
             throw new LogicException(
@@ -41,8 +41,8 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
                         Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
                         If your index page does not have a title you need to overwrite %1$s method and return NULL.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 
@@ -52,7 +52,6 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     protected function entityIdUnderTest(): string
     {
         $rp = new ReflectionProperty($this, 'expectedEntityIdUnderTest');
-        $rp->setAccessible(true);
         if (! $rp->isInitialized()) {
             throw new LogicException(
                 Str\format(
@@ -60,8 +59,8 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
                         Expected entity ID under test was not set.
                         Please set static::$expectedEntityIdUnderTest property in your test or overwrite %s method.
                     MSG,
-                    __METHOD__
-                )
+                    __METHOD__,
+                ),
             );
         }
 
@@ -90,7 +89,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
 
         $this->assertMatchesPattern(
             $formExpectedFields,
-            $form->getPhpValues()[$formName]
+            $form->getPhpValues()[$formName],
         );
     }
 
@@ -104,7 +103,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $data,
         array $files = [],
         array $queryParameters = [],
-        array $redirectQueryParameters = []
+        array $redirectQueryParameters = [],
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
@@ -124,7 +123,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $formExpectedErrors,
         array $data,
         array $files = [],
-        array $queryParameters = []
+        array $queryParameters = [],
     ): void {
         $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
@@ -148,7 +147,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $data,
         array $files = [],
         array $queryParameters = [],
-        string $submitButton = Action::SAVE_AND_RETURN
+        string $submitButton = Action::SAVE_AND_RETURN,
     ): Crawler {
         $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
 
@@ -176,7 +175,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
             $values,
-            $files
+            $files,
         );
     }
 
