@@ -70,7 +70,7 @@ final class TestKernel extends SymfonyKernel
                 'secret' => '$3cr3t',
                 'session' => [
                     'handler_id' => null,
-                    'storage_id' => 'session.storage.mock_file',
+                    'storage_factory_id' => 'session.storage.factory.mock_file',
                 ],
                 'csrf_protection' => true,
                 'test' => true,
