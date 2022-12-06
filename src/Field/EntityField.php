@@ -18,7 +18,7 @@ final class EntityField implements FieldInterface
 {
     use FieldTrait;
 
-    public const OPTION_CRUD_CONTROLLER = AssociationField::OPTION_CRUD_CONTROLLER;
+    public const OPTION_CRUD_CONTROLLER = AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER;
 
     public const OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
