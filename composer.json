@@ -24,7 +24,7 @@
     "source": "https://github.com/protung/easyadmin-plus-bundle"
   },
   "require": {
-    "php": "~8.1.0 || ~8.1.0",
+    "php": "~8.1.0 || ~8.2.0",
     "ext-dom": "*",
     "azjezz/psl": "^2.0.3",
     "easycorp/easyadmin-bundle": "~4.4.4",
