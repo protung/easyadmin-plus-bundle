@@ -184,8 +184,10 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                 : $this->entityFactory->create($entityMetadata->targetEntityFqcn(), $entityMetadata->targetEntityId());
         }
 
+        $targetEntityInstance = Type\nullable(Type\instance_of($entityMetadata->targetEntityFqcn()))->coerce($targetEntityDto->getInstance());
+
         $field->setFormTypeOptionIfNotSet('class', $targetEntityDto->getFqcn());
-        $field->setFormTypeOptionIfNotSet('data', $targetEntityDto->getInstance());
+        $field->setFormTypeOptionIfNotSet('data', $targetEntityInstance);
         $field->setFormTypeOptionIfNotSet('data_class', null);
 
         if ($field->getCustomOption(EntityField::OPTION_LINK_TO_ENTITY) === true) {
@@ -198,9 +200,10 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             );
         }
 
+        $field->setValue($targetEntityInstance);
         $field->setFormattedValue(
             $this->formatAsString(
-                Type\nullable(Type\instance_of($entityMetadata->targetEntityFqcn()))->coerce($targetEntityDto->getInstance()),
+                $targetEntityInstance,
                 $entityMetadata,
                 $field,
             ),
