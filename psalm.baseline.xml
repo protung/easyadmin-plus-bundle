@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.26.0@6998fabb2bf528b65777bf9941920888d23c03ac">
+<files psalm-version="5.4.0@62db5d4f6a7ae0a20f7cc5a4952d730272fc0863">
+  <file src="src/Controller/BaseController.php">
+    <ImplementedReturnTypeMismatch occurrences="1">
+      <code>array&lt;array-key, string|SubscribedService&gt;</code>
+    </ImplementedReturnTypeMismatch>
+    <MixedInferredReturnType occurrences="1">
+      <code>array&lt;array-key, string|SubscribedService&gt;</code>
+    </MixedInferredReturnType>
+    <UndefinedDocblockClass occurrences="1">
+      <code>array&lt;array-key, string|SubscribedService&gt;</code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="src/Controller/BaseCrudController.php">
+    <ImplementedReturnTypeMismatch occurrences="1">
+      <code>array&lt;array-key, string|SubscribedService&gt;</code>
+    </ImplementedReturnTypeMismatch>
     <MixedArgumentTypeCoercion occurrences="1"/>
+    <MixedInferredReturnType occurrences="1">
+      <code>array&lt;array-key, string|SubscribedService&gt;</code>
+    </MixedInferredReturnType>
+    <UndefinedDocblockClass occurrences="1">
+      <code>array&lt;array-key, string|SubscribedService&gt;</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
     <MixedMethodCall occurrences="1">
@@ -21,13 +41,24 @@
     </MixedArgument>
   </file>
   <file src="src/Form/DataTransformer/EntityFieldDataTransformer.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$this-&gt;entityManager-&gt;find($this-&gt;class, $value)</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>object|null</code>
-    </InvalidReturnType>
-    <MixedReturnStatement occurrences="1"/>
+    <MissingTemplateParam occurrences="1">
+      <code>DataTransformerInterface</code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Form/Type/CrudAutocompleteType.php">
+    <MissingTemplateParam occurrences="1">
+      <code>CrudAutocompleteType</code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Form/Type/EntityFieldDoctrineType.php">
+    <MissingTemplateParam occurrences="1">
+      <code>EntityFieldDoctrineType</code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/Resources/config/services.php">
+    <UnevaluatedCode occurrences="1">
+      <code>declare(strict_types=1);</code>
+    </UnevaluatedCode>
   </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
     <MixedArgumentTypeCoercion occurrences="2">
