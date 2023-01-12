@@ -42,9 +42,9 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     /**
      * @param TDtoClass $dto
      *
-     * @return TEntityClass
+     * @return TEntityClass|null
      */
-    abstract public function createEntityFromDto(object $dto): object;
+    abstract public function createEntityFromDto(object $dto): object|null;
 
     /**
      * @param TEntityClass $entity
@@ -82,9 +82,9 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         $entity = $this->createEntityFromDto($dto);
 
         /**
-         * @param TEntityClass $entity
+         * @param TEntityClass|null $entity
          */
-        $closure = function (object $entity): void {
+        $closure = function (object|null $entity): void {
             $this->entityInstance = $entity;
         };
         $closure->call($event, $entity);
