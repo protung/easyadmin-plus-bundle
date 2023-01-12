@@ -57,6 +57,8 @@ final class EntityField implements FieldInterface
 
     public const OPTION_ON_CHANGE = 'onChange';
 
+    public const OPTION_ON_CHANGE_URL_CALLABLE = 'onChangeUrlCallable';
+
     public const PARAM_ON_CHANGE_CONTEXT_FIELD_PROPERTY = 'ea-custom-entity-field-on-change-field-property';
 
     public const PARAM_ON_CHANGE_CONTEXT_HANDLE_URL = 'ea-custom-entity-field-on-change-handle-url';
@@ -150,6 +152,16 @@ final class EntityField implements FieldInterface
     public function onChange(callable $callable): self
     {
         $this->setCustomOption(self::OPTION_ON_CHANGE, $callable);
+
+        return $this;
+    }
+
+    /**
+     * @param (callable(EntityMetadata): string) $callable
+     */
+    public function setOnChangeUrlCallable(callable $callable): self
+    {
+        $this->setCustomOption(self::OPTION_ON_CHANGE_URL_CALLABLE, $callable);
 
         return $this;
     }

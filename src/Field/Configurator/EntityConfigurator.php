@@ -307,11 +307,22 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setFormTypeOption('attr.data-' . EntityField::PARAM_ON_CHANGE_CONTEXT_FIELD_PROPERTY, $field->getProperty());
 
-        $controllerUrl = $this->adminUrlGenerator
-            ->unsetAll()
-            ->setController($entityMetadata->sourceCrudControllerFqcn())
-            ->setAction('formOnChange')
-            ->generateUrl();
+        $formOnChangeUrlCallable = $field->getCustomOption(EntityField::OPTION_ON_CHANGE_URL_CALLABLE);
+
+        if ($formOnChangeUrlCallable !== null) {
+            invariant(
+                is_callable($formOnChangeUrlCallable),
+                Str\format('Form onChange url callable option is not null or callable.'),
+            );
+            $controllerUrl = Type\string()->coerce($formOnChangeUrlCallable($entityMetadata));
+        } else {
+            $controllerUrl = $this->adminUrlGenerator
+                ->unsetAll()
+                ->setController($entityMetadata->sourceCrudControllerFqcn())
+                ->setAction('formOnChange')
+                ->generateUrl();
+        }
+
         $field->setFormTypeOption('attr.data-' . EntityField::PARAM_ON_CHANGE_CONTEXT_HANDLE_URL, $controllerUrl);
     }
 
