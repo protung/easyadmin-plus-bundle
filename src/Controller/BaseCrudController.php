@@ -17,6 +17,7 @@ use Psl\Vec;
 use RuntimeException;
 use Stringable;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -168,7 +169,7 @@ abstract class BaseCrudController extends AbstractCrudController
     }
 
     /**
-     * @return array<array-key, string>
+     * @return array<array-key, string|SubscribedService>
      */
     public static function getSubscribedServices(): array
     {

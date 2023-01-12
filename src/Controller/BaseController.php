@@ -8,6 +8,7 @@ use Psl\Dict;
 use Stringable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -48,7 +49,7 @@ abstract class BaseController extends AbstractController
     }
 
     /**
-     * @return array<array-key, string>
+     * @return array<array-key, string|SubscribedService>
      */
     public static function getSubscribedServices(): array
     {

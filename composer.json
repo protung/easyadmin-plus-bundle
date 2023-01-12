@@ -45,14 +45,14 @@
     "symfony/twig-bundle": "^5.4 || ^6.1"
   },
   "require-dev": {
-    "doctrine/coding-standard": "^10.0.0",
+    "doctrine/coding-standard": "^11.1",
     "ergebnis/composer-normalize": "^2.29",
-    "php-standard-library/psalm-plugin": "^2.0.2",
-    "phpunit/phpunit": "^9.5.26",
+    "php-standard-library/psalm-plugin": "^2.2.1",
+    "phpunit/phpunit": "^9.5.27",
     "psalm/plugin-phpunit": "^0.18.4",
-    "psalm/plugin-symfony": "^4.0.0",
+    "psalm/plugin-symfony": "^5.0.1",
     "speicher210/functional-test-bundle": "^2.x-dev",
-    "vimeo/psalm": "^4.30"
+    "vimeo/psalm": "^5.4"
   },
   "suggest": {
     "speicher210/functional-test-bundle": "For testing support."
