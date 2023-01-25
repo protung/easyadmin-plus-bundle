@@ -20,6 +20,10 @@
         </ignoreFiles>
     </projectFiles>
 
+    <issueHandlers>
+        <MixedAssignment errorLevel="suppress"/>
+    </issueHandlers>
+
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
