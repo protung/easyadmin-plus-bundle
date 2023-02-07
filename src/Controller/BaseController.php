@@ -14,28 +14,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseController extends AbstractController
 {
-    private const FLASH_SUCCESS = 'success';
-
-    private const FLASH_WARNING = 'warning';
-
-    private const FLASH_ERROR = 'danger';
-
     protected function addFlashMessageSuccess(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(self::FLASH_SUCCESS, $message);
+        $this->addFlashMessage(Flash::Success, $message);
     }
 
     protected function addFlashMessageWarning(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(self::FLASH_WARNING, $message);
+        $this->addFlashMessage(Flash::Warning, $message);
     }
 
     protected function addFlashMessageError(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(self::FLASH_ERROR, $message);
+        $this->addFlashMessage(Flash::Error, $message);
     }
 
-    protected function addFlashMessage(string $type, string|Stringable|TranslatableInterface $message): void
+    protected function addFlashMessage(Flash $type, string|Stringable|TranslatableInterface $message): void
     {
         // We check against TranslatableInterface because the implementation might be Stringable as well.
         if (! $message instanceof TranslatableInterface) {
@@ -43,7 +37,7 @@ abstract class BaseController extends AbstractController
         }
 
         $this->addFlash(
-            $type,
+            $type->value,
             $message->trans($this->container->get(TranslatorInterface::class)),
         );
     }

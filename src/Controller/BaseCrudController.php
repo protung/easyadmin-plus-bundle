@@ -26,10 +26,6 @@ abstract class BaseCrudController extends AbstractCrudController
     protected const FIELD_SORT_ASC  = 'ASC';
     protected const FIELD_SORT_DESC = 'DESC';
 
-    private const FLASH_SUCCESS = 'success';
-    private const FLASH_WARNING = 'warning';
-    private const FLASH_ERROR   = 'danger';
-
     /**
      * Calling this method will disable all standard actions.
      */
@@ -129,22 +125,22 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function addFlashMessageSuccess(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(self::FLASH_SUCCESS, $message);
+        $this->addFlashMessage(Flash::Success, $message);
     }
 
     protected function addFlashMessageWarning(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(self::FLASH_WARNING, $message);
+        $this->addFlashMessage(Flash::Warning, $message);
     }
 
     protected function addFlashMessageError(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(self::FLASH_ERROR, $message);
+        $this->addFlashMessage(Flash::Error, $message);
     }
 
-    protected function addFlashMessage(string $type, string|Stringable|TranslatableInterface $message): void
+    protected function addFlashMessage(Flash $type, string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlash($type, $this->translate($message));
+        $this->addFlash($type->value, $this->translate($message));
     }
 
     private function translate(string|Stringable|TranslatableInterface $message): string
