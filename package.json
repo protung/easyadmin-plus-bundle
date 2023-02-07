@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.20.5",
+    "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
     "@popperjs/core": "^2.11.6",
-    "@symfony/webpack-encore": "^4.1.2",
+    "@symfony/webpack-encore": "^4.2.0",
     "bootstrap": "^5.2.3",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
