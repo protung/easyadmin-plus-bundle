@@ -7,7 +7,6 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
-use Psl\Type;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
@@ -25,7 +24,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
      */
     protected function assertMenu(iterable $expectedMenuItems): void
     {
-        $router = Type\instance_of(Router::class)->coerce($this->getContainerService('router'));
+        $router = $this->getContainerService(Router::class, 'router');
 
         $dashboardRoutes = Dict\filter(
             $router->getRouteCollection()->all(),
