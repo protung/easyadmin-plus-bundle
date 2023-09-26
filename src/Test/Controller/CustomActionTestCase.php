@@ -59,7 +59,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     ): void {
         $crawler = $this->submitFormRequest($data, $files, $queryParameters);
 
-        self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_OK);
+        self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $form = $this->findForm($crawler);
 
