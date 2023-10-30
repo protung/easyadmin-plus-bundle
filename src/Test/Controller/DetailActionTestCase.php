@@ -105,7 +105,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         }
 
         self::assertCount(
-            $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->count(),
+            $this->getClient()->getCrawler()->filter('#main div.row > .field-group')->count(),
             $expectedDetails,
         );
 
@@ -123,15 +123,15 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 
     private function getDetailLabel(int $index): string
     {
-        $field = $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->eq($index);
+        $field = $this->getClient()->getCrawler()->filter('#main div.row > .field-group')->eq($index);
 
-        return $field->filter('dt')->text(normalizeWhitespace: true);
+        return $field->filter('.field-label')->text(normalizeWhitespace: true);
     }
 
     private function getDetailValue(int $index): string
     {
-        $field = $this->getClient()->getCrawler()->filter('#main dl.datalist > div')->eq($index);
+        $field = $this->getClient()->getCrawler()->filter('#main div.row > .field-group')->eq($index);
 
-        return $field->filter('dd')->text(normalizeWhitespace: true);
+        return $field->filter('.field-value')->text(normalizeWhitespace: true);
     }
 }

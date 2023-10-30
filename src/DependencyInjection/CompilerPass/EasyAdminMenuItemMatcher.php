@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\DependencyInjection\CompilerPass;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\MenuFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcherInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
