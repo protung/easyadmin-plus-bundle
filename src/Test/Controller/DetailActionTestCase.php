@@ -7,8 +7,11 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use PHPUnit\Framework\ExpectationFailedException;
 use Psl\Iter;
 use Psl\Str;
+use Psl\File;
+use Psl\Json;
 use ReflectionProperty;
 
 use function is_countable;
@@ -81,6 +84,53 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 
         $this->assertActions($expectedActions);
         $this->assertDetails($expectedDetails);
+    }
+
+    /**
+     * @param iterable<string,string> $expectedDetails
+     * @param array<mixed>            $queryParameters
+     * @param array<string,string>    $expectedActions
+     */
+    protected function assertPageFromJsonExpectedFile(array $expectedActions = [], array $queryParameters = []): void
+    {
+        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        $this->assertRequestGet($queryParameters);
+        $expectedTitle = $this->expectedPageTitle();
+        if ($expectedTitle !== null) {
+            $this->assertPageTitle($expectedTitle);
+        }
+
+        $expectedDetails = Json\decode(File\read($this->getCurrentExpectedResponseContentFile('json')));
+
+        $this->assertActions($expectedActions);
+        $this->assertDetailsFromJsonExpectedFile($expectedDetails);
+    }
+
+    /**
+     * @param array<string,string> $expectedDetails
+     */
+    protected function assertDetailsFromJsonExpectedFile(array $expectedDetails): void
+    {
+        $actualDetailsCount = $this->getClient()->getCrawler()->filter('#main div.row > .field-group')->count();
+
+        self::assertCount(
+            $actualDetailsCount,
+            $expectedDetails,
+        );
+
+        $actualDetails = [];
+        for ($i = 0; $i < $actualDetailsCount; $i++) {
+            $actualDetails[$this->getDetailLabel($i)] = $this->getDetailValue($i);
+        }
+
+        try {
+            self::assertEquals($expectedDetails, $actualDetails);
+        } catch (ExpectationFailedException $e) {
+//         file_put_contents($this->getCurrentExpectedResponseContentFile('json'), Json\encode($actualDetails, true));
+
+            throw $e;
+        }
     }
 
     /**
