@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Menu;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher as EasyAdminMenuItemMatcher;
-use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Psl\Type;
 
@@ -16,7 +16,6 @@ use function is_array;
 /**
  * Custom menu item matcher to simplify special algorithms to choose what menu item is selected.
  * This should be created as a service and aliased to `EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcherInterface` service ID.
- * The compiler pass `\Protung\EasyAdminPlusBundle\DependencyInjection\CompilerPass\EasyAdminMenuItemMatcher` should be registered to fix the MenuFactory definition.
  */
 final class ChainMenuItemMatcher implements MenuItemMatcherInterface
 {
