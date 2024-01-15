@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\EasyAdminExtension;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository as EasyAdminEntityRepository;
+use Protung\EasyAdminPlusBundle\Orm\EntityRepository;
 use Symfony\Component\Form\FormTypeInterface;
 
 return static function (ContainerConfigurator $container): void {
@@ -20,4 +22,9 @@ return static function (ContainerConfigurator $container): void {
     $services
         ->load('Protung\\EasyAdminPlusBundle\\', '../../../src/*')
         ->exclude('../../../src/Resources/**/*');
+
+    $services->set(EntityRepository::class)
+        ->decorate(EasyAdminEntityRepository::class)
+        ->autoconfigure()
+        ->autowire();
 };
