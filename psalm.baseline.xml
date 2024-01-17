@@ -1,99 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.4.0@62db5d4f6a7ae0a20f7cc5a4952d730272fc0863">
-  <file src="src/Controller/BaseController.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>array&lt;array-key, string|SubscribedService&gt;</code>
-    </ImplementedReturnTypeMismatch>
-    <MixedInferredReturnType occurrences="1">
-      <code>array&lt;array-key, string|SubscribedService&gt;</code>
-    </MixedInferredReturnType>
-    <UndefinedDocblockClass occurrences="1">
-      <code>array&lt;array-key, string|SubscribedService&gt;</code>
-    </UndefinedDocblockClass>
-  </file>
+<files psalm-version="5.19.0@06b71be009a6bd6d81b9811855d6629b9fe90e1b">
   <file src="src/Controller/BaseCrudController.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>array&lt;array-key, string|SubscribedService&gt;</code>
-    </ImplementedReturnTypeMismatch>
-    <MixedArgumentTypeCoercion occurrences="1"/>
-    <MixedInferredReturnType occurrences="1">
-      <code>array&lt;array-key, string|SubscribedService&gt;</code>
-    </MixedInferredReturnType>
-    <UndefinedDocblockClass occurrences="1">
-      <code>array&lt;array-key, string|SubscribedService&gt;</code>
-    </UndefinedDocblockClass>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[Iter\apply(
+                $actions->getAsDto($page)->getActions(),
+                static function (ActionDto $actionDto) use ($actions, $permission): void {
+                    $actions->setPermission($actionDto->getName(), $permission);
+                },
+            )]]></code>
+    </MixedArgumentTypeCoercion>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
-    <MixedMethodCall occurrences="1">
+    <MixedMethodCall>
       <code>new $className()</code>
     </MixedMethodCall>
-    <UndefinedThisPropertyAssignment occurrences="4">
-      <code>$this-&gt;entityInstance</code>
-      <code>$this-&gt;entityInstance</code>
-      <code>$this-&gt;instance</code>
-      <code>$this-&gt;instance</code>
+    <UndefinedThisPropertyAssignment>
+      <code><![CDATA[$this->entityInstance]]></code>
+      <code><![CDATA[$this->entityInstance]]></code>
+      <code><![CDATA[$this->instance]]></code>
+      <code><![CDATA[$this->instance]]></code>
     </UndefinedThisPropertyAssignment>
   </file>
   <file src="src/Field/Configurator/EntityConfigurator.php">
-    <MixedArgument occurrences="2">
-      <code>$entityDto-&gt;getPrimaryKeyValue()</code>
-      <code>$field-&gt;getValue()</code>
+    <MixedArgument>
+      <code><![CDATA[$entityDto->getPrimaryKeyValue()]]></code>
+      <code><![CDATA[$field->getValue()]]></code>
     </MixedArgument>
   </file>
   <file src="src/Form/DataTransformer/EntityFieldDataTransformer.php">
-    <MissingTemplateParam occurrences="1">
+    <MissingTemplateParam>
       <code>DataTransformerInterface</code>
     </MissingTemplateParam>
   </file>
   <file src="src/Form/Type/CrudAutocompleteType.php">
-    <MissingTemplateParam occurrences="1">
+    <MissingTemplateParam>
       <code>CrudAutocompleteType</code>
     </MissingTemplateParam>
   </file>
   <file src="src/Form/Type/EntityFieldDoctrineType.php">
-    <MissingTemplateParam occurrences="1">
+    <MissingTemplateParam>
       <code>EntityFieldDoctrineType</code>
     </MissingTemplateParam>
   </file>
-  <file src="src/Resources/config/services.php">
-    <UnevaluatedCode occurrences="1">
-      <code>declare(strict_types=1);</code>
-    </UnevaluatedCode>
+  <file src="src/Orm/EntityRepository.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$entityDto->getFqcn()]]></code>
+      <code><![CDATA[$entityDto->getFqcn()]]></code>
+    </ArgumentTypeCoercion>
+    <InvalidOperand>
+      <code>$sortProperty</code>
+      <code>$sortProperty</code>
+      <code>0 + $queryTerm</code>
+    </InvalidOperand>
+    <MixedArgument>
+      <code>$entityFqcn</code>
+      <code>$entityName</code>
+      <code>$entityName</code>
+      <code>$entityName</code>
+      <code>$entityName</code>
+      <code>$entityName</code>
+      <code>$idClassName</code>
+      <code><![CDATA[$metadata->get('mappedBy')]]></code>
+      <code><![CDATA[$metadata->get('targetEntity')]]></code>
+      <code><![CDATA[$propertyConfig['property_name']]]></code>
+      <code><![CDATA[$propertyConfig['property_name']]]></code>
+      <code><![CDATA[$propertyConfig['property_name']]]></code>
+      <code><![CDATA[$propertyConfig['property_name']]]></code>
+      <code><![CDATA[$propertyConfig['property_name']]]></code>
+      <code>$propertyName</code>
+      <code>$queryTerm</code>
+      <code>$queryTerm</code>
+      <code>$queryTerm</code>
+      <code>$queryTerm</code>
+      <code>$sortOrder</code>
+      <code>$sortOrder</code>
+      <code>$sortOrder</code>
+      <code>$sortOrder</code>
+      <code>$sortOrder</code>
+      <code>$targetEntity</code>
+      <code>$targetEntityFqcn</code>
+    </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code>$sortProperty</code>
+      <code>$sortProperty</code>
+      <code>$sortProperty</code>
+      <code>$sortProperty</code>
+      <code>$sortProperty</code>
+    </MixedArgumentTypeCoercion>
+    <MixedMethodCall>
+      <code>getFqcn</code>
+    </MixedMethodCall>
+    <PossiblyNullArgument>
+      <code>$targetEntityFqcn</code>
+    </PossiblyNullArgument>
+    <PossiblyNullOperand>
+      <code><![CDATA[$entityDto->getPrimaryKeyName()]]></code>
+    </PossiblyNullOperand>
+    <PossiblyNullReference>
+      <code>getRequest</code>
+    </PossiblyNullReference>
+    <PossiblyUndefinedMethod>
+      <code>getName</code>
+    </PossiblyUndefinedMethod>
   </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
-    <MixedArgumentTypeCoercion occurrences="2">
+    <MixedArgumentTypeCoercion>
       <code>$fieldErrors</code>
       <code>$fieldErrors</code>
     </MixedArgumentTypeCoercion>
-    <MixedAssignment occurrences="2">
-      <code>$queryParameters[EA::CRUD_ACTION]</code>
-      <code>$queryParameters[EA::CRUD_CONTROLLER_FQCN]</code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Test/Controller/DeleteActionTestCase.php">
-    <MixedAssignment occurrences="2">
-      <code>$queryParameters[EA::ENTITY_ID]</code>
-      <code>$redirectQueryParameters[EA::CRUD_ACTION]</code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Test/Controller/DetailActionTestCase.php">
-    <MixedAssignment occurrences="1">
-      <code>$queryParameters[EA::ENTITY_ID]</code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Test/Controller/EditActionTestCase.php">
-    <MixedAssignment occurrences="2">
-      <code>$queryParameters[EA::ENTITY_ID]</code>
-      <code>$queryParameters[EA::ENTITY_ID]</code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Test/Controller/NewActionTestCase.php">
-    <MixedAssignment occurrences="1">
-      <code>$queryParameters[EA::CRUD_ACTION]</code>
-    </MixedAssignment>
   </file>
   <file src="src/Translation/EasyAdminTranslationMessage.php">
-    <ImpureMethodCall occurrences="1">
+    <ImpureMethodCall>
       <code>trans</code>
     </ImpureMethodCall>
   </file>

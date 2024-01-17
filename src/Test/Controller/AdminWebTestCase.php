@@ -79,16 +79,28 @@ abstract class AdminWebTestCase extends WebTestCase
         $this->loginAs($user);
     }
 
+    /**
+     * @param non-empty-string $expectedMessage
+     * @param non-empty-string ...$expectedMessages
+     */
     protected function assertFlashMessageSuccess(string $expectedMessage, string ...$expectedMessages): void
     {
         $this->assertFlashMessage('success', $expectedMessage, ...$expectedMessages);
     }
 
+    /**
+     * @param non-empty-string $expectedMessage
+     * @param non-empty-string ...$expectedMessages
+     */
     protected function assertFlashMessageWarning(string $expectedMessage, string ...$expectedMessages): void
     {
         $this->assertFlashMessage('warning', $expectedMessage, ...$expectedMessages);
     }
 
+    /**
+     * @param non-empty-string $expectedMessage
+     * @param non-empty-string ...$expectedMessages
+     */
     protected function assertFlashMessageError(string $expectedMessage, string ...$expectedMessages): void
     {
         $this->assertFlashMessage('danger', $expectedMessage, ...$expectedMessages);
@@ -107,6 +119,9 @@ abstract class AdminWebTestCase extends WebTestCase
         );
     }
 
+    /**
+     * @param non-empty-string ...$expectedMessages
+     */
     private function assertFlashMessage(string $type, string ...$expectedMessages): void
     {
         $crawler        = $this->getClient()->getCrawler();
@@ -120,7 +135,7 @@ abstract class AdminWebTestCase extends WebTestCase
         Vec\map(
             Vec\zip($actualMessages, $expectedMessages),
             /**
-             * @param array{0: string, 1: string} $data
+             * @param array{0: string, 1: non-empty-string} $data
              */
             static function (array $data): void {
                 [$actualMessage, $expectedMessage] = $data;

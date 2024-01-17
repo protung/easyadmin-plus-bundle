@@ -13,24 +13,31 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dependencies: [lowest, highest]
-        php-versions:
-          - 8.1
-          - 8.2
     if: github.event.pull_request.draft == false
-    name: PHP ${{ matrix.php-versions }} checks with ${{ matrix.dependencies }} dependencies
+    runs-on: ubuntu-latest
+    env:
+      SYMFONY_REQUIRE: ${{ matrix.symfony }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - 8.2
+          - 8.3
+        symfony:
+          - 6.4.*
+          - 7.*
+        dependencies: [ lowest, highest ]
+    name: 'PHP ${{ matrix.php }} + Symfony ${{ matrix.symfony }} + ${{ matrix.dependencies }} dependencies'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
-          coverage: none
+          php-version: ${{ matrix.php }}
+          coverage: pcov
+          tools: flex
 
       - name: Get composer cache directory
         id: composer-cache
@@ -40,16 +47,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json **/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-${{ matrix.php }}-composer-
+          key: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-${{ hashFiles('**/composer.json **/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-
 
-      - name: Install lowest dependencies
-        if: ${{ matrix.dependencies == 'lowest' }}
-        run: composer update --prefer-lowest --prefer-dist --no-progress --no-suggest --no-interaction
-
-      - name: Install highest dependencies
-        if: ${{ matrix.dependencies == 'highest' }}
-        run: composer update --prefer-dist --no-progress --no-suggest --no-interaction
+      - name: Install dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: --prefer-dist
 
       - name: Run checks lowest
         if: ${{ matrix.dependencies == 'lowest' }}
