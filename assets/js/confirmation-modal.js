@@ -35,7 +35,7 @@ export default class ConfirmationModal {
                 }
             );
 
-            confirmationActionModal.show()
+            confirmationActionModal.show();
         });
     }
 }
