@@ -27,7 +27,7 @@
     "php": "~8.2.0 || ~8.3.0",
     "ext-dom": "*",
     "azjezz/psl": "^2.5.0",
-    "easycorp/easyadmin-bundle": "~4.8.10",
+    "easycorp/easyadmin-bundle": "~4.9.0",
     "symfony/asset": "^6.4 || ^7.0",
     "symfony/cache": "^6.4 || ^7.0",
     "symfony/config": "^6.4 || ^7.0",
@@ -46,13 +46,13 @@
   },
   "require-dev": {
     "doctrine/coding-standard": "^12.0",
-    "ergebnis/composer-normalize": "^2.41.1",
+    "ergebnis/composer-normalize": "^2.42.0",
     "php-standard-library/psalm-plugin": "^2.3.0",
-    "phpunit/phpunit": "^10.5.7",
+    "phpunit/phpunit": "^10.5.10",
     "psalm/plugin-phpunit": "^0.18.4",
     "psalm/plugin-symfony": "^5.1.0",
     "speicher210/functional-test-bundle": "^2.x-dev",
-    "vimeo/psalm": "^5.19"
+    "vimeo/psalm": "^5.21.1"
   },
   "suggest": {
     "speicher210/functional-test-bundle": "For testing support."

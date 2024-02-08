@@ -286,8 +286,6 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             ->setController($crudController)
             ->setAction(Action::DETAIL)
             ->setEntityId($entityDto->getPrimaryKeyValue())
-            ->unset(EA::MENU_INDEX)
-            ->unset(EA::SUBMENU_INDEX)
             ->includeReferrer()
             ->generateUrl();
     }
