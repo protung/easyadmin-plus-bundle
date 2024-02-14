@@ -26,14 +26,17 @@ use function iterator_to_array;
  */
 abstract class AdminControllerWebTestCase extends AdminWebTestCase
 {
-    protected static string $easyAdminRoutePath = '/admin';
-
     /**
      * @return class-string<TCrudController>
      */
     abstract protected function controllerUnderTest(): string;
 
     abstract protected function actionName(): string;
+
+    protected static function easyAdminRoutePath(): string
+    {
+        return '/admin';
+    }
 
     /**
      * @param array<array-key, mixed> $queryParameters
@@ -61,7 +64,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         // we need to prepare the URL having some query parameters in a specific order
         $queryParameters = Dict\sort_by_key($queryParameters);
 
-        return static::$easyAdminRoutePath . '?' . http_build_query($queryParameters);
+        return static::easyAdminRoutePath() . '?' . http_build_query($queryParameters);
     }
 
     /**
