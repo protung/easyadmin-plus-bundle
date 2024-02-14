@@ -26,13 +26,16 @@ abstract class AdminWebTestCase extends WebTestCase
      */
     private static UserInterface|null $authentication = null;
 
-    protected static string $authenticationFirewallContext = 'easyadmin';
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->loginAsAdmin();
+    }
+
+    protected static function authenticationFirewallContext(): string
+    {
+        return 'easyadmin';
     }
 
     protected function getClient(): KernelBrowser
@@ -42,7 +45,7 @@ abstract class AdminWebTestCase extends WebTestCase
             $this->client->disableReboot();
 
             if (static::$authentication !== null) {
-                $this->client->loginUser(static::$authentication, static::$authenticationFirewallContext);
+                $this->client->loginUser(static::$authentication, static::authenticationFirewallContext());
             }
         }
 
