@@ -6,13 +6,13 @@ namespace Protung\EasyAdminPlusBundle\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
 use Psl\Iter;
+use Psl\Type;
 use Psl\Vec;
 use RuntimeException;
 use Stringable;
@@ -71,10 +71,9 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function setActionsPermissions(Actions $actions, string $permission): Actions
     {
-        $pages = [Crud::PAGE_INDEX, Crud::PAGE_NEW, Crud::PAGE_DETAIL, Crud::PAGE_EDIT];
-        foreach ($pages as $page) {
+        foreach (Type\mixed_dict()->coerce($actions->getAsDto(null)->getActions()) as $pageActions) {
             Iter\apply(
-                $actions->getAsDto($page)->getActions(),
+                $pageActions,
                 static function (ActionDto $actionDto) use ($actions, $permission): void {
                     $actions->setPermission($actionDto->getName(), $permission);
                 },

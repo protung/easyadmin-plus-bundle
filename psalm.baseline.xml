@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.19.0@06b71be009a6bd6d81b9811855d6629b9fe90e1b">
+<files psalm-version="5.21.1@8c473e2437be8b6a8fd8f630f0f11a16b114c494">
   <file src="src/Controller/BaseCrudController.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[Iter\apply(
-                $actions->getAsDto($page)->getActions(),
-                static function (ActionDto $actionDto) use ($actions, $permission): void {
-                    $actions->setPermission($actionDto->getName(), $permission);
-                },
-            )]]></code>
-    </MixedArgumentTypeCoercion>
+    <MixedArgument>
+      <code>$pageActions</code>
+    </MixedArgument>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
     <MixedMethodCall>
