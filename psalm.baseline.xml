@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.21.1@8c473e2437be8b6a8fd8f630f0f11a16b114c494">
+<files psalm-version="5.22.0@fe2c67ec89f358940f90db05efd2d663388b45a6">
   <file src="src/Controller/BaseCrudController.php">
     <MixedArgument>
-      <code>$pageActions</code>
+      <code><![CDATA[$pageActions]]></code>
     </MixedArgument>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
     <MixedMethodCall>
-      <code>new $className()</code>
+      <code><![CDATA[new $className()]]></code>
     </MixedMethodCall>
     <UndefinedThisPropertyAssignment>
       <code><![CDATA[$this->entityInstance]]></code>
@@ -24,17 +24,17 @@
   </file>
   <file src="src/Form/DataTransformer/EntityFieldDataTransformer.php">
     <MissingTemplateParam>
-      <code>DataTransformerInterface</code>
+      <code><![CDATA[DataTransformerInterface]]></code>
     </MissingTemplateParam>
   </file>
   <file src="src/Form/Type/CrudAutocompleteType.php">
     <MissingTemplateParam>
-      <code>CrudAutocompleteType</code>
+      <code><![CDATA[CrudAutocompleteType]]></code>
     </MissingTemplateParam>
   </file>
   <file src="src/Form/Type/EntityFieldDoctrineType.php">
     <MissingTemplateParam>
-      <code>EntityFieldDoctrineType</code>
+      <code><![CDATA[EntityFieldDoctrineType]]></code>
     </MissingTemplateParam>
   </file>
   <file src="src/Orm/EntityRepository.php">
@@ -43,18 +43,18 @@
       <code><![CDATA[$entityDto->getFqcn()]]></code>
     </ArgumentTypeCoercion>
     <InvalidOperand>
-      <code>$sortProperty</code>
-      <code>$sortProperty</code>
-      <code>0 + $queryTerm</code>
+      <code><![CDATA[$sortProperty]]></code>
+      <code><![CDATA[$sortProperty]]></code>
+      <code><![CDATA[0 + $queryTerm]]></code>
     </InvalidOperand>
     <MixedArgument>
-      <code>$entityFqcn</code>
-      <code>$entityName</code>
-      <code>$entityName</code>
-      <code>$entityName</code>
-      <code>$entityName</code>
-      <code>$entityName</code>
-      <code>$idClassName</code>
+      <code><![CDATA[$entityFqcn]]></code>
+      <code><![CDATA[$entityName]]></code>
+      <code><![CDATA[$entityName]]></code>
+      <code><![CDATA[$entityName]]></code>
+      <code><![CDATA[$entityName]]></code>
+      <code><![CDATA[$entityName]]></code>
+      <code><![CDATA[$idClassName]]></code>
       <code><![CDATA[$metadata->get('mappedBy')]]></code>
       <code><![CDATA[$metadata->get('targetEntity')]]></code>
       <code><![CDATA[$propertyConfig['property_name']]]></code>
@@ -62,51 +62,75 @@
       <code><![CDATA[$propertyConfig['property_name']]]></code>
       <code><![CDATA[$propertyConfig['property_name']]]></code>
       <code><![CDATA[$propertyConfig['property_name']]]></code>
-      <code>$propertyName</code>
-      <code>$queryTerm</code>
-      <code>$queryTerm</code>
-      <code>$queryTerm</code>
-      <code>$queryTerm</code>
-      <code>$sortOrder</code>
-      <code>$sortOrder</code>
-      <code>$sortOrder</code>
-      <code>$sortOrder</code>
-      <code>$sortOrder</code>
-      <code>$targetEntity</code>
-      <code>$targetEntityFqcn</code>
+      <code><![CDATA[$propertyName]]></code>
+      <code><![CDATA[$queryTerm]]></code>
+      <code><![CDATA[$queryTerm]]></code>
+      <code><![CDATA[$queryTerm]]></code>
+      <code><![CDATA[$queryTerm]]></code>
+      <code><![CDATA[$sortOrder]]></code>
+      <code><![CDATA[$sortOrder]]></code>
+      <code><![CDATA[$sortOrder]]></code>
+      <code><![CDATA[$sortOrder]]></code>
+      <code><![CDATA[$sortOrder]]></code>
+      <code><![CDATA[$targetEntity]]></code>
+      <code><![CDATA[$targetEntityFqcn]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
-      <code>$sortProperty</code>
-      <code>$sortProperty</code>
-      <code>$sortProperty</code>
-      <code>$sortProperty</code>
-      <code>$sortProperty</code>
+      <code><![CDATA[$sortProperty]]></code>
+      <code><![CDATA[$sortProperty]]></code>
+      <code><![CDATA[$sortProperty]]></code>
+      <code><![CDATA[$sortProperty]]></code>
+      <code><![CDATA[$sortProperty]]></code>
     </MixedArgumentTypeCoercion>
     <MixedMethodCall>
-      <code>getFqcn</code>
+      <code><![CDATA[getFqcn]]></code>
     </MixedMethodCall>
     <PossiblyNullArgument>
-      <code>$targetEntityFqcn</code>
+      <code><![CDATA[$targetEntityFqcn]]></code>
     </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$entityDto->getPrimaryKeyName()]]></code>
     </PossiblyNullOperand>
     <PossiblyNullReference>
-      <code>getRequest</code>
+      <code><![CDATA[getRequest]]></code>
     </PossiblyNullReference>
     <PossiblyUndefinedMethod>
-      <code>getName</code>
+      <code><![CDATA[getName]]></code>
     </PossiblyUndefinedMethod>
   </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
     <MixedArgumentTypeCoercion>
-      <code>$fieldErrors</code>
-      <code>$fieldErrors</code>
+      <code><![CDATA[$fieldErrors]]></code>
+      <code><![CDATA[$fieldErrors]]></code>
     </MixedArgumentTypeCoercion>
+  </file>
+  <file src="src/Test/Controller/IndexActionTestCase.php">
+    <LessSpecificReturnStatement>
+      <code><![CDATA[$this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+            function (Crawler $tr): array {
+                return $tr->filter('td')->each(
+                    function (Crawler $column): array|string|bool {
+                        if ($column->matches('.actions')) {
+                            return $this->mapActions($column->filter('[data-action-name]'));
+                        }
+
+                        if ($column->matches('.has-switch')) {
+                            return $column->filter('input.form-check-input:checked')->count() > 0;
+                        }
+
+                        return $column->text(normalizeWhitespace: true);
+                    },
+                );
+            },
+        )]]></code>
+    </LessSpecificReturnStatement>
+    <MoreSpecificReturnType>
+      <code><![CDATA[list<list<string|list<string>|array<mixed>>>]]></code>
+    </MoreSpecificReturnType>
   </file>
   <file src="src/Translation/EasyAdminTranslationMessage.php">
     <ImpureMethodCall>
-      <code>trans</code>
+      <code><![CDATA[trans]]></code>
     </ImpureMethodCall>
   </file>
 </files>
