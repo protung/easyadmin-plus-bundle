@@ -7,7 +7,9 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use Psl\Dict;
 use Psl\Str;
+use Psl\Type;
 use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -66,10 +68,9 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<list<string|array<string,string>|bool>> $expectedRows
-     * @param array<array-key, mixed>                      $queryParameters
+     * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertPage(array $expectedRows, array $queryParameters = []): void
+    protected function assertPage(array $queryParameters = []): void
     {
         $this->assertRequestGet($queryParameters);
 
@@ -78,9 +79,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
             $this->assertPageTitle($expectedTitle);
         }
 
-        $this->assertContentListHeaders();
-
-        $this->assertContentListRows(...$expectedRows);
+        $this->assertContentListRows();
     }
 
     /**
@@ -128,51 +127,91 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
     protected function assertContentListHeaders(): void
     {
-        $crawler = $this->getClient()->getCrawler();
+        self::assertSame($this->expectedListHeader(), $this->responseListHeaders());
+    }
 
-        $actualHeaders = $crawler->filter('#main table>thead>tr>th')->each(
-            static fn (Crawler $th): string => $th->text(normalizeWhitespace: true)
+    protected function assertContentListRows(): void
+    {
+        $actualHeaders = $this->responseListHeaders();
+
+        $actualListContentRows = $this->responseListContentRows();
+
+        $actual = Vec\map(
+            $actualListContentRows,
+            static fn (array $actualListContentRow): array => Dict\associate($actualHeaders, $actualListContentRow),
         );
-        self::assertSame($this->expectedListHeader(), $actualHeaders);
+
+        $this->assertArrayMatchesExpectedJson($actual);
     }
 
     /**
-     * @param list<string|array<string,string>|bool> ...$expectedRows
+     * @return non-empty-list<string>
      */
-    protected function assertContentListRows(array ...$expectedRows): void
+    private function responseListHeaders(): array
     {
-        self::assertSameSize(
-            $expectedRows,
-            $this->getClient()->getCrawler()->filter('#main table>tbody tr'),
-        );
+        $responseListHeadersCrawler = $this->getClient()->getCrawler()->filter('#main table>thead>tr>th');
 
-        $rowNumber = 0;
-        foreach ($expectedRows as $expectedRow) {
-            $this->assertContentListRow($expectedRow, $rowNumber);
-            $rowNumber++;
-        }
+        return Type\non_empty_vec(Type\string())->coerce(
+            $responseListHeadersCrawler->each(
+                static fn (Crawler $th): string => $th->text(normalizeWhitespace: true)
+            ),
+        );
     }
 
     /**
-     * @param list<string|array<string,string>|bool> $expectedRowData
-     * @param int                                    $rowNumber       The row number in the list (zero based).
+     * @return list<list<string|list<string>|array<mixed>>>
      */
-    private function assertContentListRow(array $expectedRowData, int $rowNumber): void
+    private function responseListContentRows(): array
     {
-        $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->eq($rowNumber)->filter('td')->each(
-            function (Crawler $column): array|string|bool {
-                if ($column->matches('.actions')) {
-                    return $this->mapActions($column->filter('[data-action-name]'));
-                }
+        return $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+            function (Crawler $tr): array {
+                return $tr->filter('td')->each(
+                    function (Crawler $column): array|string|bool {
+                        if ($column->matches('.actions')) {
+                            return $this->mapActions($column->filter('[data-action-name]'));
+                        }
 
-                if ($column->matches('.has-switch')) {
-                    return $column->filter('input.form-check-input:checked')->count() > 0;
-                }
+                        if ($column->matches('.has-switch')) {
+                            return $column->filter('input.form-check-input:checked')->count() > 0;
+                        }
 
-                return $column->text(normalizeWhitespace: true);
+                        return $column->text(normalizeWhitespace: true);
+                    },
+                );
             },
         );
+    }
 
-        $this->assertMatchesPattern($expectedRowData, $rowData);
+    /**
+     * @return array<mixed>|string
+     */
+    protected function extractDataFromElement(Crawler $elementToScrapeCrawler): array|string
+    {
+        if ($elementToScrapeCrawler->nodeName() === 'table') {
+            return $elementToScrapeCrawler->filter('tr')->each(
+                static function (Crawler $crawler): array {
+                    return $crawler->filter('td')->each(
+                        static function (Crawler $tdCrawler): string {
+                            return $tdCrawler->text(normalizeWhitespace: true);
+                        },
+                    );
+                },
+            );
+        }
+
+        if ($elementToScrapeCrawler->nodeName() === 'ul') {
+            return $elementToScrapeCrawler->filter('li')->each(
+                static function (Crawler $crawler): string {
+                    return $crawler->text(normalizeWhitespace: true);
+                },
+            );
+        }
+
+        if ($elementToScrapeCrawler->nodeName() === 'img') {
+            return $elementToScrapeCrawler->extract(['src', 'alt']);
+        }
+
+        // we fall back on getting all text inside element
+        return $elementToScrapeCrawler->text(normalizeWhitespace: true);
     }
 }
