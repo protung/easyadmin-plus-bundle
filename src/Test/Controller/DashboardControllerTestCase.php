@@ -6,13 +6,9 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
-use Psl\Iter;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use function count;
-use function is_countable;
 
 /**
  * @template TDashboardController
@@ -20,10 +16,9 @@ use function is_countable;
 abstract class DashboardControllerTestCase extends AdminWebTestCase
 {
     /**
-     * @param iterable<string,string|null> $expectedMenuItems
-     * @param array<mixed>                 $routeParameters
+     * @param array<mixed> $routeParameters
      */
-    protected function assertMenu(iterable $expectedMenuItems, array $routeParameters = []): void
+    protected function assertMenu(array $routeParameters = []): void
     {
         $client                  = $this->getClient();
         $originalFollowRedirects = $client->isFollowingRedirects();
@@ -31,30 +26,19 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
         $crawler = $client->request(Request::METHOD_GET, $this->prepareDashboardUrl($routeParameters));
         $client->followRedirects($originalFollowRedirects);
 
-        self::assertGreaterThan(0, $crawler->filter('#main-menu ul.menu')->count(), 'Menu DOM element does not exist.');
-
-        if (! is_countable($expectedMenuItems)) {
-            $expectedMenuItems = Iter\to_iterator($expectedMenuItems);
-        }
-
-        self::assertCount(
-            $crawler->filter('#main-menu ul.menu li')->count(),
-            $expectedMenuItems,
+        /** @var list<array{label: string, url: string}> $actualMenuItems */
+        $actualMenuItems = $crawler->filter('#main-menu ul.menu li.menu-item>a')->each(
+            static fn (Crawler $menuElementLink) => [
+                'label' => $menuElementLink->text(normalizeWhitespace: true),
+                'url' => $menuElementLink->attr('href'),
+            ],
         );
 
-        $index = 0;
-        foreach ($expectedMenuItems as $label => $value) {
-            $menuElement = $crawler->filter('#main-menu ul.menu li')->eq($index++);
+        $this->assertArrayMatchesExpectedJson($actualMenuItems);
 
-            $menuItemLink = $menuElement->filter('a')->first();
-
-            $url = null;
-            if (count($menuItemLink) > 0) {
-                $url = $menuItemLink->attr('href');
-            }
-
-            self::assertSame($label, $menuElement->text(normalizeWhitespace: true));
-            self::assertSame($value, $url);
+        foreach ($actualMenuItems as ['url' => $url]) {
+            $client->request(Request::METHOD_GET, $url);
+            self::assertResponseStatusCode($client->getResponse(), Response::HTTP_OK, 'Menu link is not accessible.');
         }
     }
 
