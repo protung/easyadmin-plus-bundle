@@ -15,8 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-use const PHP_EOL;
-
 abstract class AdminWebTestCase extends WebTestCase
 {
     private KernelBrowser|null $client = null;
@@ -144,18 +142,6 @@ abstract class AdminWebTestCase extends WebTestCase
                 [$actualMessage, $expectedMessage] = $data;
                 self::assertStringStartsWith($expectedMessage, $actualMessage);
             },
-        );
-    }
-
-    protected function assertResponseRedirectsToUrl(string $expectedRedirectUrl): void
-    {
-        self::assertTrue(
-            $this->getClient()->getResponse()->isRedirect($expectedRedirectUrl),
-            Str\format(
-                'Expected redirect to "%s".' . PHP_EOL . 'Actual redirect url: "%s".',
-                $expectedRedirectUrl,
-                $this->getClient()->getResponse()->headers->get('Location') ?? '',
-            ),
         );
     }
 }

@@ -191,6 +191,6 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     {
         $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
 
-        $this->assertResponseRedirectsToUrl($expectedRedirectUrl);
+        self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
     }
 }
