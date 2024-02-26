@@ -80,7 +80,8 @@ final class EntityField implements FieldInterface
             ->renderAsList()
             ->linkToEntity()
             ->setRequired(true)
-            ->setAssociationToOne();
+            ->setAssociationToOne()
+            ->setSortable(false);
     }
 
     public function setCrudController(string $crudControllerFqcn): self
