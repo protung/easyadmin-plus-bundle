@@ -45,11 +45,6 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @return list<string>
-     */
-    abstract protected function expectedListHeader(): array;
-
-    /**
      * @param array<array-key, mixed> $queryParameters
      */
     public function testPageLoadsWithEmptyList(array $queryParameters = []): void
@@ -123,11 +118,6 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         );
 
         self::assertSame($expectedIds, $rowData);
-    }
-
-    protected function assertContentListHeaders(): void
-    {
-        self::assertSame($this->expectedListHeader(), $this->responseListHeaders());
     }
 
     protected function assertContentListRows(): void
