@@ -6,7 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator;
 
 final class EntityMetadata
 {
-    private object|null $sourceEntityId;
+    private object|int|string|null $sourceEntityId;
 
     private string $sourceCrudControllerFqcn;
 
@@ -19,7 +19,7 @@ final class EntityMetadata
     /** @var string|(callable(object):?string)|null */
     private $targetEntityDisplayField;
 
-    private object|null $targetEntityId;
+    private object|int|string|null $targetEntityId;
 
     /**
      * @param class-string                           $targetCrudControllerFqcn
@@ -27,12 +27,12 @@ final class EntityMetadata
      * @param string|(callable(object):?string)|null $targetEntityDisplayField
      */
     public function __construct(
-        object|null $sourceEntityId,
+        object|int|string|null $sourceEntityId,
         string $sourceCrudControllerFqcn,
         string $targetCrudControllerFqcn,
         string $targetEntityFqcn,
         string|callable|null $targetEntityDisplayField,
-        object|null $targetEntityId,
+        object|int|string|null $targetEntityId,
     ) {
         $this->sourceEntityId           = $sourceEntityId;
         $this->sourceCrudControllerFqcn = $sourceCrudControllerFqcn;
@@ -42,7 +42,7 @@ final class EntityMetadata
         $this->targetEntityId           = $targetEntityId;
     }
 
-    public function sourceEntityId(): object|null
+    public function sourceEntityId(): object|int|string|null
     {
         return $this->sourceEntityId;
     }
@@ -76,7 +76,7 @@ final class EntityMetadata
         return $this->targetEntityDisplayField;
     }
 
-    public function targetEntityId(): object|null
+    public function targetEntityId(): object|int|string|null
     {
         return $this->targetEntityId;
     }
