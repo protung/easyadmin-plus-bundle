@@ -48,6 +48,7 @@ final class CrudAutocompleteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->define('choice_label');
+        $resolver->define('placeholder');
     }
 
     public function getParent(): string
