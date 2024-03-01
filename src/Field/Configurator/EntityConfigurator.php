@@ -138,6 +138,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                     EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
                     'propertyName' => $propertyName,
                     'originatingPage' => $crud->getCurrentPage(),
+                    EntityField::OPTION_ENTITY_DISPLAY_FIELD => $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
                 ])
                 ->generateUrl();
 
