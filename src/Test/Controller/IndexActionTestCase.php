@@ -78,46 +78,36 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param list<string>            $expectedIds
      * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertSearch(string $searchQuery, array $expectedIds, array $queryParameters = []): void
+    protected function assertSearch(string $searchQuery, array $queryParameters = []): void
     {
         $queryParameters[EA::QUERY] = $searchQuery;
 
         $this->assertRequestGet($queryParameters);
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
 
-        $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+        $rows = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
             static fn (Crawler $row): string => $row->attr('data-id') ?? ''
         );
 
-        self::assertSame($expectedIds, $rowData);
+        $this->assertArrayMatchesExpectedJson($rows);
     }
 
     /**
      * @param array<array-key, mixed> $filters
-     * @param list<string>            $expectedIds
      * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertFilters(array $filters, array $expectedIds, array $queryParameters = []): void
+    protected function assertFilters(array $filters, array $queryParameters = []): void
     {
         $queryParameters[EA::FILTERS] = $filters;
 
         $this->assertRequestGet($queryParameters);
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
 
-        $rowData = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+        $rows = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
             static fn (Crawler $row): string => $row->attr('data-id') ?? ''
         );
 
-        self::assertSame($expectedIds, $rowData);
+        $this->assertArrayMatchesExpectedJson($rows);
     }
 
     protected function assertContentListRows(): void
