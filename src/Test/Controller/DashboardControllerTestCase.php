@@ -6,9 +6,12 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
+use Psl\Str;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+use function array_key_exists;
 
 /**
  * @template TDashboardController
@@ -27,18 +30,54 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
         $client->followRedirects($originalFollowRedirects);
 
         /** @var list<array{label: string, url: string}> $actualMenuItems */
-        $actualMenuItems = $crawler->filter('#main-menu ul.menu li.menu-item>a')->each(
-            static fn (Crawler $menuElementLink) => [
-                'label' => $menuElementLink->text(normalizeWhitespace: true),
-                'url' => $menuElementLink->attr('href'),
-            ],
+        $actualMenuItems = $crawler->filter('#main-menu ul.menu > li.menu-item > a')->each(
+            static function (Crawler $menuElementLink) {
+                if (Str\contains($menuElementLink->attr('class') ?? '', 'submenu-toggle')) {
+                    return [
+                        'label' => $menuElementLink->text(normalizeWhitespace: true),
+                        'submenu' => $menuElementLink->ancestors()->filter('ul.submenu > li.menu-item > a')->each(
+                            static fn (Crawler $menuElementLink) => [
+                                'label' => $menuElementLink->text(normalizeWhitespace: true),
+                                'url' => $menuElementLink->attr('href'),
+                            ]
+                        ),
+                    ];
+                }
+
+                return [
+                    'label' => $menuElementLink->text(normalizeWhitespace: true),
+                    'url' => $menuElementLink->attr('href'),
+                ];
+            },
         );
 
         $this->assertArrayMatchesExpectedJson($actualMenuItems);
+        $this->assertMenuItems($actualMenuItems);
+    }
 
-        foreach ($actualMenuItems as ['url' => $url]) {
-            $client->request(Request::METHOD_GET, $url);
-            self::assertResponseStatusCode($client->getResponse(), Response::HTTP_OK, 'Menu link is not accessible.');
+    /**
+     * @param list<array{label: string, url?: string, submenu?: list<array{label: string, url: string}>}> $menuItems
+     */
+    protected function assertMenuItems(array $menuItems): void
+    {
+        foreach ($menuItems as $menuItem) {
+            if (array_key_exists('url', $menuItem)) {
+                $url = $menuItem['url'];
+
+                self::ensureKernelShutdown();
+
+                $this->getClient()->request(Request::METHOD_GET, $url);
+
+                self::assertResponseStatusCode(
+                    $this->getClient()->getResponse(),
+                    Response::HTTP_OK,
+                    Str\format('Menu link "%s" is not accessible.', $url),
+                );
+            }
+
+            if (array_key_exists('submenu', $menuItem)) {
+                $this->assertMenuItems($menuItem['submenu']);
+            }
         }
     }
 
