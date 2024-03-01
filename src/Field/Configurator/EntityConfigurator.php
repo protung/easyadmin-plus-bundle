@@ -89,7 +89,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             $sourceCrudControllerFqcn,
             $targetCrudControllerFqcn,
             $targetEntityFqcn,
-            $this->getEntityDisplayField($field),
+            EntityField::getEntityDisplayField($field),
             $field->getValue(),
         );
 
@@ -323,20 +323,5 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         }
 
         $field->setFormTypeOption('attr.data-' . EntityField::PARAM_ON_CHANGE_CONTEXT_HANDLE_URL, $controllerUrl);
-    }
-
-    /**
-     * @return string|(callable(object):?string)|null
-     */
-    private function getEntityDisplayField(FieldDto $field): string|callable|null
-    {
-        /** @var string|(callable(object):?string)|null $value */
-        $value = $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD);
-
-        if (is_callable($value)) {
-            return $value;
-        }
-
-        return Type\nullable(Type\string())->coerce($value);
     }
 }

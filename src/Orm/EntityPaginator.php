@@ -169,7 +169,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         $fields = Type\vec(Type\instance_of(FieldInterface::class))->coerce($controller->configureFields($autocompleteContext['originatingPage']));
         $field  = Type\instance_of(FieldDto::class)->coerce(FieldCollection::new($fields)->getByProperty($autocompleteContext['propertyName']));
 
-        $targetEntityDisplayField = $this->getEntityDisplayField($field);
+        $targetEntityDisplayField = EntityField::getEntityDisplayField($field);
         if ($targetEntityDisplayField === null) {
             return $this->decoratedPaginator->getResultsAsJson();
         }
@@ -221,18 +221,5 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         );
 
         return Json\encode($generatedJson);
-    }
-
-    /** @return string|(callable(object):?string)|null */
-    private function getEntityDisplayField(FieldDto $field): string|callable|null
-    {
-        /** @var string|(callable(object):?string)|null $value */
-        $value = $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD);
-
-        if (is_callable($value)) {
-            return $value;
-        }
-
-        return Type\nullable(Type\string())->coerce($value);
     }
 }

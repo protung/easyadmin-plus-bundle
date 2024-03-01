@@ -121,7 +121,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
             return null;
         }
 
-        $targetEntityDisplayField = $this->getEntityDisplayField($field);
+        $targetEntityDisplayField = EntityField::getEntityDisplayField($field);
         if ($targetEntityDisplayField !== null) {
             if (is_callable($targetEntityDisplayField)) {
                 return $targetEntityDisplayField($entityInstance);
@@ -140,18 +140,5 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
                 $field->getProperty(),
             ),
         );
-    }
-
-    /** @return string|(callable(object):?string)|null */
-    private function getEntityDisplayField(FieldDto $field): string|callable|null
-    {
-        /** @var string|(callable(object):?string)|null $value */
-        $value = $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD);
-
-        if (is_callable($value)) {
-            return $value;
-        }
-
-        return Type\nullable(Type\string())->coerce($value);
     }
 }

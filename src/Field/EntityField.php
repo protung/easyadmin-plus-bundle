@@ -8,11 +8,15 @@ use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Form\Type\EntityFieldDoctrineType;
+use Psl\Type;
+
+use function is_callable;
 
 final class EntityField implements FieldInterface
 {
@@ -185,5 +189,20 @@ final class EntityField implements FieldInterface
         $this->setCustomOption(self::OPTION_ENTITY_DTO_FACTORY_CALLABLE, $callable);
 
         return $this;
+    }
+
+    /**
+     * @return string|(callable(object):?string)|null
+     */
+    public static function getEntityDisplayField(FieldDto $field): string|callable|null
+    {
+        /** @var string|(callable(object):?string)|null $value */
+        $value = $field->getCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD);
+
+        if (is_callable($value)) {
+            return $value;
+        }
+
+        return Type\nullable(Type\string())->coerce($value);
     }
 }
