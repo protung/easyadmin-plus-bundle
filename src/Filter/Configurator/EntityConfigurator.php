@@ -19,10 +19,6 @@ use Protung\EasyAdminPlusBundle\Form\Type\CrudAutocompleteType;
 use Psl\Str;
 use Psl\Type;
 use RuntimeException;
-use Stringable;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-
-use function is_callable;
 
 /**
  * @see https://github.com/EasyCorp/EasyAdminBundle/issues/4244
@@ -31,7 +27,6 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 {
     public function __construct(
         private AdminUrlGeneratorInterface $adminUrlGenerator,
-        private PropertyAccessorInterface $propertyAccessor,
     ) {
     }
 
@@ -69,7 +64,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $filterDto->setFormTypeOption(
             'value_type_options.choice_label',
-            fn (object $targetEntityInstance): string|null => $this->formatAsString($targetEntityInstance, $fieldDto),
+            static fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto),
         );
 
         $autocompleteMode = Type\bool()->coerce($fieldDto->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
@@ -113,32 +108,5 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
             ->generateUrl();
 
         $filterDto->setFormTypeOption('value_type_options.attr.data-ea-autocomplete-endpoint-url', $autocompleteEndpointUrl);
-    }
-
-    private function formatAsString(object|null $entityInstance, FieldDto $field): string|null
-    {
-        if ($entityInstance === null) {
-            return null;
-        }
-
-        $targetEntityDisplayField = EntityField::getEntityDisplayField($field);
-        if ($targetEntityDisplayField !== null) {
-            if (is_callable($targetEntityDisplayField)) {
-                return $targetEntityDisplayField($entityInstance);
-            }
-
-            return Type\nullable(Type\string())->coerce($this->propertyAccessor->getValue($entityInstance, $targetEntityDisplayField));
-        }
-
-        if ($entityInstance instanceof Stringable) {
-            return (string) $entityInstance;
-        }
-
-        throw new RuntimeException(
-            Str\format(
-                'The "%s" field cannot be configured because it does not define the related entity display value set with the "setEntityDisplayField()" method. or implement "__toString()".',
-                $field->getProperty(),
-            ),
-        );
     }
 }

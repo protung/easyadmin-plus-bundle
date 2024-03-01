@@ -26,8 +26,6 @@ use Psl\Type\Exception\CoercionException;
 use Psl\Vec;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
-use function is_callable;
-
 final readonly class EntityPaginator implements EntityPaginatorInterface
 {
     public function __construct(
@@ -169,18 +167,12 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         $fields = Type\vec(Type\instance_of(FieldInterface::class))->coerce($controller->configureFields($autocompleteContext['originatingPage']));
         $field  = Type\instance_of(FieldDto::class)->coerce(FieldCollection::new($fields)->getByProperty($autocompleteContext['propertyName']));
 
-        $targetEntityDisplayField = EntityField::getEntityDisplayField($field);
-        if ($targetEntityDisplayField === null) {
-            return $this->decoratedPaginator->getResultsAsJson();
-        }
-
-        $primaryKeyName = Type\string()->coerce($context->getEntity()->getPrimaryKeyName());
-
         $results = $this->decoratedPaginator->getResults();
         if ($results === null) {
             return $this->decoratedPaginator->getResultsAsJson();
         }
 
+        $primaryKeyName = Type\string()->coerce($context->getEntity()->getPrimaryKeyName());
         $reindexResults = Dict\reindex(
             Type\vec(Type\object())->coerce($results),
             fn (object $entityInstance): string => (string) $this->propertyAccessor->getValue($entityInstance, $primaryKeyName),
@@ -205,16 +197,11 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
 
         $generatedJson['results'] = Vec\map(
             $generatedJson['results'],
-            function (array $result) use ($reindexResults, $targetEntityDisplayField): array {
-                $entityInstance = Type\object()->coerce($reindexResults[$result[EA::ENTITY_ID]]);
-
-                if (is_callable($targetEntityDisplayField)) {
-                    $entityAsString = $targetEntityDisplayField($entityInstance);
-                } else {
-                    $entityAsString = (string) $this->propertyAccessor->getValue($entityInstance, $targetEntityDisplayField);
-                }
-
-                $result['entityAsString'] = $entityAsString;
+            static function (array $result) use ($reindexResults, $field): array {
+                $result['entityAsString'] = EntityField::formatAsString(
+                    Type\object()->coerce($reindexResults[$result[EA::ENTITY_ID]]),
+                    $field,
+                );
 
                 return $result;
             },

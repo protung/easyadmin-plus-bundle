@@ -14,7 +14,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Form\Type\EntityFieldDoctrineType;
+use Psl\Str;
 use Psl\Type;
+use RuntimeException;
+use Stringable;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use function is_callable;
 
@@ -204,5 +208,32 @@ final class EntityField implements FieldInterface
         }
 
         return Type\nullable(Type\string())->coerce($value);
+    }
+
+    public static function formatAsString(object|null $entityInstance, FieldDto $field): string|null
+    {
+        if ($entityInstance === null) {
+            return null;
+        }
+
+        $targetEntityDisplayField = self::getEntityDisplayField($field);
+        if ($targetEntityDisplayField !== null) {
+            if (is_callable($targetEntityDisplayField)) {
+                return $targetEntityDisplayField($entityInstance);
+            }
+
+            return Type\nullable(Type\string())->coerce(PropertyAccess::createPropertyAccessor()->getValue($entityInstance, $targetEntityDisplayField));
+        }
+
+        if ($entityInstance instanceof Stringable) {
+            return (string) $entityInstance;
+        }
+
+        throw new RuntimeException(
+            Str\format(
+                'The "%s" field cannot be configured because it does not define the related entity display value set with the "setEntityDisplayField()" method. or implement "__toString()".',
+                $field->getProperty(),
+            ),
+        );
     }
 }

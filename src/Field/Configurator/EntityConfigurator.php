@@ -24,7 +24,6 @@ use Psl\Str;
 use Psl\Type;
 use Psl\Vec;
 use RuntimeException;
-use Stringable;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -203,11 +202,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setValue($targetEntityInstance);
         $field->setFormattedValue(
-            $this->formatAsString(
-                $targetEntityInstance,
-                $entityMetadata,
-                $field,
-            ),
+            EntityField::formatAsString($targetEntityInstance, $field),
         );
     }
 
@@ -243,7 +238,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
                     return [
                         'relatedUrl' => $relatedUrl,
-                        'formattedValue' => $this->formatAsString($entity, $entityMetadata, $field),
+                        'formattedValue' => EntityField::formatAsString($entity, $field),
                     ];
                 },
             );
@@ -252,33 +247,6 @@ final class EntityConfigurator implements FieldConfiguratorInterface
         }
 
         $field->setFormattedValue($formattedValue);
-    }
-
-    private function formatAsString(object|null $entityInstance, EntityMetadata $entityMetadata, FieldDto $field): string|null
-    {
-        if ($entityInstance === null) {
-            return null;
-        }
-
-        $targetEntityDisplayField = $entityMetadata->targetEntityDisplayField();
-        if ($targetEntityDisplayField !== null) {
-            if (is_callable($targetEntityDisplayField)) {
-                return $targetEntityDisplayField($entityInstance);
-            }
-
-            return (string) $this->propertyAccessor->getValue($entityInstance, $targetEntityDisplayField);
-        }
-
-        if ($entityInstance instanceof Stringable) {
-            return (string) $entityInstance;
-        }
-
-        throw new RuntimeException(
-            Str\format(
-                'The "%s" field cannot be configured because it doesn\'t define the related entity display value set with the "setEntityDisplayField()" method. or implement "__toString()".',
-                $field->getProperty(),
-            ),
-        );
     }
 
     private function generateLinkToAssociatedEntity(string $crudController, EntityDto $entityDto): string
