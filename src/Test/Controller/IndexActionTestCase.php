@@ -83,14 +83,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     protected function assertSearch(string $searchQuery, array $queryParameters = []): void
     {
         $queryParameters[EA::QUERY] = $searchQuery;
-
-        $this->assertRequestGet($queryParameters);
-
-        $rows = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
-            static fn (Crawler $row): string => $row->attr('data-id') ?? ''
-        );
-
-        $this->assertArrayMatchesExpectedJson($rows);
+        $this->assertListOfIds($queryParameters);
     }
 
     /**
@@ -100,7 +93,24 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     protected function assertFilters(array $filters, array $queryParameters = []): void
     {
         $queryParameters[EA::FILTERS] = $filters;
+        $this->assertListOfIds($queryParameters);
+    }
 
+    /**
+     * @param array<array-key, mixed> $sorting
+     * @param array<array-key, mixed> $queryParameters
+     */
+    protected function assertSorting(array $sorting, array $queryParameters = []): void
+    {
+        $queryParameters[EA::SORT] = $sorting;
+        $this->assertListOfIds($queryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    private function assertListOfIds(array $queryParameters): void
+    {
         $this->assertRequestGet($queryParameters);
 
         $rows = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
