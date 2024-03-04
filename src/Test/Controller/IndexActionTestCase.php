@@ -44,6 +44,11 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         return static::$expectedPageTitle;
     }
 
+    protected function listContentRowSelector(): string
+    {
+        return $this->mainContentSelector() . ' table>tbody tr';
+    }
+
     /**
      * @param array<array-key, mixed> $queryParameters
      */
@@ -58,7 +63,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
         self::assertSame(
             Vec\concat(Vec\fill(3, 'empty-row'), ['no-results'], Vec\fill(11, 'empty-row')),
-            $crawler->filter('#main table>tbody tr')->extract(['class']),
+            $crawler->filter($this->listContentRowSelector())->extract(['class']),
         );
     }
 
@@ -113,7 +118,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     {
         $this->assertRequestGet($queryParameters);
 
-        $rows = $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+        $rows = $this->getClient()->getCrawler()->filter($this->listContentRowSelector())->each(
             static fn (Crawler $row): string => $row->attr('data-id') ?? ''
         );
 
@@ -139,7 +144,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     private function responseListHeaders(): array
     {
-        $responseListHeadersCrawler = $this->getClient()->getCrawler()->filter('#main table>thead>tr>th');
+        $responseListHeadersCrawler = $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' table>thead>tr>th');
 
         return Type\non_empty_vec(Type\string())->coerce(
             $responseListHeadersCrawler->each(
@@ -153,7 +158,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     private function responseListContentRows(): array
     {
-        return $this->getClient()->getCrawler()->filter('#main table>tbody tr')->each(
+        return $this->getClient()->getCrawler()->filter($this->listContentRowSelector())->each(
             function (Crawler $tr): array {
                 return $tr->filter('td')->each(
                     function (Crawler $column): array|string|bool {

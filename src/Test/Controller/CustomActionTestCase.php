@@ -26,6 +26,11 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
         return static::$expectedPageTitle;
     }
 
+    protected function mainContentSelector(): string
+    {
+        return '.content-wrapper';
+    }
+
     /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
@@ -104,6 +109,6 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
 
     private function findForm(Crawler $crawler): Form
     {
-        return $crawler->filter('.content-wrapper form')->form();
+        return $crawler->filter($this->mainContentSelector() . ' form')->form();
     }
 }

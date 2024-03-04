@@ -19,8 +19,6 @@ use function is_countable;
  */
 abstract class DetailActionTestCase extends AdminControllerWebTestCase
 {
-    private const DETAIL_PAGE_FIELDS_SELECTOR = '#main fieldset div.field-group';
-
     protected static string $expectedEntityIdUnderTest;
 
     protected static string|null $expectedPageTitle = null;
@@ -66,6 +64,11 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         return static::$expectedEntityIdUnderTest;
     }
 
+    protected function detailContentFieldsSelector(): string
+    {
+        return $this->mainContentSelector() . ' fieldset div.field-group';
+    }
+
     /**
      * @param iterable<string,string> $expectedDetails
      * @param array<mixed>            $queryParameters
@@ -107,7 +110,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         }
 
         self::assertCount(
-            $this->getClient()->getCrawler()->filter(self::DETAIL_PAGE_FIELDS_SELECTOR)->count(),
+            $this->getClient()->getCrawler()->filter($this->detailContentFieldsSelector())->count(),
             $expectedDetails,
         );
 
@@ -125,14 +128,14 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 
     private function getDetailLabel(int $index): string
     {
-        $field = $this->getClient()->getCrawler()->filter(self::DETAIL_PAGE_FIELDS_SELECTOR)->eq($index);
+        $field = $this->getClient()->getCrawler()->filter($this->detailContentFieldsSelector())->eq($index);
 
         return $field->filter('div.field-label')->text(normalizeWhitespace: true);
     }
 
     private function getDetailValue(int $index): string
     {
-        $field = $this->getClient()->getCrawler()->filter(self::DETAIL_PAGE_FIELDS_SELECTOR)->eq($index);
+        $field = $this->getClient()->getCrawler()->filter($this->detailContentFieldsSelector())->eq($index);
 
         return $field->filter('div.field-value')->text(normalizeWhitespace: true);
     }

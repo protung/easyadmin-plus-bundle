@@ -38,6 +38,11 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         return '/admin';
     }
 
+    protected function mainContentSelector(): string
+    {
+        return '#main';
+    }
+
     /**
      * @param array<array-key, mixed> $queryParameters
      * @param positive-int            $expectedResponseStatusCode

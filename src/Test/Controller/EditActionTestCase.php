@@ -181,6 +181,6 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
 
     private function findForm(Crawler $crawler): Form
     {
-        return $crawler->filter('#main form')->form();
+        return $crawler->filter($this->mainContentSelector() . ' form')->form();
     }
 }
