@@ -174,7 +174,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
                 $actionsCrawler->each(
                     static fn (Crawler $crawler): array => [
                         Type\non_empty_string()->assert($crawler->attr('data-action-name')),
-                        $crawler->text(normalizeWhitespace: true) !== '' ?: $crawler->attr('title') ?? '',
+                        $crawler->text(normalizeWhitespace: true) !== '' ? $crawler->text(normalizeWhitespace: true) : $crawler->attr('title') ?? '',
                     ]
                 ),
             ),
