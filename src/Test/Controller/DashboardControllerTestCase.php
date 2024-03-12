@@ -39,7 +39,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
                             static fn (Crawler $menuElementLink) => [
                                 'label' => $menuElementLink->text(normalizeWhitespace: true),
                                 'url' => $menuElementLink->attr('href'),
-                            ]
+                            ],
                         ),
                     ];
                 }

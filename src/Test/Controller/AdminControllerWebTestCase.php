@@ -86,7 +86,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         $flatFieldErrors = $this->flattenFieldErrors($fieldErrors);
 
         $genericErrors = $crawler->filter('.invalid-feedback')->reduce(
-            static fn (Crawler $crawler): bool => ! Iter\contains($flatFieldErrors, $crawler->getNode(0))
+            static fn (Crawler $crawler): bool => ! Iter\contains($flatFieldErrors, $crawler->getNode(0)),
         );
 
         return array_merge(
@@ -160,7 +160,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
             /**
              * @param FormField|array<array-key, FormField> $fields
              */
-            fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields)
+            fn (FormField|array $fields): array => $this->mapFieldsErrors($crawler, $fields),
         );
     }
 
@@ -175,7 +175,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
                     static fn (Crawler $crawler): array => [
                         Type\non_empty_string()->assert($crawler->attr('data-action-name')),
                         $crawler->text(normalizeWhitespace: true) !== '' ? $crawler->text(normalizeWhitespace: true) : $crawler->attr('title') ?? '',
-                    ]
+                    ],
                 ),
             ),
         );

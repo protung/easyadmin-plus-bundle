@@ -119,7 +119,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         $this->assertRequestGet($queryParameters);
 
         $rows = $this->getClient()->getCrawler()->filter($this->listContentRowSelector())->each(
-            static fn (Crawler $row): string => $row->attr('data-id') ?? ''
+            static fn (Crawler $row): string => $row->attr('data-id') ?? '',
         );
 
         $this->assertArrayMatchesExpectedJson($rows);
@@ -148,7 +148,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
         return Type\non_empty_vec(Type\string())->coerce(
             $responseListHeadersCrawler->each(
-                static fn (Crawler $th): string => $th->text(normalizeWhitespace: true)
+                static fn (Crawler $th): string => $th->text(normalizeWhitespace: true),
             ),
         );
     }
