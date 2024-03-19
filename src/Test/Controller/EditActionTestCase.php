@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class EditActionTestCase extends AdminControllerWebTestCase
 {
-    protected static string $expectedEntityIdUnderTest;
+    protected static string|int $expectedEntityIdUnderTest;
 
     protected static string|null $expectedPageTitle = null;
 
@@ -49,7 +49,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         return static::$expectedPageTitle;
     }
 
-    protected function entityIdUnderTest(): string
+    protected function entityIdUnderTest(): string|int
     {
         $rp = new ReflectionProperty($this, 'expectedEntityIdUnderTest');
         if (! $rp->isInitialized()) {

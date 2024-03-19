@@ -21,7 +21,7 @@ use function array_merge;
  */
 abstract class DeleteActionTestCase extends AdminControllerWebTestCase
 {
-    protected static string $expectedEntityIdUnderTest;
+    protected static string|int $expectedEntityIdUnderTest;
 
     /**
      * @param array<array-key, mixed> $queryParameters
@@ -51,7 +51,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         return $crawler->filter($this->mainContentSelector() . ' form#delete-form')->form();
     }
 
-    protected function entityIdUnderTest(): string
+    protected function entityIdUnderTest(): string|int
     {
         $rp = new ReflectionProperty($this, 'expectedEntityIdUnderTest');
         if (! $rp->isInitialized()) {
