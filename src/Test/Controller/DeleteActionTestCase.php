@@ -7,6 +7,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Str;
 use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
@@ -17,7 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 use function array_merge;
 
 /**
- * @template TCrudController
+ * @template TEntity of object
+ * @template TCrudController of BaseCrudController<TEntity>
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class DeleteActionTestCase extends AdminControllerWebTestCase
@@ -89,6 +91,29 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         }
 
         return static::$expectedEntityIdUnderTest;
+    }
+
+    /**
+     * @return TEntity|null
+     */
+    protected function findEntityUnderTest(): object|null
+    {
+        return $this->getObjectManager()->find(
+            static::controllerUnderTest()::getEntityFqcn(),
+            $this->entityIdUnderTest(),
+        );
+    }
+
+    /**
+     * @return TEntity
+     */
+    protected function getEntityUnderTest(): object
+    {
+        $entity = $this->findEntityUnderTest();
+
+        self::assertNotNull($entity);
+
+        return $entity;
     }
 
     protected function actionName(): string
