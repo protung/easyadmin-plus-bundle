@@ -19,6 +19,7 @@ use Psl\Type;
 use RuntimeException;
 use Stringable;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 use function is_callable;
 
@@ -71,7 +72,7 @@ final class EntityField implements FieldInterface
 
     public const PARAM_ON_CHANGE_CONTEXT_HANDLE_URL = 'ea-custom-entity-field-on-change-handle-url';
 
-    public static function new(string $propertyName, string|null $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)

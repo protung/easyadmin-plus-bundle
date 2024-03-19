@@ -6,12 +6,13 @@ namespace Protung\EasyAdminPlusBundle\Field;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 final class JsonField implements FieldInterface
 {
     use FieldTrait;
 
-    public static function new(string $propertyName, string|null $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)
