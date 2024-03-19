@@ -7,11 +7,10 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
-use Psl\Iter;
 use Psl\Str;
+use Psl\Type;
 use ReflectionProperty;
-
-use function is_countable;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @template TCrudController
@@ -21,29 +20,9 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
 {
     protected static string|int $expectedEntityIdUnderTest;
 
-    protected static string|null $expectedPageTitle = null;
-
     protected function actionName(): string
     {
         return Action::DETAIL;
-    }
-
-    protected function expectedPageTitle(): string|null
-    {
-        if (static::$expectedPageTitle === null) {
-            throw new LogicException(
-                Str\format(
-                    <<<'MSG'
-                        Expected page title was not set.
-                        Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
-                        If your index page does not have a title you need to overwrite %1$s method and return NULL.
-                    MSG,
-                    __METHOD__,
-                ),
-            );
-        }
-
-        return static::$expectedPageTitle;
     }
 
     protected function entityIdUnderTest(): string|int
@@ -64,79 +43,112 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         return static::$expectedEntityIdUnderTest;
     }
 
-    protected function detailContentFieldsSelector(): string
-    {
-        return $this->mainContentSelector() . ' fieldset div.field-group';
-    }
-
     /**
-     * @param iterable<string,string> $expectedDetails
-     * @param array<mixed>            $queryParameters
-     * @param array<string,string>    $expectedActions
+     * @param array<array-key, mixed> $queryParameters
      */
-    protected function assertPage(iterable $expectedDetails, array $expectedActions = [], array $queryParameters = []): void
+    protected function assertPage(array $queryParameters = []): void
     {
         $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
 
         $this->assertRequestGet($queryParameters);
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
 
-        $this->assertActions($expectedActions);
-        $this->assertDetails($expectedDetails);
+        $actual = [
+            'page_title' => $this->extractPageTitle(),
+            'data' => $this->extractData(),
+            'actions' => $this->extractActions(),
+        ];
+
+        $this->assertArrayMatchesExpectedJson($actual);
+    }
+
+    protected function extractPageTitle(): string
+    {
+        $title = $this->getClient()->getCrawler()->filter('h1.title');
+
+        self::assertCount(1, $title);
+
+        return $title->text(normalizeWhitespace: true);
     }
 
     /**
-     * @param array<string,string> $expectedActions
+     * @return array<string, string>
      */
-    protected function assertActions(array $expectedActions): void
+    protected function extractActions(): array
     {
         $actionsCrawler = $this->getClient()->getCrawler()->filter('.page-actions a');
 
-        $actualActions = $this->mapActions($actionsCrawler);
-
-        self::assertSame($expectedActions, $actualActions);
+        return $this->mapActions($actionsCrawler);
     }
 
     /**
-     * @param iterable<string,string> $expectedDetails
+     * @return array<mixed>
      */
-    protected function assertDetails(iterable $expectedDetails): void
+    protected function extractData(): array
     {
-        if (! is_countable($expectedDetails)) {
-            $expectedDetails = Iter\to_iterator($expectedDetails);
+        $tabs =  $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' .nav-tabs');
+
+        if ($tabs->count() > 0) {
+            return $tabs->filter('.nav-item a')->each(
+                function (Crawler $tab): array {
+                    $tabDataSelector = Type\non_empty_string()->coerce($tab->attr('href'));
+
+                    $tabData = $this->getClient()->getCrawler()->filter($tabDataSelector);
+
+                    $fieldsets = $tabData->filter($tabDataSelector . ' fieldset');
+                    if ($fieldsets->count() > 0) {
+                        return [
+                            'tab' => $tab->text(normalizeWhitespace: true),
+                            'fieldsets' => $fieldsets->each(
+                                $this->extractFieldsFromFieldset(...),
+                            ),
+                        ];
+                    }
+
+                    return [
+                        'tab' => $tab->text(normalizeWhitespace: true),
+                        'fields' => $tabData->filter($this->fieldSelector())->each(
+                            $this->extractField(...),
+                        ),
+                    ];
+                },
+            );
         }
 
-        self::assertCount(
-            $this->getClient()->getCrawler()->filter($this->detailContentFieldsSelector())->count(),
-            $expectedDetails,
+        return $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' fieldset')->each(
+            $this->extractFieldsFromFieldset(...),
         );
-
-        $index = 0;
-        foreach ($expectedDetails as $label => $value) {
-            $this->assertDetail($index++, $label, $value);
-        }
     }
 
-    private function assertDetail(int $index, string $label, string $value): void
+    /**
+     * @return array<mixed>
+     */
+    protected function extractFieldsFromFieldset(Crawler $fieldset): array
     {
-        self::assertSame($label, $this->getDetailLabel($index));
-        $this->assertMatchesPattern($value, $this->getDetailValue($index));
+        $fieldsetTitle = $fieldset->filter('div.form-fieldset-title')->text('', normalizeWhitespace: true);
+
+        return [
+            'title' =>  $fieldsetTitle !== '' ? $fieldsetTitle : null,
+            'fields' => $fieldset->filter($this->fieldSelector())->each(
+                $this->extractField(...),
+            ),
+        ];
     }
 
-    private function getDetailLabel(int $index): string
+    /**
+     * @return array<string, string|null>
+     */
+    protected function extractField(Crawler $field): array
     {
-        $field = $this->getClient()->getCrawler()->filter($this->detailContentFieldsSelector())->eq($index);
+        $label = $field->filter('div.field-label')->text('', normalizeWhitespace: true);
 
-        return $field->filter('div.field-label')->text(normalizeWhitespace: true);
+        return [
+            'label' => $label !== '' ? $label : null,
+            'value' => $field->filter('div.field-value')->text(normalizeWhitespace: true),
+        ];
     }
 
-    private function getDetailValue(int $index): string
+    protected function fieldSelector(): string
     {
-        $field = $this->getClient()->getCrawler()->filter($this->detailContentFieldsSelector())->eq($index);
-
-        return $field->filter('div.field-value')->text(normalizeWhitespace: true);
+        return 'div.field-group';
     }
 }
