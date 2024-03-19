@@ -12,6 +12,7 @@ use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use function array_merge;
 
@@ -44,6 +45,27 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
 
         $redirectQueryParameters[EA::CRUD_ACTION] ??= Action::INDEX;
         $this->assertResponseIsRedirect($redirectQueryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    protected function assertDeleteEntityRespondsWithStatusCodeForbidden(array $queryParameters = []): void
+    {
+        $indexPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::INDEX]);
+        $crawler                  = $this->assertRequestGet($indexPageQueryParameters);
+
+        $form                             = $this->findForm($crawler);
+        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        $this->getClient()->request(
+            Request::METHOD_POST,
+            $this->prepareAdminUrl($queryParameters),
+            $form->getValues(),
+        );
+
+        self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_FORBIDDEN);
+
+        $this->clearObjectManager();
     }
 
     private function findForm(Crawler $crawler): Form
