@@ -21,10 +21,18 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @template TEntity of object
+ */
 abstract class BaseCrudController extends AbstractCrudController
 {
     protected const FIELD_SORT_ASC  = 'ASC';
     protected const FIELD_SORT_DESC = 'DESC';
+
+    /**
+     * @return class-string<TEntity>
+     */
+    abstract public static function getEntityFqcn(): string;
 
     /**
      * Calling this method will disable all standard actions.
