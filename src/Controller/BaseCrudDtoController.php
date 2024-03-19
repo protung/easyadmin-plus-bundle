@@ -21,41 +21,42 @@ use Symfony\Component\Form\FormInterface;
 /**
  * Original inspiration from https://gist.github.com/ragboyjr/2ed5734eb839483ca22892f6955b2792
  *
- * @template TEntityClass of object
- * @template TDtoClass of object
+ * @template TEntity of object
+ * @template TDto of object
+ * @template-extends BaseCrudController<TEntity>
  */
 abstract class BaseCrudDtoController extends BaseCrudController implements EventSubscriberInterface
 {
-    /** @var TEntityClass|null */
+    /** @var TEntity|null */
     private object|null $temporaryEntityForEdit = null;
 
     /**
-     * @return class-string<TEntityClass>
+     * @return class-string<TEntity>
      */
     abstract public static function getEntityFqcn(): string;
 
     /**
-     * @return class-string<TDtoClass>
+     * @return class-string<TDto>
      */
     abstract public static function getDtoFqcn(): string;
 
     /**
-     * @param TDtoClass $dto
+     * @param TDto $dto
      *
-     * @return TEntityClass|null
+     * @return TEntity|null
      */
     abstract public function createEntityFromDto(object $dto): object|null;
 
     /**
-     * @param TEntityClass $entity
+     * @param TEntity $entity
      *
-     * @return TDtoClass
+     * @return TDto
      */
     abstract public function createDtoFromEntity(object $entity): object;
 
     /**
-     * @param TEntityClass $entity
-     * @param TDtoClass    $dto
+     * @param TEntity $entity
+     * @param TDto    $dto
      */
     abstract public function updateEntityFromDto(object $entity, object $dto): void;
 
@@ -82,7 +83,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         $entity = $this->createEntityFromDto($dto);
 
         /**
-         * @param TEntityClass|null $entity
+         * @param TEntity|null $entity
          */
         $closure = function (object|null $entity): void {
             $this->entityInstance = $entity;
@@ -119,7 +120,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         $dto                          = $this->createDtoFromEntity($this->temporaryEntityForEdit);
 
         /**
-         * @param TDtoClass $dto
+         * @param TDto $dto
          */
         $closure = function (object $dto): void {
             $this->instance = $dto;
@@ -145,7 +146,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         $this->updateEntityFromDto($this->temporaryEntityForEdit, $dto);
 
         /**
-         * @param TEntityClass $entity
+         * @param TEntity $entity
          */
         $closure = function (object $entity): void {
             $this->entityInstance = $entity;
@@ -186,7 +187,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     }
 
     /**
-     * @return TDtoClass
+     * @return TDto
      */
     public function createEntity(string $entityFqcn): object
     {
