@@ -36,17 +36,21 @@ final class CrudAutocompleteType extends AbstractType
         $class = Type\string()->coerce($options['class']);
         invariant(Class\exists($class), 'Option "class" is not a class.');
 
-        $builder->addModelTransformer(
-            new EntityFieldDataTransformer(
-                $this->entityManager,
-                $this->propertyAccessor,
-                $class,
-            ),
-        );
+        if ($options['is_association'] === false) {
+            $builder->addModelTransformer(
+                new EntityFieldDataTransformer(
+                    $this->entityManager,
+                    $this->propertyAccessor,
+                    $class,
+                ),
+            );
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefault('is_association', false);
+        $resolver->setAllowedTypes('is_association', 'bool');
         $resolver->define('choice_label');
         $resolver->define('placeholder');
     }
