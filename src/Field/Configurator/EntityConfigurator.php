@@ -92,6 +92,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             $field->getValue(),
         );
 
+        $field->setFormTypeOption('is_association', $entityDto->isAssociation($propertyName));
         $this->configureOnChange($field, $entityMetadata);
 
         $associationType = Type\string()->coerce($field->getCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE));

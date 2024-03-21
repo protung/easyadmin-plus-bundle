@@ -18,7 +18,7 @@ use Symfony\Component\Form\FormTypeInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services()
-        ->defaults()->private()->autowire()
+        ->defaults()->private()->autowire()->autoconfigure()
         ->instanceof(FieldConfiguratorInterface::class)->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR)
         ->instanceof(FormTypeInterface::class)->tag('form.type')
         ->alias(MenuItemMatcherInterface::class, MenuItemMatcher::class);
