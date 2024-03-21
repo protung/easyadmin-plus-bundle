@@ -107,7 +107,15 @@
   <file src="src/Test/Controller/DeleteActionTestCase.php">
     <InvalidReturnStatement>
       <code><![CDATA[$this->getObjectManager()->find(
-            static::controllerUnderTest()::getEntityFqcn(),
+            $this->controllerUnderTest()::getEntityFqcn(),
+            $this->entityIdUnderTest(),
+        )]]></code>
+    </InvalidReturnStatement>
+  </file>
+  <file src="src/Test/Controller/EditActionTestCase.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->getObjectManager()->find(
+            $this->controllerUnderTest()::getEntityFqcn(),
             $this->entityIdUnderTest(),
         )]]></code>
     </InvalidReturnStatement>
