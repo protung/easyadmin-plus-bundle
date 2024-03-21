@@ -110,13 +110,6 @@ final class EntityField implements FieldInterface
         return $this;
     }
 
-    public function disabled(bool $disabled = true): self
-    {
-        $this->setFormTypeOption('disabled', $disabled);
-
-        return $this;
-    }
-
     public function setAssociationToOne(): self
     {
         $this->setCustomOption(self::OPTION_DOCTRINE_ASSOCIATION_TYPE, self::DOCTRINE_ASSOCIATION_TYPE_SINGLE);
