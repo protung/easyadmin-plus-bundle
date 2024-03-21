@@ -99,7 +99,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
     protected function findEntityUnderTest(): object|null
     {
         return $this->getObjectManager()->find(
-            static::controllerUnderTest()::getEntityFqcn(),
+            $this->controllerUnderTest()::getEntityFqcn(),
             $this->entityIdUnderTest(),
         );
     }

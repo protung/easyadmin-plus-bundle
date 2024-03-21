@@ -75,7 +75,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function extractActions(): array
     {
-        $actionsCrawler = $this->getClient()->getCrawler()->filter('.page-actions a');
+        $actionsCrawler = $this->getClient()->getCrawler()->filter('.page-actions')->children();
 
         return $this->mapActions($actionsCrawler);
     }
