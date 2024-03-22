@@ -6,8 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use LogicException;
-use Psl\Str;
+use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
@@ -16,49 +15,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @template TCrudController
+ * @template TEntity of object
+ * @template TCrudController of BaseCrudController<TEntity>
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class NewActionTestCase extends AdminControllerWebTestCase
 {
-    protected static string|null $expectedPageTitle = null;
-
     protected function actionName(): string
     {
         return Action::NEW;
     }
 
-    protected function expectedPageTitle(): string|null
-    {
-        if (static::$expectedPageTitle === null) {
-            throw new LogicException(
-                Str\format(
-                    <<<'MSG'
-                        Expected page title was not set.
-                        Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
-                        If your index page does not have a title you need to overwrite %1$s method and return NULL.
-                    MSG,
-                    __METHOD__,
-                ),
-            );
-        }
-
-        return static::$expectedPageTitle;
-    }
-
     /**
      * @param array<array-key, mixed> $queryParameters
      */
-    public function testPageLoads(array $queryParameters = []): void
+    protected function assertShowingEntityDefaultData(array $queryParameters = []): void
     {
-        $queryParameters[EA::CRUD_ACTION] ??= $this->actionName();
-
         $this->assertRequestGet($queryParameters);
 
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
+        $actual = [
+            'page_title' => $this->extractPageTitle(),
+            'form_data' => $this->extractFormData(),
+            'actions' => $this->extractActions(),
+        ];
+
+        $this->assertArrayMatchesExpectedJson($actual);
     }
 
     /**
@@ -81,13 +62,11 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $formExpectedErrors
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $queryParameters
      */
     protected function assertSubmittingFormAndShowingValidationErrors(
-        array $formExpectedErrors,
         array $data,
         array $files = [],
         array $queryParameters = [],
@@ -100,8 +79,30 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
 
         $actual = $this->mapErrors($crawler, $form);
 
-        $formExpectedErrors['_token'] = [];
-        $this->assertMatchesPattern($formExpectedErrors, $actual);
+        $csrfTokenKey = '_token';
+        self::assertArrayHasKey($csrfTokenKey, $actual);
+        self::assertSame([], $actual[$csrfTokenKey]);
+
+        unset($actual[$csrfTokenKey]);
+
+        $this->assertArrayMatchesExpectedJson($actual);
+    }
+
+    protected function extractPageTitle(): string
+    {
+        $title = $this->getClient()->getCrawler()->filter('h1.title');
+
+        self::assertCount(1, $title);
+
+        return $title->text(normalizeWhitespace: true);
+    }
+
+    /** @return array<string, string> */
+    protected function extractActions(): array
+    {
+        $actionsCrawler = $this->getClient()->getCrawler()->filter('.page-actions')->children();
+
+        return $this->mapActions($actionsCrawler);
     }
 
     /**
@@ -117,11 +118,6 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         string $submitButton = Action::SAVE_AND_RETURN,
     ): Crawler {
         $crawler = $this->assertRequestGet($queryParameters);
-
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
 
         $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
@@ -144,32 +140,45 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         );
     }
 
-    /**
-     * @param array<string, mixed>    $formExpectedFields
-     * @param array<array-key, mixed> $queryParameters
-     */
-    protected function assertShowingEntityDefaultData(array $formExpectedFields, array $queryParameters = []): void
+    /** @return array<mixed> */
+    protected function extractFormData(): array
     {
-        $this->assertRequestGet($queryParameters);
-
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
-
         $form     = $this->findForm($this->getClient()->getCrawler());
         $formName = $form->getFormNode()->getAttribute('name');
 
-        $formExpectedFields['_token'] = '@string@';
+        $formData = $form->getPhpValues()[$formName];
 
-        $this->assertMatchesPattern(
-            $formExpectedFields,
-            $form->getPhpValues()[$formName],
-        );
+        $csrfTokenKey = '_token';
+        self::assertIsArray($formData);
+        self::assertArrayHasKey($csrfTokenKey, $formData);
+        self::assertIsString($formData[$csrfTokenKey]);
+
+        unset($formData[$csrfTokenKey]);
+
+        return $formData;
     }
 
     private function findForm(Crawler $crawler): Form
     {
         return $crawler->filter($this->mainContentSelector() . ' form')->form();
+    }
+
+    /** @return TEntity|null */
+    protected function findEntity(int|string|object $id): object|null
+    {
+        return $this->getObjectManager()->find(
+            $this->controllerUnderTest()::getEntityFqcn(),
+            $id,
+        );
+    }
+
+    /** @return TEntity */
+    protected function getEntity(int|string|object $id): object
+    {
+        $entity = $this->findEntity($id);
+
+        self::assertNotNull($entity);
+
+        return $entity;
     }
 }
