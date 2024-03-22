@@ -79,13 +79,21 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function setActionsPermissions(Actions $actions, string $permission): Actions
     {
+        return $this->applyToAllActions(
+            $actions,
+            static function (ActionDto $actionDto) use ($actions, $permission): void {
+                $actions->setPermission($actionDto->getName(), $permission);
+            },
+        );
+    }
+
+    /**
+     * @param callable(ActionDto):void $apply
+     */
+    final protected function applyToAllActions(Actions $actions, callable $apply): Actions
+    {
         foreach (Type\mixed_dict()->coerce($actions->getAsDto(null)->getActions()) as $pageActions) {
-            Iter\apply(
-                $pageActions,
-                static function (ActionDto $actionDto) use ($actions, $permission): void {
-                    $actions->setPermission($actionDto->getName(), $permission);
-                },
-            );
+            Iter\apply($pageActions, $apply);
         }
 
         return $actions;
