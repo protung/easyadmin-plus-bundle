@@ -144,6 +144,14 @@
       <code><![CDATA[list<list<string|list<string>|array<mixed>>>]]></code>
     </MoreSpecificReturnType>
   </file>
+  <file src="src/Test/Controller/NewActionTestCase.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->getObjectManager()->find(
+            $this->controllerUnderTest()::getEntityFqcn(),
+            $id,
+        )]]></code>
+    </InvalidReturnStatement>
+  </file>
   <file src="src/Translation/EasyAdminTranslationMessage.php">
     <ImpureMethodCall>
       <code><![CDATA[trans]]></code>
