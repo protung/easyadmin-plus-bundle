@@ -89,6 +89,12 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     {
         $queryParameters[EA::QUERY] = $searchQuery;
         $this->assertListOfIds($queryParameters);
+
+        self::assertCount(
+            1,
+            $this->getClient()->getCrawler()->filter('form.form-action-search'),
+            'Search form field was not present on page.',
+        );
     }
 
     /**
