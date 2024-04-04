@@ -1,5 +1,3 @@
-import Modal from 'bootstrap/js/dist/modal';
-
 export default class ConfirmationModal {
     create(element) {
         element.addEventListener('click', (event) => {
@@ -27,7 +25,7 @@ export default class ConfirmationModal {
 
             confirmationActionButton.setAttribute('class', 'btn btn-' + (element.getAttribute('data-protung-easyadmin-plus-extension-modal-confirm-type') ?? 'primary'));
 
-            const confirmationActionModal = new Modal(
+            const confirmationActionModal = bootstrap.Modal.getOrCreateInstance(
                 document.querySelector('#protung-easyadmin-plus-extension-modal-action-custom-confirmation'),
                 {
                     backdrop: true,
