@@ -72,7 +72,12 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
 
     private function findForm(Crawler $crawler): Form
     {
-        return $crawler->filter($this->mainContentSelector() . ' form#delete-form')->form();
+        return $crawler->filter($this->deleteFormSelector())->form();
+    }
+
+    protected function deleteFormSelector(): string
+    {
+        return $this->mainContentSelector() . ' form#delete-form';
     }
 
     protected function entityIdUnderTest(): string|int
