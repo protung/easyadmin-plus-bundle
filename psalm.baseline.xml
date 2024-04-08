@@ -124,28 +124,12 @@
     </InvalidReturnStatement>
   </file>
   <file src="src/Test/Controller/IndexActionTestCase.php">
-    <LessSpecificReturnStatement>
-      <code><![CDATA[$this->getClient()->getCrawler()->filter($this->listContentRowSelector())->each(
-            function (Crawler $tr): array {
-                return $tr->filter('td')->each(
-                    function (Crawler $column): array|string|bool {
-                        if ($column->matches('.actions')) {
-                            return $this->mapActions($column->filter('[data-action-name]'));
-                        }
-
-                        if ($column->matches('.has-switch')) {
-                            return $column->filter('input.form-check-input:checked')->count() > 0;
-                        }
-
-                        return $column->text(normalizeWhitespace: true);
-                    },
-                );
-            },
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[Vec\map(
+            $rows,
+            static fn (array $row): array => Dict\associate($headers, $row),
         )]]></code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType>
-      <code><![CDATA[list<list<string|list<string>|array<mixed>>>]]></code>
-    </MoreSpecificReturnType>
+    </MixedArgumentTypeCoercion>
   </file>
   <file src="src/Test/Controller/NewActionTestCase.php">
     <InvalidReturnStatement>

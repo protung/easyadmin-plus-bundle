@@ -6,9 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use LogicException;
 use Psl\Dict;
-use Psl\Str;
 use Psl\Type;
 use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
@@ -19,32 +17,12 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 abstract class IndexActionTestCase extends AdminControllerWebTestCase
 {
-    protected static string|null $expectedPageTitle = null;
-
     protected function actionName(): string
     {
         return Action::INDEX;
     }
 
-    protected function expectedPageTitle(): string|null
-    {
-        if (static::$expectedPageTitle === null) {
-            throw new LogicException(
-                Str\format(
-                    <<<'MSG'
-                        Expected page title was not set.
-                        Please set static::$expectedPageTitle property in your test or overwrite %1$s method.
-                        If your index page does not have a title you need to overwrite %1$s method and return NULL.
-                    MSG,
-                    __METHOD__,
-                ),
-            );
-        }
-
-        return static::$expectedPageTitle;
-    }
-
-    protected function listContentRowSelector(): string
+    protected function datagridRowSelector(): string
     {
         return $this->mainContentSelector() . ' table>tbody tr';
     }
@@ -56,14 +34,9 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     {
         $crawler = $this->assertRequestGet($queryParameters);
 
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
-
         self::assertSame(
             Vec\concat(Vec\fill(3, 'empty-row'), ['no-results'], Vec\fill(11, 'empty-row')),
-            $crawler->filter($this->listContentRowSelector())->extract(['class']),
+            $crawler->filter($this->datagridRowSelector())->extract(['class']),
         );
     }
 
@@ -74,12 +47,14 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     {
         $this->assertRequestGet($queryParameters);
 
-        $expectedTitle = $this->expectedPageTitle();
-        if ($expectedTitle !== null) {
-            $this->assertPageTitle($expectedTitle);
-        }
+        $actual = [
+            'page_title' => $this->extractPageTitle(),
+            'datagrid_headers' => $this->extractDatagridHeaders(),
+            'datagrid_rows' => $this->extractDatagridRows(),
+            'global_actions' => $this->extractGlobalActions(),
+        ];
 
-        $this->assertContentListRows();
+        $this->assertArrayMatchesExpectedJson($actual);
     }
 
     /**
@@ -117,54 +92,25 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         $this->assertListOfIds($queryParameters);
     }
 
-    /**
-     * @param array<array-key, mixed> $queryParameters
-     */
-    private function assertListOfIds(array $queryParameters): void
+    protected function extractPageTitle(): string|null
     {
-        $this->assertRequestGet($queryParameters);
+        $title = $this->getClient()->getCrawler()->filter('h1.title');
 
-        $rows = $this->getClient()->getCrawler()->filter($this->listContentRowSelector())->each(
-            static fn (Crawler $row): string => $row->attr('data-id') ?? '',
-        );
+        if ($title->count() > 0) {
+            return $title->text(normalizeWhitespace: true);
+        }
 
-        $this->assertArrayMatchesExpectedJson($rows);
-    }
-
-    protected function assertContentListRows(): void
-    {
-        $actualHeaders = $this->responseListHeaders();
-
-        $actualListContentRows = $this->responseListContentRows();
-
-        $actual = Vec\map(
-            $actualListContentRows,
-            static fn (array $actualListContentRow): array => Dict\associate($actualHeaders, $actualListContentRow),
-        );
-
-        $this->assertArrayMatchesExpectedJson($actual);
+        return null;
     }
 
     /**
-     * @return non-empty-list<string>
+     * @return list<array<mixed>>
      */
-    private function responseListHeaders(): array
+    protected function extractDatagridRows(): array
     {
-        $responseListHeadersCrawler = $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' table>thead>tr>th');
+        $headers = $this->extractDatagridHeaders();
 
-        return Type\non_empty_vec(Type\string())->coerce(
-            $responseListHeadersCrawler->each(
-                static fn (Crawler $th): string => $th->text(normalizeWhitespace: true),
-            ),
-        );
-    }
-
-    /**
-     * @return list<list<string|list<string>|array<mixed>>>
-     */
-    private function responseListContentRows(): array
-    {
-        return $this->getClient()->getCrawler()->filter($this->listContentRowSelector())->each(
+        $rows = $this->getClient()->getCrawler()->filter($this->datagridRowSelector())->each(
             function (Crawler $tr): array {
                 return $tr->filter('td')->each(
                     function (Crawler $column): array|string|bool {
@@ -181,6 +127,49 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
                 );
             },
         );
+
+        return Vec\map(
+            $rows,
+            static fn (array $row): array => Dict\associate($headers, $row),
+        );
+    }
+
+    /**
+     * @return non-empty-list<string>
+     */
+    protected function extractDatagridHeaders(): array
+    {
+        $datagridHeaders = $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' table>thead>tr>th');
+
+        return Type\non_empty_vec(Type\string())->coerce(
+            $datagridHeaders->each(
+                static fn (Crawler $th): string => $th->text(normalizeWhitespace: true),
+            ),
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function extractGlobalActions(): array
+    {
+        return $this->mapActions(
+            $this->getClient()->getCrawler()->filter('.global-actions')->filter('[data-action-name]'),
+        );
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    private function assertListOfIds(array $queryParameters): void
+    {
+        $this->assertRequestGet($queryParameters);
+
+        $rows = $this->getClient()->getCrawler()->filter($this->datagridRowSelector())->each(
+            static fn (Crawler $row): string => $row->attr('data-id') ?? '',
+        );
+
+        $this->assertArrayMatchesExpectedJson($rows);
     }
 
     /**
