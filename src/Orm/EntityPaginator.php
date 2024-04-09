@@ -26,6 +26,8 @@ use Psl\Type\Exception\CoercionException;
 use Psl\Vec;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+use function array_key_exists;
+
 final readonly class EntityPaginator implements EntityPaginatorInterface
 {
     public function __construct(
@@ -182,12 +184,14 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
             $this->decoratedPaginator->getResultsAsJson(),
             Type\shape(
                 [
-                    'results' => Type\vec(
-                        Type\shape(
-                            [
-                                EA::ENTITY_ID => Type\non_empty_string(),
-                                'entityAsString' => Type\non_empty_string(),
-                            ],
+                    'results' => Type\optional(
+                        Type\vec(
+                            Type\shape(
+                                [
+                                    EA::ENTITY_ID => Type\non_empty_string(),
+                                    'entityAsString' => Type\non_empty_string(),
+                                ],
+                            ),
                         ),
                     ),
                     'next_page' => Type\nullable(Type\string()),
@@ -195,17 +199,19 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
             ),
         );
 
-        $generatedJson['results'] = Vec\map(
-            $generatedJson['results'],
-            static function (array $result) use ($reindexResults, $field): array {
-                $result['entityAsString'] = EntityField::formatAsString(
-                    Type\object()->coerce($reindexResults[$result[EA::ENTITY_ID]]),
-                    $field,
-                );
+        if (array_key_exists('results', $generatedJson)) {
+            $generatedJson['results'] = Vec\map(
+                $generatedJson['results'],
+                static function (array $result) use ($reindexResults, $field): array {
+                    $result['entityAsString'] = EntityField::formatAsString(
+                        Type\object()->coerce($reindexResults[$result[EA::ENTITY_ID]]),
+                        $field,
+                    );
 
-                return $result;
-            },
-        );
+                    return $result;
+                },
+            );
+        }
 
         return Json\encode($generatedJson);
     }
