@@ -144,7 +144,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
             $field->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $autocompleteEndpointUrl);
         } else {
-            $field->setFormTypeOptionIfNotSet('query_builder', static function (EntityRepository $repository) use ($field, $context): QueryBuilder {
+            $field->setFormTypeOptionIfNotSet('query_builder', static function (EntityRepository $repository) use ($field): QueryBuilder {
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here
                 $queryBuilder         = $repository->createQueryBuilder('entity');
                 $queryBuilderCallable = $field->getCustomOption(EntityField::OPTION_QUERY_BUILDER_CALLABLE);
@@ -153,7 +153,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
                         is_callable($queryBuilderCallable),
                         Str\format('Query builder callable option is not null or callable.'),
                     );
-                    $queryBuilderCallable($queryBuilder, $context);
+                    $queryBuilderCallable($queryBuilder);
                 }
 
                 return $queryBuilder;

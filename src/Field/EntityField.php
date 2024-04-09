@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Field;
 
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
@@ -170,7 +169,7 @@ final class EntityField implements FieldInterface
     }
 
     /**
-     * @param (callable(QueryBuilder, AdminContext): void) $callable
+     * @param (callable(QueryBuilder): void) $callable
      */
     public function setQueryBuilderCallable(callable $callable): self
     {
