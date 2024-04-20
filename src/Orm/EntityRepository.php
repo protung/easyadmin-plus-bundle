@@ -6,7 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Orm;
 
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
@@ -143,7 +143,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                     $parameterName = sprintf('query_for_ulids_%d', $queryTermIndex);
                     $queryTermConditions->add(sprintf('%s.%s = :%s', $entityName, $propertyConfig['property_name'], $parameterName));
                     $queryBuilder->setParameter($parameterName, $dqlParameters['uuid_query'], 'ulid');
-                } elseif ($propertyConfig['is_text']) {
+                } elseif ($propertyConfig['is_text'] || $propertyConfig['is_integer']) {
                     $parameterName = sprintf('query_for_text_%d', $queryTermIndex);
                     $queryTermConditions->add(sprintf('LOWER(%s.%s) LIKE :%s', $entityName, $propertyConfig['property_name'], $parameterName));
                     $queryBuilder->setParameter($parameterName, $dqlParameters['text_query']);
@@ -186,7 +186,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                         assert($entityManager instanceof EntityManagerInterface);
                         $countQueryBuilder = $entityManager->createQueryBuilder();
 
-                        if ($metadata->get('type') === ClassMetadataInfo::MANY_TO_MANY) {
+                        if ($metadata->get('type') === ClassMetadata::MANY_TO_MANY) {
                             // many-to-many relation
                             $countQueryBuilder
                                 ->select($queryBuilder->expr()->count('subQueryEntity'))
@@ -257,7 +257,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
     /**
      * @return list<array<mixed>>
      */
-    protected function getSearchablePropertiesConfig(QueryBuilder $queryBuilder, SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields): array
+    private function getSearchablePropertiesConfig(QueryBuilder $queryBuilder, SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields): array
     {
         $searchablePropertiesConfig     = [];
         $configuredSearchableProperties = $searchDto->getSearchableProperties();
