@@ -35,7 +35,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
                 if (Str\contains($menuElementLink->attr('class') ?? '', 'submenu-toggle')) {
                     return [
                         'label' => $menuElementLink->text(normalizeWhitespace: true),
-                        'submenu' => $menuElementLink->ancestors()->filter('ul.submenu > li.menu-item > a')->each(
+                        'submenu' => $menuElementLink->ancestors()->first()->filter('ul.submenu > li.menu-item > a')->each(
                             static fn (Crawler $menuElementLink) => [
                                 'label' => $menuElementLink->text(normalizeWhitespace: true),
                                 'url' => $menuElementLink->attr('href'),
