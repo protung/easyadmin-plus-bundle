@@ -165,16 +165,19 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<mixed>>
      */
     protected function mapActions(Crawler $actionsCrawler): array
     {
         return Dict\from_entries(
-            Type\vec(Type\shape([0 => Type\non_empty_string(), 1 => Type\string()]))->coerce(
+            Type\vec(Type\shape([0 => Type\non_empty_string(), 1 => Type\mixed_dict()]))->coerce(
                 $actionsCrawler->each(
                     static fn (Crawler $crawler): array => [
                         Type\non_empty_string()->assert($crawler->attr('data-action-name')),
-                        $crawler->text(normalizeWhitespace: true) !== '' ? $crawler->text(normalizeWhitespace: true) : $crawler->attr('title') ?? '',
+                        [
+                            'title' => $crawler->text(normalizeWhitespace: true) !== '' ? $crawler->text(normalizeWhitespace: true) : $crawler->attr('title') ?? '',
+                            'url' => $crawler->attr('href'),
+                        ],
                     ],
                 ),
             ),

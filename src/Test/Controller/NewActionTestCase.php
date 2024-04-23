@@ -97,7 +97,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         return $title->text(normalizeWhitespace: true);
     }
 
-    /** @return array<string, string> */
+    /** @return array<string, array<mixed>> */
     protected function extractActions(): array
     {
         $actionsCrawler = $this->getClient()->getCrawler()->filter('.page-actions')->children();

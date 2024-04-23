@@ -71,7 +71,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<mixed>>
      */
     protected function extractActions(): array
     {

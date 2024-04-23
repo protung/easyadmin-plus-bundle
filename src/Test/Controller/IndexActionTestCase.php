@@ -149,7 +149,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<mixed>>
      */
     protected function extractGlobalActions(): array
     {
