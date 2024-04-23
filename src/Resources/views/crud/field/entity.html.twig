@@ -18,16 +18,20 @@
                 </li>
             {% endfor %}
         {% else %}
-            {% include '@EasyAdmin/label/null.html.twig' %}
+            {{ include(ea.templatePath('label/null')) }}
         {% endif %}
         </ul>
     {% else %}
         <span class="badge badge-secondary">{{ formattedValue }}</span>
     {% endif %}
 {% else %}
-    {% if field.customOptions.get('relatedUrl') is not null %}
+    {% if field.customOptions.get('relatedUrl') is not null and formattedValue is not null %}
         <a href="{{ field.customOptions.get('relatedUrl') }}">{{ formattedValue }}</a>
     {% else %}
-        {{ formattedValue }}
+        {% if formattedValue is not null %}
+            {{ formattedValue }}
+        {% else %}
+            {{ include(ea.templatePath('label/null')) }}
+        {% endif %}
     {% endif %}
 {% endif %}

@@ -15,7 +15,14 @@ final class JsonFieldTest extends TemplateTestCase
      */
     public static function dataProviderTestOutput(): Generator
     {
-        yield 'no-data' => [[]];
+        $ea = new class {
+            public function templatePath(): string
+            {
+                return '@EasyAdmin/label/null.html.twig';
+            }
+        };
+
+        yield 'no-data' => [['ea' => $ea]];
 
         yield 'with-value' => [
             [
