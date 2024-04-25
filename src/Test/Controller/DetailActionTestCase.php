@@ -11,6 +11,7 @@ use Psl\Str;
 use Psl\Type;
 use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @template TCrudController
@@ -41,6 +42,16 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         }
 
         return static::$expectedEntityIdUnderTest;
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    public function assertRespondsWithStatusCodeForbidden(array $queryParameters = []): void
+    {
+        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        $this->assertRequestGet($queryParameters, Response::HTTP_FORBIDDEN);
     }
 
     /**
