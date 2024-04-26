@@ -28,7 +28,7 @@ abstract class AdminWebTestCase extends WebTestCase
     {
         parent::setUp();
 
-        $this->loginAsAdmin();
+        $this->loginAsDefaultUser();
     }
 
     protected static function authenticationFirewallContext(): string
@@ -72,6 +72,11 @@ abstract class AdminWebTestCase extends WebTestCase
     protected function loginAs(UserInterface|null $user): void
     {
         self::$authentication = $user;
+    }
+
+    protected function loginAsDefaultUser(): void
+    {
+        $this->loginAsAdmin();
     }
 
     protected function loginAsAdmin(): void
