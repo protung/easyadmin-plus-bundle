@@ -7,28 +7,19 @@ namespace Protung\EasyAdminPlusBundle\Field;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Form\Type\EntityFieldDoctrineType;
-use Psl\Str;
-use Psl\Type;
-use RuntimeException;
-use Stringable;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatableInterface;
-
-use function is_callable;
 
 final class EntityField implements FieldInterface
 {
     use FieldTrait;
+    use AdvancedDisplayField;
 
     public const OPTION_CRUD_CONTROLLER = AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER;
-
-    public const OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
     public const OPTION_AUTOCOMPLETE = AssociationField::OPTION_AUTOCOMPLETE;
 
@@ -95,16 +86,6 @@ final class EntityField implements FieldInterface
     public function setCrudController(string $crudControllerFqcn): self
     {
         $this->setCustomOption(self::OPTION_CRUD_CONTROLLER, $crudControllerFqcn);
-
-        return $this;
-    }
-
-    /**
-     * @param string|(callable(mixed): string) $entityDisplayField
-     */
-    public function setEntityDisplayField(string|callable $entityDisplayField): self
-    {
-        $this->setCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD, $entityDisplayField);
 
         return $this;
     }
@@ -186,47 +167,5 @@ final class EntityField implements FieldInterface
         $this->setCustomOption(self::OPTION_ENTITY_DTO_FACTORY_CALLABLE, $callable);
 
         return $this;
-    }
-
-    /**
-     * @return string|(callable(object):?string)|null
-     */
-    public static function getEntityDisplayField(FieldDto $field): string|callable|null
-    {
-        /** @var string|(callable(object):?string)|null $value */
-        $value = $field->getCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD);
-
-        if (is_callable($value)) {
-            return $value;
-        }
-
-        return Type\nullable(Type\string())->coerce($value);
-    }
-
-    public static function formatAsString(object|null $entityInstance, FieldDto $field): string|null
-    {
-        if ($entityInstance === null) {
-            return null;
-        }
-
-        $targetEntityDisplayField = self::getEntityDisplayField($field);
-        if ($targetEntityDisplayField !== null) {
-            if (is_callable($targetEntityDisplayField)) {
-                return $targetEntityDisplayField($entityInstance);
-            }
-
-            return Type\nullable(Type\string())->coerce(PropertyAccess::createPropertyAccessor()->getValue($entityInstance, $targetEntityDisplayField));
-        }
-
-        if ($entityInstance instanceof Stringable) {
-            return (string) $entityInstance;
-        }
-
-        throw new RuntimeException(
-            Str\format(
-                'The "%s" field cannot be configured because it does not define the related entity display value set with the "setEntityDisplayField()" method. or implement "__toString()".',
-                $field->getProperty(),
-            ),
-        );
     }
 }
