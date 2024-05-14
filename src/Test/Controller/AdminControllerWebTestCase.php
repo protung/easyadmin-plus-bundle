@@ -145,7 +145,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     {
         if ($fields instanceof FormField) {
             $currentFormWidget = $crawler
-                ->filter(Str\format('input[name="%1$s"],select[name="%1$s"],textarea[name="%1$s"]', $fields->getName()))
+                ->filter(Str\format('input[name="%1$s"],select[name="%1$s"],select[name="%1$s[]"],textarea[name="%1$s"]', $fields->getName()))
                 ->closest('.form-widget');
 
             if ($currentFormWidget === null) {
