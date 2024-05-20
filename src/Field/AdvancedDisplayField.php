@@ -18,7 +18,9 @@ trait AdvancedDisplayField
     public const OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
     /**
-     * @param string|(callable(object): string) $entityDisplayField
+     * @param string|(callable(TEntity): string) $entityDisplayField
+     *
+     * @template TEntity of object
      */
     public function setEntityDisplayField(string|callable $entityDisplayField): self
     {
