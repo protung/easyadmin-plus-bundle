@@ -125,8 +125,15 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
             );
         }
 
-        return $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' fieldset')->each(
-            $this->extractFieldsFromFieldset(...),
+        $fieldsets = $this->getClient()->getCrawler()->filter($this->mainContentSelector() . ' fieldset');
+        if ($fieldsets->count() > 0) {
+            return $fieldsets->each(
+                $this->extractFieldsFromFieldset(...),
+            );
+        }
+
+        return $this->getClient()->getCrawler()->filter($this->mainContentSelector())->filter($this->fieldSelector())->each(
+            $this->extractField(...),
         );
     }
 
