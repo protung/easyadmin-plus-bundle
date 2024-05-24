@@ -28,7 +28,7 @@ abstract class AdminWebTestCase extends WebTestCase
     {
         parent::setUp();
 
-        $this->loginAsDefaultUser();
+        static::loginAsDefaultUser();
     }
 
     protected static function authenticationFirewallContext(): string
@@ -69,20 +69,20 @@ abstract class AdminWebTestCase extends WebTestCase
         $this->getClient()->followRedirect();
     }
 
-    protected function loginAs(UserInterface|null $user): void
+    protected static function loginAs(UserInterface|null $user): void
     {
         self::$authentication = $user;
     }
 
-    protected function loginAsDefaultUser(): void
+    protected static function loginAsDefaultUser(): void
     {
-        $this->loginAsAdmin();
+        static::loginAsAdmin();
     }
 
-    protected function loginAsAdmin(): void
+    protected static function loginAsAdmin(): void
     {
         $user = new InMemoryUser('admin-test', 'admin-test', ['ROLE_ADMIN']);
-        $this->loginAs($user);
+        static::loginAs($user);
     }
 
     /**
