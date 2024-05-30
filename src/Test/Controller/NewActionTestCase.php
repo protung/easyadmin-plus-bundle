@@ -164,18 +164,18 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     }
 
     /** @return TEntity|null */
-    protected function findEntity(int|string|object $id): object|null
+    protected function findEntityForControllerUnderTest(int|string|object $id): object|null
     {
-        return $this->getObjectManager()->find(
+        return $this->findEntity(
             $this->controllerUnderTest()::getEntityFqcn(),
             $id,
         );
     }
 
     /** @return TEntity */
-    protected function getEntity(int|string|object $id): object
+    protected function getEntityForControllerUnderTest(int|string|object $id): object
     {
-        $entity = $this->findEntity($id);
+        $entity = $this->findEntityForControllerUnderTest($id);
 
         self::assertNotNull($entity);
 
