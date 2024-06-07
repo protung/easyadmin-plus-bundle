@@ -63,13 +63,21 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function prepareAdminUrl(array $queryParameters): string
     {
+        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    protected function prepareAdminUrlQueryParameters(array $queryParameters): string
+    {
         $queryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $this->controllerUnderTest();
         $queryParameters[EA::CRUD_ACTION]          ??= $this->actionName();
 
         // we need to prepare the URL having some query parameters in a specific order
         $queryParameters = Dict\sort_by_key($queryParameters);
 
-        return static::easyAdminRoutePath() . '?' . http_build_query($queryParameters);
+        return http_build_query($queryParameters);
     }
 
     /**
