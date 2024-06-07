@@ -11,7 +11,7 @@
             {% for entity in formattedValue %}
                 <li>
                     {% if entity.relatedUrl %}
-                        <a href="{{ entity.relatedUrl }}">{{ entity.formattedValue }}</a>
+                        <a href="{{ entity.relatedUrl }}" data-turbo="{{ field.customOptions.get('turboDriveEnabled') }}">{{ entity.formattedValue }}</a>
                     {% else %}
                         {{ entity.formattedValue }}
                     {% endif %}
@@ -26,7 +26,7 @@
     {% endif %}
 {% else %}
     {% if field.customOptions.get('relatedUrl') is not null and formattedValue is not null %}
-        <a href="{{ field.customOptions.get('relatedUrl') }}">{{ formattedValue }}</a>
+        <a href="{{ field.customOptions.get('relatedUrl') }}" data-turbo="{{ field.customOptions.get('turboDriveEnabled') }}">{{ formattedValue }}</a>
     {% else %}
         {% if formattedValue is not null %}
             {{ formattedValue }}

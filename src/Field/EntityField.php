@@ -29,6 +29,8 @@ final class EntityField implements FieldInterface
 
     public const WIDGET_NATIVE = AssociationField::WIDGET_NATIVE;
 
+    public const OPTION_TURBO_DRIVE_ENABLED = 'turboDriveEnabled';
+
     public const OPTION_RENDER_TYPE = 'renderType';
 
     public const OPTION_RENDER_TYPE_LIST = 'asList';
@@ -71,6 +73,7 @@ final class EntityField implements FieldInterface
             ->setFormType(EntityFieldDoctrineType::class)
             ->addCssClass('field-association')
             ->setCustomOption(self::OPTION_CRUD_CONTROLLER, null)
+            ->setCustomOption(self::OPTION_TURBO_DRIVE_ENABLED, 'false')
             ->setCustomOption(self::OPTION_WIDGET, self::WIDGET_AUTOCOMPLETE)
             ->setCustomOption(self::OPTION_QUERY_BUILDER_CALLABLE, null)
             ->setCustomOption(self::OPTION_ENTITY_DTO_FACTORY_CALLABLE, null)
@@ -86,6 +89,20 @@ final class EntityField implements FieldInterface
     public function setCrudController(string $crudControllerFqcn): self
     {
         $this->setCustomOption(self::OPTION_CRUD_CONTROLLER, $crudControllerFqcn);
+
+        return $this;
+    }
+
+    public function enableTurboDrive(): self
+    {
+        $this->setCustomOption(self::OPTION_TURBO_DRIVE_ENABLED, 'true');
+
+        return $this;
+    }
+
+    public function disableTurboDrive(): self
+    {
+        $this->setCustomOption(self::OPTION_TURBO_DRIVE_ENABLED, 'false');
 
         return $this;
     }
