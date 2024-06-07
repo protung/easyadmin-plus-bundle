@@ -44,6 +44,8 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$entityDto->getFqcn()]]></code>
       <code><![CDATA[$entityDto->getFqcn()]]></code>
+      <code><![CDATA[$entityDto->getFqcn()]]></code>
+      <code><![CDATA[$entityDto->getFqcn()]]></code>
     </ArgumentTypeCoercion>
     <InvalidOperand>
       <code><![CDATA[$sortProperty]]></code>
