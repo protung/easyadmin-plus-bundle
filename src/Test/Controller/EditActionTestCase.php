@@ -101,6 +101,26 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $redirectQueryParameters
+     */
+    protected function assertSavingEntityAndRedirectingToDetailAction(
+        array $data,
+        array $files = [],
+        array $queryParameters = [],
+        array $redirectQueryParameters = [],
+    ): void {
+        $this->submitFormRequest($data, $files, $queryParameters);
+
+        $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
+        $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest();
+
+        $this->assertResponseIsRedirect($redirectQueryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $data
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $queryParameters
      */
     protected function assertSubmittingFormAndShowingValidationErrors(
         array $data,
