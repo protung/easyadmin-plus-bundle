@@ -6,10 +6,12 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use DOMElement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
+use RuntimeException;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
@@ -208,5 +210,15 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
 
         self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
+    }
+
+    protected function getAdminContextFromLastRequest(): AdminContext
+    {
+        $context = $this->getClient()->getRequest()->attributes->get(EA::CONTEXT_REQUEST_ATTRIBUTE);
+        if (! $context instanceof AdminContext) {
+            throw new RuntimeException('Admin context was not stored in the request.');
+        }
+
+        return $context;
     }
 }

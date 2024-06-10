@@ -76,7 +76,6 @@
       <code><![CDATA[$sortOrder]]></code>
       <code><![CDATA[$sortOrder]]></code>
       <code><![CDATA[$sortOrder]]></code>
-      <code><![CDATA[$sortOrder]]></code>
       <code><![CDATA[$targetEntity]]></code>
       <code><![CDATA[$targetEntityFqcn]]></code>
     </MixedArgument>
@@ -135,11 +134,15 @@
   </file>
   <file src="src/Test/Controller/NewActionTestCase.php">
     <InvalidReturnStatement>
+      <code><![CDATA[$entity]]></code>
       <code><![CDATA[$this->findEntity(
             $this->controllerUnderTest()::getEntityFqcn(),
             $id,
         )]]></code>
     </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[TEntity]]></code>
+    </InvalidReturnType>
   </file>
   <file src="src/Translation/EasyAdminTranslationMessage.php">
     <ImpureMethodCall>

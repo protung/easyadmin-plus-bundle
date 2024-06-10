@@ -6,8 +6,10 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
+use RuntimeException;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
@@ -57,6 +59,26 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         $this->submitFormRequest($data, $files, $queryParameters);
 
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
+
+        $this->assertResponseIsRedirect($redirectQueryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $data
+     * @param array<array-key, mixed> $files
+     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $redirectQueryParameters
+     */
+    protected function assertSavingEntityAndRedirectingToDetailAction(
+        array $data,
+        array $files = [],
+        array $queryParameters = [],
+        array $redirectQueryParameters = [],
+    ): void {
+        $this->submitFormRequest($data, $files, $queryParameters);
+
+        $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
+        $redirectQueryParameters[EA::ENTITY_ID]   = $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString();
 
         $this->assertResponseIsRedirect($redirectQueryParameters);
     }
@@ -178,6 +200,21 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         $entity = $this->findEntityForControllerUnderTest($id);
 
         self::assertNotNull($entity);
+
+        return $entity;
+    }
+
+    /** @return TEntity */
+    protected function getCreatedEntityUnderTest(): object
+    {
+        $context = $this->getClient()->getRequest()->attributes->get(EA::CONTEXT_REQUEST_ATTRIBUTE);
+        if (! $context instanceof AdminContext) {
+            throw new RuntimeException('Admin context was not stored in the request.');
+        }
+
+        $entity = $this->getAdminContextFromLastRequest()->getEntity()->getInstance();
+
+        self::assertIsObject($entity);
 
         return $entity;
     }

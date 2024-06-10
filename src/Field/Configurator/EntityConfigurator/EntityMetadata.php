@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator;
 
+/**
+ * @psalm-immutable
+ */
 final class EntityMetadata
 {
     private object|int|string|null $sourceEntityId;
