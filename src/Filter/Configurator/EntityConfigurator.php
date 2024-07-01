@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Filter\Configurator;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Filter\FilterConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
 use Protung\EasyAdminPlusBundle\Form\Type\CrudAutocompleteType;
+use Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator;
 use Psl\Str;
 use Psl\Type;
 use RuntimeException;
@@ -26,7 +26,7 @@ use RuntimeException;
 final readonly class EntityConfigurator implements FilterConfiguratorInterface
 {
     public function __construct(
-        private AdminUrlGeneratorInterface $adminUrlGenerator,
+        private AutocompleteActionAdminUrlGenerator $autocompleteActionAdminUrlGenerator,
     ) {
     }
 
@@ -45,7 +45,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $propertyName = $filterDto->getProperty();
 
-        $targetCrudControllerFqcn = Type\nullable(Type\string())
+        $targetCrudControllerFqcn = Type\nullable(Type\class_string(CrudControllerInterface::class))
             ->coerce($fieldDto->getCustomOption(EntityField::OPTION_CRUD_CONTROLLER));
         if ($targetCrudControllerFqcn === null) {
             throw new RuntimeException(
@@ -90,23 +90,14 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $filterDto->setFormTypeOptionIfNotSet('value_type', CrudAutocompleteType::class);
 
-        $autocompleteEndpointUrl = $this->adminUrlGenerator
-            ->set('page', 1) // The autocomplete should always start on the first page
-            ->setController($targetCrudControllerFqcn)
-            ->setAction('autocomplete')
-            ->setEntityId(null)
-            ->unset(EA::SORT) // Avoid passing the 'sort' param from the current entity to the autocompleted one
-            ->set(
-                EntityField::PARAM_AUTOCOMPLETE_CONTEXT,
-                [
-                    EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
-                    'propertyName' => $propertyName,
-                    'originatingPage' => Crud::PAGE_INDEX,
-                    EntityField::OPTION_ENTITY_DISPLAY_FIELD => $fieldDto->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
-                ],
-            )
-            ->generateUrl();
-
+        $autocompleteEndpointUrl = $this->autocompleteActionAdminUrlGenerator
+            ->generate(
+                $context,
+                $targetCrudControllerFqcn,
+                $propertyName,
+                Crud::PAGE_INDEX,
+                $fieldDto->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
+            );
         $filterDto->setFormTypeOption('value_type_options.attr.data-ea-autocomplete-endpoint-url', $autocompleteEndpointUrl);
     }
 }

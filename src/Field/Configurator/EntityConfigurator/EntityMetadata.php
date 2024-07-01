@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
+
 /**
  * @psalm-immutable
  */
@@ -13,7 +15,7 @@ final class EntityMetadata
 
     private string $sourceCrudControllerFqcn;
 
-    /** @var class-string */
+    /** @var class-string<CrudControllerInterface> */
     private string $targetCrudControllerFqcn;
 
     /** @var class-string */
@@ -25,7 +27,7 @@ final class EntityMetadata
     private object|int|string|null $targetEntityId;
 
     /**
-     * @param class-string                           $targetCrudControllerFqcn
+     * @param class-string<CrudControllerInterface>  $targetCrudControllerFqcn
      * @param class-string                           $targetEntityFqcn
      * @param string|(callable(object):?string)|null $targetEntityDisplayField
      */
@@ -56,7 +58,7 @@ final class EntityMetadata
     }
 
     /**
-     * @return class-string
+     * @return class-string<CrudControllerInterface>
      */
     public function targetCrudControllerFqcn(): string
     {

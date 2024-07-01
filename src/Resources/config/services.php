@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Protung\EasyAdminPlusBundle\Filter\Configurator\EntityConfigurator;
 use Protung\EasyAdminPlusBundle\Orm\EntityPaginator;
 use Protung\EasyAdminPlusBundle\Orm\EntityRepository;
+use Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator;
 use Symfony\Component\Form\FormTypeInterface;
 
 return static function (ContainerConfigurator $container): void {
@@ -36,11 +37,16 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure()
         ->private()
-        ->arg('$adminUrlGenerator', service(AdminUrlGenerator::class))
         ->tag(EasyAdminExtension::TAG_FILTER_CONFIGURATOR, ['priority' => -1]); // must be after \EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\EntityConfigurator
 
     $services->set(EntityPaginator::class)
         ->decorate(EntityPaginatorInterface::class)
+        ->arg('$adminUrlGenerator', service(AdminUrlGenerator::class))
+        ->autowire()
+        ->autoconfigure()
+        ->private();
+
+    $services->set(AutocompleteActionAdminUrlGenerator::class)
         ->arg('$adminUrlGenerator', service(AdminUrlGenerator::class))
         ->autowire()
         ->autoconfigure()

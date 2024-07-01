@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
 use Protung\EasyAdminPlusBundle\Form\Type\CrudAutocompleteType;
+use Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator;
 use Psl\Class;
 use Psl\Str;
 use Psl\Type;
@@ -30,30 +31,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use function is_callable;
 use function Psl\invariant;
 
-final class EntityConfigurator implements FieldConfiguratorInterface
+final readonly class EntityConfigurator implements FieldConfiguratorInterface
 {
-    private EntityFactory $entityFactory;
-
-    private AdminUrlGenerator $adminUrlGenerator;
-
-    private TranslatorInterface $translator;
-
-    private PropertyAccessorInterface $propertyAccessor;
-
-    private EntityManagerInterface $entityManager;
-
     public function __construct(
-        EntityFactory $entityFactory,
-        AdminUrlGenerator $adminUrlGenerator,
-        TranslatorInterface $translator,
-        PropertyAccessorInterface $propertyAccessor,
-        EntityManagerInterface $entityManager,
+        private EntityFactory $entityFactory,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private AutocompleteActionAdminUrlGenerator $autocompleteActionAdminUrlGenerator,
+        private TranslatorInterface $translator,
+        private PropertyAccessorInterface $propertyAccessor,
+        private EntityManagerInterface $entityManager,
     ) {
-        $this->entityFactory     = $entityFactory;
-        $this->adminUrlGenerator = $adminUrlGenerator;
-        $this->translator        = $translator;
-        $this->propertyAccessor  = $propertyAccessor;
-        $this->entityManager     = $entityManager;
     }
 
     public function supports(FieldDto $field, EntityDto $entityDto): bool
@@ -65,7 +52,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
     {
         $propertyName = $field->getProperty();
 
-        $targetCrudControllerFqcn = Type\nullable(Type\string())->coerce($field->getCustomOption(EntityField::OPTION_CRUD_CONTROLLER));
+        $targetCrudControllerFqcn = Type\nullable(Type\class_string(CrudControllerInterface::class))->coerce($field->getCustomOption(EntityField::OPTION_CRUD_CONTROLLER));
         if ($targetCrudControllerFqcn === null) {
             throw new RuntimeException(
                 Str\format(
@@ -77,7 +64,7 @@ final class EntityConfigurator implements FieldConfiguratorInterface
 
         $crud = Type\instance_of(CrudDto::class)->coerce($context->getCrud());
 
-        $sourceCrudControllerFqcn = Type\string()->coerce($crud->getControllerFqcn());
+        $sourceCrudControllerFqcn = Type\class_string(CrudControllerInterface::class)->coerce($crud->getControllerFqcn());
 
         $targetEntityFqcn = Type\string()->coerce($context->getCrudControllers()->findEntityFqcnByCrudFqcn($targetCrudControllerFqcn));
         invariant(Class\exists($targetEntityFqcn), 'Could not determine target entity for set CRUD controller.');
@@ -128,19 +115,14 @@ final class EntityConfigurator implements FieldConfiguratorInterface
             }
 
             $field->setFormType(CrudAutocompleteType::class);
-            $autocompleteEndpointUrl = $this->adminUrlGenerator
-                ->set('page', 1) // The autocomplete should always start on the first page
-                ->setController($entityMetadata->targetCrudControllerFqcn())
-                ->setAction('autocomplete')
-                ->setEntityId(null)
-                ->unset(EA::SORT) // Avoid passing the 'sort' param from the current entity to the autocompleted one
-                ->set(EntityField::PARAM_AUTOCOMPLETE_CONTEXT, [
-                    EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
-                    'propertyName' => $propertyName,
-                    'originatingPage' => $crud->getCurrentPage(),
-                    EntityField::OPTION_ENTITY_DISPLAY_FIELD => $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
-                ])
-                ->generateUrl();
+            $autocompleteEndpointUrl = $this->autocompleteActionAdminUrlGenerator
+                ->generate(
+                    $context,
+                    $entityMetadata->targetCrudControllerFqcn(),
+                    $propertyName,
+                    Type\string()->coerce($crud->getCurrentPage()),
+                    $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
+                );
 
             $field->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $autocompleteEndpointUrl);
         } else {
