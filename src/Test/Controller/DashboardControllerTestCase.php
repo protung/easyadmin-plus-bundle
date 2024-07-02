@@ -23,11 +23,9 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
      */
     protected function assertMenu(array $routeParameters = []): void
     {
-        $client                  = $this->getClient();
-        $originalFollowRedirects = $client->isFollowingRedirects();
-        $client->followRedirects();
-        $crawler = $client->request(Request::METHOD_GET, $this->prepareDashboardUrl($routeParameters));
-        $client->followRedirects($originalFollowRedirects);
+        $crawler = $this->makeGetRequestAndFollowRedirects(
+            $this->prepareDashboardUrl($routeParameters),
+        );
 
         /** @var list<array{label: string, url: string}> $actualMenuItems */
         $actualMenuItems = $crawler->filter('#main-menu ul.menu > li.menu-item > a')->each(
@@ -66,7 +64,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
 
                 self::ensureKernelShutdown();
 
-                $this->getClient()->request(Request::METHOD_GET, $url);
+                $this->makeGetRequestAndFollowRedirects($url);
 
                 self::assertResponseStatusCode(
                     $this->getClient()->getResponse(),
@@ -104,6 +102,17 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
             ->setAll(Dict\sort_by_key($routeParameters))
             ->setDashboard($this->getDashboardControllerFqcn())
             ->generateUrl();
+    }
+
+    private function makeGetRequestAndFollowRedirects(string $url): Crawler
+    {
+        $client                  = $this->getClient();
+        $originalFollowRedirects = $client->isFollowingRedirects();
+        $client->followRedirects();
+        $crawler = $client->request(Request::METHOD_GET, $url);
+        $client->followRedirects($originalFollowRedirects);
+
+        return $crawler;
     }
 
     /**
