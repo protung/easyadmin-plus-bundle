@@ -26,7 +26,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services
         ->load('Protung\\EasyAdminPlusBundle\\', '../../../src/*')
-        ->exclude('../../../src/Resources/**/*');
+        ->exclude(['../../../src/Resources/**/*', '../../../src/Test/**/*']);
 
     $services->set(EntityRepository::class)
         ->decorate(EasyAdminEntityRepository::class)
