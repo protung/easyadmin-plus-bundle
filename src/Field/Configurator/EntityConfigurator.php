@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
@@ -120,7 +121,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
                     $context,
                     $entityMetadata->targetCrudControllerFqcn(),
                     $propertyName,
-                    Type\string()->coerce($crud->getCurrentPage()),
+                    $crud->getCurrentPage() ?? Crud::PAGE_INDEX,
                     $field->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
                 );
 
