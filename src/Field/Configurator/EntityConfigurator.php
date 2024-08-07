@@ -105,7 +105,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
             $field->setFormTypeOption('class', $entityMetadata->targetEntityFqcn());
         }
 
-        if ($autocompleteMode === true) {
+        if ($autocompleteMode === true && $field->getFormTypeOption('disabled') !== true) {
             if ($widgetMode !== EntityField::WIDGET_AUTOCOMPLETE) {
                 throw new RuntimeException(
                     Str\format(
