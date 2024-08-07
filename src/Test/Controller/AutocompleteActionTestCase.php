@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use Override;
 use Psl\Json;
@@ -30,7 +31,7 @@ abstract class AutocompleteActionTestCase extends CustomActionTestCase
 
     protected function autocompleteContextOriginatingPage(): string
     {
-        return 'index';
+        return Crud::PAGE_INDEX; // This is the page for filters and is the fallback in the entity field configurator.
     }
 
     /** @param array<array-key, mixed> $queryParameters */

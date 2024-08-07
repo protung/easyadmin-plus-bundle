@@ -95,7 +95,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
                 $context,
                 $targetCrudControllerFqcn,
                 $propertyName,
-                Crud::PAGE_INDEX,
+                Crud::PAGE_INDEX, // Filter is used from an index page.
                 $fieldDto->getCustomOption(EntityField::OPTION_ENTITY_DISPLAY_FIELD) !== null,
             );
         $filterDto->setFormTypeOption('value_type_options.attr.data-ea-autocomplete-endpoint-url', $autocompleteEndpointUrl);
