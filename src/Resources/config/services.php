@@ -65,7 +65,7 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure()
         ->private()
-        ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR);
+        ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR, ['priority' => 1]); // by design, we want this to kick in before any of the other field configurators with default priority
 
     $services->set(CallbackConfigurableConfiguratorAfterCommonPostConfigurator::class)
         ->autowire()
