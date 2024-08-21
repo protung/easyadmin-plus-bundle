@@ -16,13 +16,13 @@ final class CallbackConfigurablePreConfigurator implements FieldConfiguratorInte
     #[Override]
     public function supports(FieldDto $field, EntityDto $entityDto): bool
     {
-        return CallbackConfigurableField::fieldHasCallbackPreConfigurator($field);
+        return CallbackConfigurableField::fieldHasCallbackBeforeCommonPreConfigurator($field);
     }
 
     #[Override]
     public function configure(FieldDto $field, EntityDto $entityDto, AdminContext $context): void
     {
-        $configurator = CallbackConfigurableField::getCallbackPreConfigurator($field);
+        $configurator = CallbackConfigurableField::getCallbackBeforeCommonPreConfigurator($field);
 
         $configurator($field, $entityDto, $context);
     }

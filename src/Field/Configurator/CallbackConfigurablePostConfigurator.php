@@ -16,13 +16,13 @@ final class CallbackConfigurablePostConfigurator implements FieldConfiguratorInt
     #[Override]
     public function supports(FieldDto $field, EntityDto $entityDto): bool
     {
-        return CallbackConfigurableField::fieldHasCallbackPostConfigurator($field);
+        return CallbackConfigurableField::fieldHasCallbackAfterCommonPostConfigurator($field);
     }
 
     #[Override]
     public function configure(FieldDto $field, EntityDto $entityDto, AdminContext $context): void
     {
-        $configurator = CallbackConfigurableField::getCallbackPostConfigurator($field);
+        $configurator = CallbackConfigurableField::getCallbackAfterCommonPostConfigurator($field);
 
         $configurator($field, $entityDto, $context);
     }

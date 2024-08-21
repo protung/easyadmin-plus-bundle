@@ -59,7 +59,7 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure()
         ->private()
-        ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR, ['priority' => 10_000]); // must be before \EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CommonPreConfigurator
+        ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR, ['priority' => 10_000]); // must be before \EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CommonPostConfigurator
 
     $services->set(CallbackConfigurableConfigurator::class)
         ->autowire()
