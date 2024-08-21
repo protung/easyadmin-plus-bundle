@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.24.0@462c80e31c34e58cc4f750c656be3927e80e550e">
+<files psalm-version="5.25.0@01a8eb06b9e9cc6cfb6a320bf9fb14331919d505">
   <file src="src/Controller/BaseCrudController.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$apply]]></code>
@@ -18,6 +18,16 @@
       <code><![CDATA[$this->instance]]></code>
       <code><![CDATA[$this->instance]]></code>
     </UndefinedThisPropertyAssignment>
+  </file>
+  <file src="src/Field/CallbackConfigurableFieldOption.php">
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$callable]]></code>
+      <code><![CDATA[$callable]]></code>
+      <code><![CDATA[$callable]]></code>
+      <code><![CDATA[callable(FieldDto $field, EntityDto $entityDto, AdminContext $context):void]]></code>
+      <code><![CDATA[callable(FieldDto $field, EntityDto $entityDto, AdminContext $context):void]]></code>
+      <code><![CDATA[callable(FieldDto $field, EntityDto $entityDto, AdminContext $context):void]]></code>
+    </MixedReturnTypeCoercion>
   </file>
   <file src="src/Field/Configurator/EntityConfigurator.php">
     <MixedArgument>

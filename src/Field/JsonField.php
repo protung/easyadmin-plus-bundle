@@ -11,6 +11,7 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 final class JsonField implements FieldInterface
 {
     use FieldTrait;
+    use CallbackConfigurableField;
 
     public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
     {

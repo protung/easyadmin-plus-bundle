@@ -18,6 +18,7 @@ final class EntityField implements FieldInterface
 {
     use FieldTrait;
     use AdvancedDisplayField;
+    use CallbackConfigurableField;
 
     public const OPTION_CRUD_CONTROLLER = AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER;
 
