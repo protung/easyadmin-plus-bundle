@@ -19,7 +19,7 @@
       <code><![CDATA[$this->instance]]></code>
     </UndefinedThisPropertyAssignment>
   </file>
-  <file src="src/Field/CallbackConfigurableField.php">
+  <file src="src/Field/CallbackConfigurableFieldOption.php">
     <MixedReturnTypeCoercion>
       <code><![CDATA[$callable]]></code>
       <code><![CDATA[$callable]]></code>

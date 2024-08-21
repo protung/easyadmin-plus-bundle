@@ -9,20 +9,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use Override;
-use Protung\EasyAdminPlusBundle\Field\CallbackConfigurableField;
+use Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption;
 
-final class CallbackConfigurablePreConfigurator implements FieldConfiguratorInterface
+final class CallbackConfigurableConfiguratorBeforeCommonPreConfigurator implements FieldConfiguratorInterface
 {
     #[Override]
     public function supports(FieldDto $field, EntityDto $entityDto): bool
     {
-        return CallbackConfigurableField::fieldHasCallbackBeforeCommonPreConfigurator($field);
+        return CallbackConfigurableFieldOption::fieldHasCallbackBeforeCommonPreConfigurator($field);
     }
 
     #[Override]
     public function configure(FieldDto $field, EntityDto $entityDto, AdminContext $context): void
     {
-        $configurator = CallbackConfigurableField::getCallbackBeforeCommonPreConfigurator($field);
+        $configurator = CallbackConfigurableFieldOption::getCallbackBeforeCommonPreConfigurator($field);
 
         $configurator($field, $entityDto, $context);
     }

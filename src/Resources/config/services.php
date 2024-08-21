@@ -12,8 +12,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository as EasyAdminEntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfigurator;
-use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurablePostConfigurator;
-use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurablePreConfigurator;
+use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfiguratorAfterCommonPostConfigurator;
+use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfiguratorBeforeCommonPreConfigurator;
 use Protung\EasyAdminPlusBundle\Filter\Configurator\EntityConfigurator;
 use Protung\EasyAdminPlusBundle\Orm\EntityPaginator;
 use Protung\EasyAdminPlusBundle\Orm\EntityRepository;
@@ -55,7 +55,7 @@ return static function (ContainerConfigurator $container): void {
         ->autoconfigure()
         ->private();
 
-    $services->set(CallbackConfigurablePreConfigurator::class)
+    $services->set(CallbackConfigurableConfiguratorBeforeCommonPreConfigurator::class)
         ->autowire()
         ->autoconfigure()
         ->private()
@@ -67,7 +67,7 @@ return static function (ContainerConfigurator $container): void {
         ->private()
         ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR);
 
-    $services->set(CallbackConfigurablePostConfigurator::class)
+    $services->set(CallbackConfigurableConfiguratorAfterCommonPostConfigurator::class)
         ->autowire()
         ->autoconfigure()
         ->private()
