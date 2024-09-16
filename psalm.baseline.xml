@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.25.0@01a8eb06b9e9cc6cfb6a320bf9fb14331919d505">
+<files psalm-version="5.26.0@4787eaf414e16c661902b94dfe5d882223e5b513">
   <file src="src/Controller/BaseCrudController.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$apply]]></code>
@@ -117,6 +117,11 @@
       <code><![CDATA[$fieldErrors]]></code>
       <code><![CDATA[$fieldErrors]]></code>
     </MixedArgumentTypeCoercion>
+  </file>
+  <file src="src/Test/Controller/BatchActionTestCase.php">
+    <InvalidReturnStatement>
+      <code><![CDATA[$this->findEntity($this->controllerUnderTest()::getEntityFqcn(), $id)]]></code>
+    </InvalidReturnStatement>
   </file>
   <file src="src/Test/Controller/DeleteActionTestCase.php">
     <InvalidReturnStatement>

@@ -6,11 +6,14 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @template TCrudController
+ * @template TEntity of object
+ * @template TCrudController of BaseCrudController<TEntity>
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class BatchActionTestCase extends AdminControllerWebTestCase
@@ -20,13 +23,9 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
     /**
      * @param array<string>        $entityIds
      * @param array<string, mixed> $indexPageQueryParameters
-     * @param array<string, mixed> $expectedRedirectUrlParameters
      */
-    public function assertBatchActionForEntityIds(
-        array $entityIds,
-        array $indexPageQueryParameters = [],
-        array $expectedRedirectUrlParameters = [],
-    ): void {
+    public function submitFormRequest(array $entityIds, array $indexPageQueryParameters = []): Crawler
+    {
         $listingPageCrawler = $this->getClient()->request(
             Request::METHOD_GET,
             $this->prepareAdminUrl($indexPageQueryParameters),
@@ -38,7 +37,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
 
         $actionRequestUrl = $actionAnchorElement->attr('data-action-url');
 
-        $this->getClient()
+        return $this->getClient()
             ->request(
                 Request::METHOD_POST,
                 Type\string()->coerce($actionRequestUrl),
@@ -49,8 +48,29 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
                     EA::BATCH_ACTION_CSRF_TOKEN => $actionAnchorElement->attr('data-action-csrf-token'),
                 ],
             );
+    }
+
+    /**
+     * @param array<string>        $entityIds
+     * @param array<string, mixed> $indexPageQueryParameters
+     * @param array<string, mixed> $expectedRedirectUrlParameters
+     */
+    public function assertBatchActionForEntityIds(
+        array $entityIds,
+        array $indexPageQueryParameters = [],
+        array $expectedRedirectUrlParameters = [],
+    ): void {
+        $this->submitFormRequest($entityIds, $indexPageQueryParameters);
 
         $this->assertResponseIsRedirect($expectedRedirectUrlParameters);
+    }
+
+    /**
+     * @return TEntity|null
+     */
+    protected function findEntityUnderTest(string|int $id): object|null
+    {
+        return $this->findEntity($this->controllerUnderTest()::getEntityFqcn(), $id);
     }
 
     protected function actionName(): string
