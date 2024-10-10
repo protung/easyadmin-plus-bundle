@@ -7,8 +7,9 @@ namespace Protung\EasyAdminPlusBundle\Menu;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher as EasyAdminMenuItemMatcher;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use Psl\Iter;
 use Psl\Type;
+use Symfony\Component\HttpFoundation\Request;
 
 use function array_values;
 use function is_array;
@@ -17,36 +18,30 @@ use function is_array;
  * Custom menu item matcher to simplify special algorithms to choose what menu item is selected.
  * This should be created as a service and aliased to `EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcherInterface` service ID.
  */
-final class ChainMenuItemMatcher implements MenuItemMatcherInterface
+final readonly class ChainMenuItemMatcher implements MenuItemMatcherInterface
 {
-    private readonly EasyAdminMenuItemMatcher $easyAdminMenuItemMatcher;
-
-    private readonly AdminContextProvider $adminContextProvider;
+    private EasyAdminMenuItemMatcher $easyAdminMenuItemMatcher;
 
     /** @var non-empty-list<Matcher> */
-    private readonly array $matchers;
+    private array $matchers;
 
     public function __construct(
         EasyAdminMenuItemMatcher $easyAdminMenuItemMatcher,
-        AdminContextProvider $adminContextProvider,
         Matcher $matcher,
         Matcher ...$matchers,
     ) {
         $this->easyAdminMenuItemMatcher = $easyAdminMenuItemMatcher;
-        $this->adminContextProvider     = $adminContextProvider;
         $this->matchers                 = [$matcher, ...array_values($matchers)];
     }
 
-    public function isSelected(MenuItemDto $menuItemDto): bool
+    /**
+     * {@inheritDoc}
+     */
+    public function markSelectedMenuItem(array $menuItems, Request $request): array
     {
-        $adminContext = $this->adminContextProvider->getContext();
-        if ($adminContext === null || $menuItemDto->isMenuSection()) {
-            return $this->easyAdminMenuItemMatcher->isSelected($menuItemDto);
-        }
-
-        $currentController = $adminContext->getRequest()->attributes->get('_controller');
+        $currentController = $request->attributes->get('_controller');
         if ($currentController === null) {
-            return $this->easyAdminMenuItemMatcher->isSelected($menuItemDto);
+            return $this->easyAdminMenuItemMatcher->markSelectedMenuItem($menuItems, $request);
         }
 
         $currentController = Type\union(
@@ -58,16 +53,26 @@ final class ChainMenuItemMatcher implements MenuItemMatcherInterface
         $currentController = is_array($currentController) ? $currentController[0] : $currentController;
 
         foreach ($this->matchers as $matcher) {
-            if ($matcher->isSelected($menuItemDto, $adminContext, $currentController)) {
-                return true;
+            foreach ($menuItems as $menuItemDto) {
+                $subItems = $menuItemDto->getSubItems();
+                if ($subItems !== []) {
+                    $menuItemDto->setSubItems($this->markSelectedMenuItem($subItems, $request));
+
+                    $hasSubmenuSelected = Iter\any(
+                        $subItems,
+                        static fn (MenuItemDto $subItemDto): bool => $subItemDto->isSelected(),
+                    );
+                    $menuItemDto->setSelected($hasSubmenuSelected);
+                    continue;
+                }
+
+                if ($matcher->shouldBeSelected($menuItemDto, $currentController)) {
+                    $menuItemDto->setSelected(true);
+                    break;
+                }
             }
         }
 
-        return $this->easyAdminMenuItemMatcher->isSelected($menuItemDto);
-    }
-
-    public function isExpanded(MenuItemDto $menuItemDto): bool
-    {
-        return $this->easyAdminMenuItemMatcher->isExpanded($menuItemDto);
+        return $this->easyAdminMenuItemMatcher->markSelectedMenuItem($menuItems, $request);
     }
 }

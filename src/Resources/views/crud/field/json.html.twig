@@ -2,16 +2,14 @@
 {# @var field \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto #}
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 
-{%- apply spaceless -%}
-    {% if field.formattedValue is not null %}
-        <pre style="max-height: 340px;overflow-y: scroll;">
-            <code>{{ field.formattedValue|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
-        </pre>
-    {% elseif field.value is not null %}
-        <pre style="max-height: 340px;overflow-y: scroll;">
-            <code>{{ field.value|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
-        </pre>
-    {% else %}
-        {{ include(ea.templatePath('label/null')) }}
-    {% endif %}
-{% endapply %}
+{% if field.formattedValue is not null %}
+    <pre style="max-height: 340px;overflow-y: scroll;">
+        <code>{{ field.formattedValue|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
+    </pre>
+{% elseif field.value is not null %}
+    <pre style="max-height: 340px;overflow-y: scroll;">
+        <code>{{ field.value|json_encode(constant('JSON_PRETTY_PRINT')) }}</code>
+    </pre>
+{% else %}
+    {{ include(ea.templatePath('label/null')) }}
+{% endif %}

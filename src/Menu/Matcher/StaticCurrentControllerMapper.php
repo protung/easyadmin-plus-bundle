@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Menu\Matcher;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use Protung\EasyAdminPlusBundle\Menu\Matcher;
 
@@ -40,7 +39,7 @@ final class StaticCurrentControllerMapper implements Matcher
         $this->controllersMap = $controllersMap;
     }
 
-    public function isSelected(MenuItemDto $menuItemDto, AdminContext $adminContext, string $currentController): bool
+    public function shouldBeSelected(MenuItemDto $menuItemDto, string $currentController): bool
     {
         $menuItemQueryString     = $menuItemDto->getLinkUrl() === null ? null : parse_url($menuItemDto->getLinkUrl(), PHP_URL_QUERY);
         $menuItemQueryParameters = [];
