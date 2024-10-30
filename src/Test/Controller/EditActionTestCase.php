@@ -92,7 +92,6 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         $this->submitFormRequest($data, $files, $queryParameters);
 
         $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
-        $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest(); // If there is no referrer query parameter set, the redirect will contain the entityId query parameter
 
         $this->assertResponseIsRedirect($redirectQueryParameters);
     }
