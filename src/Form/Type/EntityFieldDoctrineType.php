@@ -19,14 +19,10 @@ use function Psl\invariant;
 
 final class EntityFieldDoctrineType extends AbstractType
 {
-    private EntityManagerInterface $entityManager;
-
-    private PropertyAccessorInterface $propertyAccessor;
-
-    public function __construct(EntityManagerInterface $entityManager, PropertyAccessorInterface $propertyAccessor)
-    {
-        $this->entityManager    = $entityManager;
-        $this->propertyAccessor = $propertyAccessor;
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private PropertyAccessorInterface $propertyAccessor,
+    ) {
     }
 
     /**
@@ -36,6 +32,7 @@ final class EntityFieldDoctrineType extends AbstractType
     {
         $class = Type\string()->coerce($options['class']);
         invariant(Class\exists($class), 'Option "class" is not a class.');
+        $multiple = Type\bool()->coerce($options['multiple']);
 
         if ($options['is_association'] === false) {
             $builder->addModelTransformer(
@@ -43,6 +40,7 @@ final class EntityFieldDoctrineType extends AbstractType
                     $this->entityManager,
                     $this->propertyAccessor,
                     $class,
+                    $multiple,
                 ),
             );
         }
