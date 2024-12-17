@@ -10,10 +10,15 @@ use Psl\Type;
 use Psl\Vec;
 use Speicher210\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionFactoryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
+
+use function serialize;
 
 abstract class AdminWebTestCase extends WebTestCase
 {
@@ -48,6 +53,29 @@ abstract class AdminWebTestCase extends WebTestCase
         }
 
         return $this->client;
+    }
+
+    /**
+     * Set up a session before making a request.
+     *
+     * @param array<string, mixed> $sessionAttributes
+     */
+    public function prepareSession(KernelBrowser $client, array $sessionAttributes): void
+    {
+        $token = $this->getContainerService(TokenStorage::class, 'security.untracked_token_storage')->getToken();
+
+        $sessionStorageFactory = $this->getContainerService(SessionFactoryInterface::class, 'session.factory');
+
+        $session = $sessionStorageFactory->createSession();
+        $session->replace($sessionAttributes);
+        if ($token !== null) {
+            $session->set('_security_' . static::authenticationFirewallContext(), serialize($token));
+        }
+
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $client->getCookieJar()->set($cookie);
     }
 
     /**
