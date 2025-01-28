@@ -29,6 +29,7 @@ use RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+use function is_bool;
 use function is_callable;
 use function Psl\invariant;
 
@@ -85,7 +86,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $associationType = Type\string()->coerce($field->getCustomOption(EntityField::OPTION_DOCTRINE_ASSOCIATION_TYPE));
         if ($associationType === EntityField::DOCTRINE_ASSOCIATION_TYPE_SINGLE) {
-            $this->configureToOneAssociation($field, $entityMetadata);
+            $this->configureToOneAssociation($field, $entityMetadata, $context);
         } elseif ($associationType === EntityField::DOCTRINE_ASSOCIATION_TYPE_MANY) {
             $this->configureToManyAssociation($field, $entityMetadata, $context);
         } else {
@@ -144,7 +145,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         }
     }
 
-    private function configureToOneAssociation(FieldDto $field, EntityMetadata $entityMetadata): void
+    private function configureToOneAssociation(FieldDto $field, EntityMetadata $entityMetadata, AdminContext $context): void
     {
         if ($field->getFormTypeOption('required') === false) {
             $field->setFormTypeOptionIfNotSet('attr.placeholder', $this->translator->trans('label.form.empty_value', [], 'EasyAdminBundle'));
@@ -174,7 +175,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         $field->setFormTypeOptionIfNotSet('data', $targetEntityInstance);
         $field->setFormTypeOptionIfNotSet('data_class', null);
 
-        if ($field->getCustomOption(EntityField::OPTION_LINK_TO_ENTITY) === true) {
+        if ($this->resolveLinkToEntityOption($field, $context)) {
             $field->setCustomOption(
                 EntityField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity(
@@ -208,9 +209,9 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
             $targetSingleIdentifierFieldName = $this->entityManager->getClassMetadata($entityMetadata->targetEntityFqcn())->getSingleIdentifierFieldName();
             $formattedValue                  = Vec\map(
                 Type\vec(Type\instance_of($entityMetadata->targetEntityFqcn()))->coerce($targetEntityRepository->findBy($criteria)),
-                function (object $entity) use ($entityMetadata, $field, $targetSingleIdentifierFieldName): array {
+                function (object $entity) use ($entityMetadata, $field, $targetSingleIdentifierFieldName, $context): array {
                     $relatedUrl = null;
-                    if ($field->getCustomOption(EntityField::OPTION_LINK_TO_ENTITY) === true) {
+                    if ($this->resolveLinkToEntityOption($field, $context)) {
                         $relatedUrl = $this->generateLinkToAssociatedEntity(
                             $entityMetadata->targetCrudControllerFqcn(),
                             $this->entityFactory->create(
@@ -275,5 +276,21 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         }
 
         $field->setFormTypeOption('attr.data-' . EntityField::PARAM_ON_CHANGE_CONTEXT_HANDLE_URL, $controllerUrl);
+    }
+
+    private function resolveLinkToEntityOption(FieldDto $field, AdminContext $context): bool
+    {
+        $optionValue = $field->getCustomOption(EntityField::OPTION_LINK_TO_ENTITY);
+
+        if (is_bool($optionValue)) {
+            return $optionValue;
+        }
+
+        invariant(
+            is_callable($optionValue),
+            Str\format('The "%s" field cannot be configured because the linkToEntity option is not boolean or callable.', $field->getProperty()),
+        );
+
+        return Type\bool()->coerce($optionValue($context));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Field;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
@@ -143,7 +144,10 @@ final class EntityField implements FieldInterface
         return $this;
     }
 
-    public function linkToEntity(bool $link = true): self
+    /**
+     * @param (bool|(callable(AdminContext): bool)) $callable
+     */
+    public function linkToEntity(bool|callable $link = true): self
     {
         $this->setCustomOption(self::OPTION_LINK_TO_ENTITY, $link);
 
