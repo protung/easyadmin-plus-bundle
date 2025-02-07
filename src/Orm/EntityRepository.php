@@ -27,6 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use InvalidArgumentException;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
+use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
 use ReflectionClass;
@@ -42,7 +43,6 @@ use function assert;
 use function class_exists;
 use function count;
 use function ctype_digit;
-use function current;
 use function explode;
 use function in_array;
 use function is_array;
@@ -253,7 +253,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                 ];
             }
 
-            $filterDataDto = FilterDataDto::new($i, $filter, current($queryBuilder->getRootAliases()), $submittedData);
+            $filterDataDto = FilterDataDto::new($i, $filter, Iter\first($queryBuilder->getRootAliases()), $submittedData);
             $filter->apply($queryBuilder, $filterDataDto, $fields->getByProperty($propertyName), $entityDto);
 
             ++$i;
