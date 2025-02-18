@@ -1,10 +1,10 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.25.8",
-    "@babel/preset-env": "^7.25.8",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "@popperjs/core": "^2.11.8",
     "@symfony/webpack-encore": "^5.0.1",
-    "webpack": "^5.95.0",
+    "webpack": "^5.98.0",
     "webpack-cli": "^5.1.4"
   },
   "license": "MIT",
