@@ -26,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Orm\Escaper;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use InvalidArgumentException;
+use Override;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
 use Psl\Iter;
 use Psl\Str;
@@ -68,6 +69,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
     ) {
     }
 
+    #[Override]
     public function createQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $entityManager = $this->doctrine->getManagerForClass($entityDto->getFqcn());

@@ -7,6 +7,7 @@ namespace Protung\EasyAdminPlusBundle\Tests\Test\TestApplication;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Generator;
+use Override;
 use Protung\EasyAdminPlusBundle\ProtungEasyAdminPlusBundle;
 use Psl\Env;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -26,6 +27,7 @@ final class TestKernel extends SymfonyKernel
     /**
      * @return Generator<BundleInterface>
      */
+    #[Override]
     public function registerBundles(): Generator
     {
         yield new FrameworkBundle();
@@ -36,16 +38,19 @@ final class TestKernel extends SymfonyKernel
         yield new ProtungEasyAdminPlusBundle();
     }
 
+    #[Override]
     public function getProjectDir(): string
     {
         return __DIR__;
     }
 
+    #[Override]
     public function getCacheDir(): string
     {
         return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->getEnvironment() . '/cache';
     }
 
+    #[Override]
     public function getLogDir(): string
     {
         return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->getEnvironment() . '/log';

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Translation;
 
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -33,6 +34,7 @@ final class EasyAdminTranslationMessage implements TranslatableInterface
         return new self($message, $parameters);
     }
 
+    #[Override]
     public function trans(TranslatorInterface $translator, string|null $locale = null): string
     {
         return $this->message->trans($translator, $locale);

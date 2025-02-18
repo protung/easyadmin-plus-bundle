@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Protung\EasyAdminPlusBundle\Form\DataTransformer\EntityFieldDataTransformer;
 use Psl\Class;
 use Psl\Type;
@@ -28,6 +29,7 @@ final class EntityFieldDoctrineType extends AbstractType
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $class = Type\string()->coerce($options['class']);
@@ -46,6 +48,7 @@ final class EntityFieldDoctrineType extends AbstractType
         }
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('is_association', false);
@@ -64,6 +67,7 @@ final class EntityFieldDoctrineType extends AbstractType
         );
     }
 
+    #[Override]
     public function getParent(): string
     {
         return EntityType::class;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Form\Type\Extension;
 
+use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class EntityTypeExtension extends AbstractTypeExtension
 {
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         // This needs to be defined because it gets passed from CrudAutocompleteType or EntityFieldDoctrineType by the CrudAutocompleteSubscriber
@@ -22,6 +24,7 @@ final class EntityTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public static function getExtendedTypes(): iterable
     {
         return [EntityType::class];

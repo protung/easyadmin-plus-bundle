@@ -7,6 +7,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
 use RuntimeException;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class NewActionTestCase extends AdminControllerWebTestCase
 {
+    #[Override]
     protected function actionName(): string
     {
         return Action::NEW;

@@ -7,6 +7,7 @@ namespace Protung\EasyAdminPlusBundle\Menu;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher as EasyAdminMenuItemMatcher;
+use Override;
 use Psl\Iter;
 use Psl\Type;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +38,7 @@ final readonly class ChainMenuItemMatcher implements MenuItemMatcherInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function markSelectedMenuItem(array $menuItems, Request $request): array
     {
         $currentController = $request->attributes->get('_controller');

@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
+use Override;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Form\Type\EntityFieldDoctrineType;
 use Symfony\Contracts\Translation\TranslatableInterface;
@@ -66,6 +67,7 @@ final class EntityField implements FieldInterface
 
     public const PARAM_ON_CHANGE_CONTEXT_HANDLE_URL = 'ea-custom-entity-field-on-change-handle-url';
 
+    #[Override]
     public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
     {
         return (new self())

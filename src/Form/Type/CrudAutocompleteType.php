@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Form\Type;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudAutocompleteType as EasyAdminCrudAutocompleteType;
+use Override;
 use Protung\EasyAdminPlusBundle\Form\DataTransformer\EntityFieldDataTransformer;
 use Psl\Class;
 use Psl\Type;
@@ -27,6 +28,7 @@ final class CrudAutocompleteType extends AbstractType
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $class = Type\string()->coerce($options['class']);
@@ -45,6 +47,7 @@ final class CrudAutocompleteType extends AbstractType
         }
     }
 
+    #[Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('is_association', false);
@@ -53,6 +56,7 @@ final class CrudAutocompleteType extends AbstractType
         $resolver->define('placeholder');
     }
 
+    #[Override]
     public function getParent(): string
     {
         return EasyAdminCrudAutocompleteType::class;

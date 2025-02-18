@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Override;
 use Psl\Type;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
@@ -26,6 +27,7 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
         return static::$expectedPageTitle;
     }
 
+    #[Override]
     protected function mainContentSelector(): string
     {
         return '.content-wrapper';

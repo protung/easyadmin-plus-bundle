@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDataDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\FilterTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Filter\Type\TextFilterType;
+use Override;
 use Psl\Str;
 use Symfony\Contracts\Translation\TranslatableInterface;
 
@@ -33,6 +34,7 @@ final class EmbeddedTextFilter implements FilterInterface
             ->setFormTypeOption('translation_domain', 'EasyAdminBundle');
     }
 
+    #[Override]
     public function apply(QueryBuilder $queryBuilder, FilterDataDto $filterDataDto, FieldDto|null $fieldDto, EntityDto $entityDto): void
     {
         $alias         = $filterDataDto->getEntityAlias();

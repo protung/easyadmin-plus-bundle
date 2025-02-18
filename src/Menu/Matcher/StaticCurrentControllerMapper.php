@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Menu\Matcher;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
+use Override;
 use Protung\EasyAdminPlusBundle\Menu\Matcher;
 
 use function parse_str;
@@ -39,6 +40,7 @@ final class StaticCurrentControllerMapper implements Matcher
         $this->controllersMap = $controllersMap;
     }
 
+    #[Override]
     public function shouldBeSelected(MenuItemDto $menuItemDto, string $currentController): bool
     {
         $menuItemQueryString     = $menuItemDto->getLinkUrl() === null ? null : parse_url($menuItemDto->getLinkUrl(), PHP_URL_QUERY);

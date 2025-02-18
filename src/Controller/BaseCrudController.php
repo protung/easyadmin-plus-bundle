@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Override;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Type;
@@ -32,6 +33,7 @@ abstract class BaseCrudController extends AbstractCrudController
     /**
      * @return class-string<TEntity>
      */
+    #[Override]
     abstract public static function getEntityFqcn(): string;
 
     /**
@@ -182,6 +184,7 @@ abstract class BaseCrudController extends AbstractCrudController
     /**
      * @return array<array-key, string|SubscribedService>
      */
+    #[Override]
     public static function getSubscribedServices(): array
     {
         return Dict\merge(

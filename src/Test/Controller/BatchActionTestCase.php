@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
 use Symfony\Component\DomCrawler\Crawler;
@@ -73,6 +74,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
         return $this->findEntity($this->controllerUnderTest()::getEntityFqcn(), $id);
     }
 
+    #[Override]
     protected function actionName(): string
     {
         return Action::INDEX;

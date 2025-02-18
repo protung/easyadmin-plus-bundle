@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Override;
 use Psl\Dict;
 use Psl\Type;
 use Psl\Vec;
@@ -17,6 +18,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 abstract class IndexActionTestCase extends AdminControllerWebTestCase
 {
+    #[Override]
     protected function actionName(): string
     {
         return Action::INDEX;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
+use Override;
 use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
@@ -29,6 +30,7 @@ abstract class AdminWebTestCase extends WebTestCase
      */
     private static UserInterface|null $authentication = null;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,6 +43,7 @@ abstract class AdminWebTestCase extends WebTestCase
         return 'easyadmin';
     }
 
+    #[Override]
     protected function getClient(): KernelBrowser
     {
         if ($this->client === null) {
@@ -60,6 +63,7 @@ abstract class AdminWebTestCase extends WebTestCase
      *
      * @param array<string, mixed> $sessionAttributes
      */
+    #[Override]
     public function prepareSession(KernelBrowser $client, array $sessionAttributes): void
     {
         $token = $this->getContainerService(TokenStorage::class, 'security.untracked_token_storage')->getToken();

@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Override;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
 use Protung\EasyAdminPlusBundle\Form\Type\CrudAutocompleteType;
@@ -45,11 +46,13 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
     ) {
     }
 
+    #[Override]
     public function supports(FieldDto $field, EntityDto $entityDto): bool
     {
         return $field->getFieldFqcn() === EntityField::class;
     }
 
+    #[Override]
     public function configure(FieldDto $field, EntityDto $entityDto, AdminContext $context): void
     {
         $propertyName = $field->getProperty();

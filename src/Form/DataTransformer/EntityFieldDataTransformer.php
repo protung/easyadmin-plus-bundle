@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Psl\Dict;
 use Psl\Type;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -30,6 +31,7 @@ final readonly class EntityFieldDataTransformer implements DataTransformerInterf
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function transform($value): object|array|null
     {
         if ($value === null || $value === '') {
@@ -53,6 +55,7 @@ final readonly class EntityFieldDataTransformer implements DataTransformerInterf
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function reverseTransform($value): mixed
     {
         if ($value === null || $value === '') {

@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,7 @@ abstract class BatchDeleteActionTestCase extends BatchActionTestCase
         $this->clearObjectManager();
     }
 
+    #[Override]
     protected function getBatchActionName(): string
     {
         return Action::BATCH_DELETE;

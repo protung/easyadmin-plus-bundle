@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Controller;
 
+use Override;
 use Psl\Dict;
 use Stringable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,6 +46,7 @@ abstract class BaseController extends AbstractController
     /**
      * @return array<array-key, string|SubscribedService>
      */
+    #[Override]
     public static function getSubscribedServices(): array
     {
         return Dict\merge(

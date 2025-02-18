@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
+use Override;
 use Psl\Class;
 use Psl\Type;
 use RuntimeException;
@@ -33,6 +34,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     /**
      * @return class-string<TEntity>
      */
+    #[Override]
     abstract public static function getEntityFqcn(): string;
 
     /**
@@ -60,6 +62,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
      */
     abstract public function updateEntityFromDto(object $entity, object $dto): void;
 
+    #[Override]
     public function createNewForm(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormInterface
     {
         $form = parent::createNewForm($entityDto, $formOptions, $context);
@@ -189,6 +192,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     /**
      * @return TDto
      */
+    #[Override]
     public function createEntity(string $entityFqcn): object
     {
         $className = static::getDtoFqcn();
@@ -199,6 +203,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public static function getSubscribedEvents(): array
     {
         return [

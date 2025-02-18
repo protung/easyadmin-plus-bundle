@@ -7,6 +7,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
+use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Str;
 use Psl\Type;
@@ -26,6 +27,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
 {
     protected static string|int $expectedEntityIdUnderTest;
 
+    #[Override]
     protected function actionName(): string
     {
         return Action::EDIT;
