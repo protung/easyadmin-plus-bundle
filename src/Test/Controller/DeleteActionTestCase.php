@@ -52,6 +52,31 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
 
     /**
      * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $redirectQueryParameters
+     */
+    protected function assertRemovingEntityFromDetailPageAndRedirectingToIndexAction(
+        array $queryParameters = [],
+        array $redirectQueryParameters = [],
+    ): void {
+        $detailPageQueryParameters                  = array_merge($queryParameters, [EA::CRUD_ACTION => Action::DETAIL]);
+        $detailPageQueryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        $crawler = $this->assertRequestGet($detailPageQueryParameters);
+
+        $form                             = $this->findForm($crawler);
+        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        $this->getClient()->request(
+            Request::METHOD_POST,
+            $this->prepareAdminUrl($queryParameters),
+            $form->getValues(),
+        );
+
+        $redirectQueryParameters[EA::CRUD_ACTION] ??= Action::INDEX;
+        $this->assertResponseIsRedirect($redirectQueryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
      */
     protected function assertDeleteEntityRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
