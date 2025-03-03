@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -78,6 +79,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         $entityMetadata = new EntityMetadata(
             $entityDto->getPrimaryKeyValue(),
             $sourceCrudControllerFqcn,
+            Type\class_string(DashboardControllerInterface::class)->coerce($context->getDashboardControllerFqcn()),
             $targetCrudControllerFqcn,
             $targetEntityFqcn,
             EntityField::getEntityDisplayField($field),
@@ -182,7 +184,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
             $field->setCustomOption(
                 EntityField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity(
-                    $entityMetadata->targetCrudControllerFqcn(),
+                    $entityMetadata,
                     $targetEntityDto,
                 ),
             );
@@ -216,7 +218,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
                     $relatedUrl = null;
                     if ($this->resolveLinkToEntityOption($field, $context)) {
                         $relatedUrl = $this->generateLinkToAssociatedEntity(
-                            $entityMetadata->targetCrudControllerFqcn(),
+                            $entityMetadata,
                             $this->entityFactory->create(
                                 $entityMetadata->targetEntityFqcn(),
                                 $this->propertyAccessor->getValue($entity, $targetSingleIdentifierFieldName),
@@ -237,13 +239,14 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         $field->setFormattedValue($formattedValue);
     }
 
-    private function generateLinkToAssociatedEntity(string $crudController, EntityDto $entityDto): string
+    private function generateLinkToAssociatedEntity(EntityMetadata $entityMetadata, EntityDto $entityDto): string
     {
         return $this->adminUrlGenerator
-            ->setController($crudController)
+            ->unsetAll()
+            ->setDashboard($entityMetadata->targetDashboardControllerFqcn())
+            ->setController($entityMetadata->targetCrudControllerFqcn())
             ->setAction(Action::DETAIL)
             ->setEntityId($entityDto->getPrimaryKeyValue())
-            ->includeReferrer()
             ->generateUrl();
     }
 
