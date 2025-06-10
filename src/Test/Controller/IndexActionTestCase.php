@@ -113,27 +113,35 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         $headers = $this->extractDatagridHeaders();
 
         $rows = $this->getClient()->getCrawler()->filter($this->datagridRowSelector())->each(
-            function (Crawler $tr): array {
-                return $tr->filter('td')->each(
-                    function (Crawler $column): array|string|bool {
-                        if ($column->matches('.actions')) {
-                            return $this->mapActions($column->filter('[data-action-name]'));
-                        }
-
-                        if ($column->matches('.has-switch')) {
-                            return $column->filter('input.form-check-input:checked')->count() > 0;
-                        }
-
-                        return $column->text(normalizeWhitespace: true);
-                    },
-                );
-            },
+            fn (Crawler $tr): array => $tr->filter('td')->each(
+                $this->extractDataFromCell(...),
+            ),
         );
 
         return Vec\map(
             $rows,
             static fn (array $row): array => Dict\associate($headers, $row),
         );
+    }
+
+    /**
+     * @return array<mixed>|string|bool
+     */
+    protected function extractDataFromCell(Crawler $cell): array|string|bool
+    {
+        if ($cell->matches('.field-color')) {
+            return $cell->filter('.color-sample')->attr('title') ?? '';
+        }
+
+        if ($cell->matches('.actions')) {
+            return $this->mapActions($cell->filter('[data-action-name]'));
+        }
+
+        if ($cell->matches('.has-switch')) {
+            return $cell->filter('input.form-check-input:checked')->count() > 0;
+        }
+
+        return $this->extractDataFromElement($cell);
     }
 
     /**
