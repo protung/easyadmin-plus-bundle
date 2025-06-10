@@ -15,7 +15,7 @@ use function is_callable;
 
 trait AdvancedDisplayField
 {
-    public const OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
+    public const string OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
     /**
      * @param string|(callable(TEntity): string) $entityDisplayField

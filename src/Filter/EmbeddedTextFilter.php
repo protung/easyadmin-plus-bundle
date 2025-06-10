@@ -22,7 +22,7 @@ final class EmbeddedTextFilter implements FilterInterface
 {
     use FilterTrait;
 
-    private const PROPERTY_PATH_SEPARATOR = '___';
+    private const string PROPERTY_PATH_SEPARATOR = '___';
 
     public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
     {

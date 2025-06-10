@@ -22,50 +22,50 @@ final class EntityField implements FieldInterface
     use AdvancedDisplayField;
     use CallbackConfigurableField;
 
-    public const OPTION_CRUD_CONTROLLER = AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER;
+    public const string OPTION_CRUD_CONTROLLER = AssociationField::OPTION_EMBEDDED_CRUD_FORM_CONTROLLER;
 
-    public const OPTION_AUTOCOMPLETE = AssociationField::OPTION_AUTOCOMPLETE;
+    public const string OPTION_AUTOCOMPLETE = AssociationField::OPTION_AUTOCOMPLETE;
 
-    public const OPTION_WIDGET = AssociationField::OPTION_WIDGET;
+    public const string OPTION_WIDGET = AssociationField::OPTION_WIDGET;
 
-    public const WIDGET_AUTOCOMPLETE = AssociationField::WIDGET_AUTOCOMPLETE;
+    public const string WIDGET_AUTOCOMPLETE = AssociationField::WIDGET_AUTOCOMPLETE;
 
-    public const WIDGET_NATIVE = AssociationField::WIDGET_NATIVE;
+    public const string WIDGET_NATIVE = AssociationField::WIDGET_NATIVE;
 
-    public const OPTION_TURBO_DRIVE_ENABLED = 'turboDriveEnabled';
+    public const string OPTION_TURBO_DRIVE_ENABLED = 'turboDriveEnabled';
 
-    public const OPTION_RENDER_TYPE = 'renderType';
+    public const string OPTION_RENDER_TYPE = 'renderType';
 
-    public const OPTION_RENDER_TYPE_LIST = 'asList';
+    public const string OPTION_RENDER_TYPE_LIST = 'asList';
 
-    public const OPTION_RENDER_TYPE_COUNT = 'asCount';
+    public const string OPTION_RENDER_TYPE_COUNT = 'asCount';
 
-    public const OPTION_QUERY_BUILDER_CALLABLE = AssociationField::OPTION_QUERY_BUILDER_CALLABLE;
+    public const string OPTION_QUERY_BUILDER_CALLABLE = AssociationField::OPTION_QUERY_BUILDER_CALLABLE;
 
-    public const OPTION_ENTITY_DTO_FACTORY_CALLABLE = 'entityDtoFactoryCallable';
+    public const string OPTION_ENTITY_DTO_FACTORY_CALLABLE = 'entityDtoFactoryCallable';
 
-    public const OPTION_LINK_TO_ENTITY = 'linkToEntity';
-
-    /** @internal this option is intended for internal use only */
-    public const OPTION_RELATED_URL = AssociationField::OPTION_RELATED_URL;
+    public const string OPTION_LINK_TO_ENTITY = 'linkToEntity';
 
     /** @internal this option is intended for internal use only */
-    public const OPTION_DOCTRINE_ASSOCIATION_TYPE = AssociationField::OPTION_DOCTRINE_ASSOCIATION_TYPE;
-
-    public const DOCTRINE_ASSOCIATION_TYPE_SINGLE = 'toOne';
-
-    public const DOCTRINE_ASSOCIATION_TYPE_MANY = 'toMany';
+    public const string OPTION_RELATED_URL = AssociationField::OPTION_RELATED_URL;
 
     /** @internal this option is intended for internal use only */
-    public const PARAM_AUTOCOMPLETE_CONTEXT = AssociationField::PARAM_AUTOCOMPLETE_CONTEXT;
+    public const string OPTION_DOCTRINE_ASSOCIATION_TYPE = AssociationField::OPTION_DOCTRINE_ASSOCIATION_TYPE;
 
-    public const OPTION_ON_CHANGE = 'onChange';
+    public const string DOCTRINE_ASSOCIATION_TYPE_SINGLE = 'toOne';
 
-    public const OPTION_ON_CHANGE_URL_CALLABLE = 'onChangeUrlCallable';
+    public const string DOCTRINE_ASSOCIATION_TYPE_MANY = 'toMany';
 
-    public const PARAM_ON_CHANGE_CONTEXT_FIELD_PROPERTY = 'ea-custom-entity-field-on-change-field-property';
+    /** @internal this option is intended for internal use only */
+    public const string PARAM_AUTOCOMPLETE_CONTEXT = AssociationField::PARAM_AUTOCOMPLETE_CONTEXT;
 
-    public const PARAM_ON_CHANGE_CONTEXT_HANDLE_URL = 'ea-custom-entity-field-on-change-handle-url';
+    public const string OPTION_ON_CHANGE = 'onChange';
+
+    public const string OPTION_ON_CHANGE_URL_CALLABLE = 'onChangeUrlCallable';
+
+    public const string PARAM_ON_CHANGE_CONTEXT_FIELD_PROPERTY = 'ea-custom-entity-field-on-change-field-property';
+
+    public const string PARAM_ON_CHANGE_CONTEXT_HANDLE_URL = 'ea-custom-entity-field-on-change-handle-url';
 
     #[Override]
     public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
