@@ -162,6 +162,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         $label = $field->filter('div.field-label')->text('', normalizeWhitespace: true);
 
         return [
+            'element' => 'field',
             'label' => $label !== '' ? $label : null,
             'value' => $field->filter('div.field-value')->text(normalizeWhitespace: true),
         ];
