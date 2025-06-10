@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class EasyAdminTranslationMessage implements TranslatableInterface
 {
-    private const EASY_ADMIN_TRANSLATION_DOMAIN = 'EasyAdminBundle';
+    private const string EASY_ADMIN_TRANSLATION_DOMAIN = 'EasyAdminBundle';
 
     private TranslatableMessage $message;
 

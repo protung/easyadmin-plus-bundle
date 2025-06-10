@@ -24,11 +24,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @template TEntity of object
+ * @extends AbstractCrudController<TEntity>
  */
 abstract class BaseCrudController extends AbstractCrudController
 {
-    protected const FIELD_SORT_ASC  = 'ASC';
-    protected const FIELD_SORT_DESC = 'DESC';
+    protected const string FIELD_SORT_ASC  = 'ASC';
+    protected const string FIELD_SORT_DESC = 'DESC';
 
     /**
      * @return class-string<TEntity>
