@@ -20,8 +20,11 @@
     </UndefinedThisPropertyAssignment>
   </file>
   <file src="src/Field/AdvancedDisplayField.php">
+    <MismatchingDocblockParamType>
+      <code><![CDATA[string|(callable(TEntity):string|TranslatableInterface)]]></code>
+    </MismatchingDocblockParamType>
     <MismatchingDocblockReturnType>
-      <code><![CDATA[string|(callable(object):string|TranslatableInterface|null)|null]]></code>
+      <code><![CDATA[string|(callable(object):string|TranslatableInterface)|null]]></code>
     </MismatchingDocblockReturnType>
     <PossiblyInvalidArgument>
       <code><![CDATA[$targetEntityDisplayField]]></code>

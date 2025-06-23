@@ -20,7 +20,7 @@ trait AdvancedDisplayField
     public const string OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
     /**
-     * @param string|(callable(TEntity): string) $entityDisplayField
+     * @param string|(callable(TEntity):string|TranslatableInterface) $entityDisplayField
      *
      * @template TEntity of object
      */
@@ -32,11 +32,11 @@ trait AdvancedDisplayField
     }
 
     /**
-     * @return string|(callable(object):string|TranslatableInterface|null)|null
+     * @return string|(callable(object):string|TranslatableInterface)|null
      */
     public static function getEntityDisplayField(FieldDto $field): string|callable|null
     {
-        /** @var string|(callable(object):string|TranslatableInterface|null)|null $value */
+        /** @var string|(callable(object):string|TranslatableInterface)|null $value */
         $value = $field->getCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD);
 
         if (is_callable($value)) {
