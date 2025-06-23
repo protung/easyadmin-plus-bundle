@@ -55,6 +55,9 @@
     "speicher210/functional-test-bundle": "2.x-dev",
     "vimeo/psalm": "^6.12.0"
   },
+  "conflict": {
+    "easycorp/easyadmin-bundle": ">=4.24.9"
+  },
   "suggest": {
     "speicher210/functional-test-bundle": "For testing support."
   },

@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 /**
  * @psalm-immutable
@@ -26,17 +27,17 @@ final class EntityMetadata
     /** @var class-string */
     private string $targetEntityFqcn;
 
-    /** @var string|(callable(object):?string)|null */
+    /** @var string|(callable(object):string|TranslatableInterface|null)|null */
     private $targetEntityDisplayField;
 
     private object|int|string|null $targetEntityId;
 
     /**
-     * @param class-string<CrudControllerInterface>      $sourceCrudControllerFqcn
-     * @param class-string<DashboardControllerInterface> $targetDashboardControllerFqcn
-     * @param class-string<CrudControllerInterface>      $targetCrudControllerFqcn
-     * @param class-string                               $targetEntityFqcn
-     * @param string|(callable(object):?string)|null     $targetEntityDisplayField
+     * @param class-string<CrudControllerInterface>                            $sourceCrudControllerFqcn
+     * @param class-string<DashboardControllerInterface>                       $targetDashboardControllerFqcn
+     * @param class-string<CrudControllerInterface>                            $targetCrudControllerFqcn
+     * @param class-string                                                     $targetEntityFqcn
+     * @param string|(callable(object):string|TranslatableInterface|null)|null $targetEntityDisplayField
      */
     public function __construct(
         object|int|string|null $sourceEntityId,
@@ -94,7 +95,7 @@ final class EntityMetadata
     }
 
     /**
-     * @return string|(callable(object):?string)|null
+     * @return string|(callable(object):string|TranslatableInterface|null)|null
      */
     public function targetEntityDisplayField(): string|callable|null
     {
