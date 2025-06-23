@@ -10,6 +10,8 @@ use Psl\Type;
 use RuntimeException;
 use Stringable;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function is_callable;
 
@@ -30,11 +32,11 @@ trait AdvancedDisplayField
     }
 
     /**
-     * @return string|(callable(object):?string)|null
+     * @return string|(callable(object):string|TranslatableInterface|null)|null
      */
     public static function getEntityDisplayField(FieldDto $field): string|callable|null
     {
-        /** @var string|(callable(object):?string)|null $value */
+        /** @var string|(callable(object):string|TranslatableInterface|null)|null $value */
         $value = $field->getCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD);
 
         if (is_callable($value)) {
@@ -44,7 +46,7 @@ trait AdvancedDisplayField
         return Type\nullable(Type\string())->coerce($value);
     }
 
-    public static function formatAsString(object|null $entityInstance, FieldDto $field): string|null
+    public static function formatAsString(object|null $entityInstance, FieldDto $field, TranslatorInterface $translator): string|null
     {
         if ($entityInstance === null) {
             return null;
@@ -53,7 +55,9 @@ trait AdvancedDisplayField
         $targetEntityDisplayField = self::getEntityDisplayField($field);
         if ($targetEntityDisplayField !== null) {
             if (is_callable($targetEntityDisplayField)) {
-                return $targetEntityDisplayField($entityInstance);
+                $displayValue = $targetEntityDisplayField($entityInstance);
+
+                return $displayValue instanceof TranslatableInterface ? $displayValue->trans($translator) : $displayValue;
             }
 
             return Type\nullable(Type\string())->coerce(PropertyAccess::createPropertyAccessor()->getValue($entityInstance, $targetEntityDisplayField));

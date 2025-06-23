@@ -192,7 +192,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setValue($targetEntityInstance);
         $field->setFormattedValue(
-            EntityField::formatAsString($targetEntityInstance, $field),
+            EntityField::formatAsString($targetEntityInstance, $field, $this->translator),
         );
     }
 
@@ -228,7 +228,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
                     return [
                         'relatedUrl' => $relatedUrl,
-                        'formattedValue' => EntityField::formatAsString($entity, $field),
+                        'formattedValue' => EntityField::formatAsString($entity, $field, $this->translator),
                     ];
                 },
             );

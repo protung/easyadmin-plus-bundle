@@ -25,6 +25,7 @@ use Psl\Type;
 use Psl\Type\Exception\CoercionException;
 use Psl\Vec;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function array_key_exists;
 
@@ -37,6 +38,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         private EntityFactory $entityFactory,
         private AdminUrlGeneratorInterface $adminUrlGenerator,
         private PropertyAccessorInterface $propertyAccessor,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -50,6 +52,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
             $this->entityFactory,
             $this->adminUrlGenerator,
             $this->propertyAccessor,
+            $this->translator,
         );
     }
 
@@ -202,10 +205,11 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         if (array_key_exists('results', $generatedJson)) {
             $generatedJson['results'] = Vec\map(
                 $generatedJson['results'],
-                static function (array $result) use ($reindexResults, $field): array {
+                function (array $result) use ($reindexResults, $field): array {
                     $result['entityAsString'] = EntityField::formatAsString(
                         Type\object()->coerce($reindexResults[$result[EA::ENTITY_ID]]),
                         $field,
+                        $this->translator,
                     );
 
                     return $result;

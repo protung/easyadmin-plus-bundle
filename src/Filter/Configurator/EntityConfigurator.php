@@ -19,6 +19,7 @@ use Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator;
 use Psl\Str;
 use Psl\Type;
 use RuntimeException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @see https://github.com/EasyCorp/EasyAdminBundle/issues/4244
@@ -27,6 +28,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 {
     public function __construct(
         private AutocompleteActionAdminUrlGenerator $autocompleteActionAdminUrlGenerator,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -64,7 +66,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $filterDto->setFormTypeOption(
             'value_type_options.choice_label',
-            static fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto),
+            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto, $this->translator),
         );
 
         $autocompleteMode = Type\bool()->coerce($fieldDto->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
