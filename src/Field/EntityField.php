@@ -125,6 +125,20 @@ final class EntityField implements FieldInterface
         return $this;
     }
 
+    public function operateOnIds(): self
+    {
+        $this->setFormTypeOption('is_association', false);
+
+        return $this;
+    }
+
+    public function operateOnEntities(): self
+    {
+        $this->setFormTypeOption('is_association', true);
+
+        return $this;
+    }
+
     public function autocomplete(bool $autocomplete = true): self
     {
         $this->setCustomOption(self::OPTION_AUTOCOMPLETE, $autocomplete);
