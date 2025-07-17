@@ -206,4 +206,14 @@ final class EntityField implements FieldInterface
 
         return $this;
     }
+
+    public function readonly(bool $readonly = true): self
+    {
+        $this->setDisabled($readonly);
+
+        // For readonly fields it is useful to not load the choices to improve performance for fields that might have many options.
+        $this->setFormTypeOptionIfNotSet('choice_lazy', $readonly);
+
+        return $this;
+    }
 }
