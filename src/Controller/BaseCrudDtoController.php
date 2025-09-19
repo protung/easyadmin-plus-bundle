@@ -17,9 +17,6 @@ use Psl\Class;
 use Psl\Type;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Event\PreSetDataEvent;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -86,22 +83,6 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         $this->removeEntityInstanceFromAdminContext($context);
 
         return $form;
-    }
-
-    #[Override]
-    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
-    {
-        $formOptions->set('data_class', static::getDtoFqcn());
-        $formBuilder = parent::createNewFormBuilder($entityDto, $formOptions, $context);
-
-        $formBuilder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (PreSetDataEvent $event): void {
-                $event->setData($this->createDto());
-            },
-        );
-
-        return $formBuilder;
     }
 
     final public function convertDtoToEntityFromBeforeEntityPersistedEvent(BeforeEntityPersistedEvent $event): void
