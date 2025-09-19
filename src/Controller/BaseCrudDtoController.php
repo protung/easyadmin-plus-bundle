@@ -17,6 +17,9 @@ use Psl\Class;
 use Psl\Type;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Event\PreSetDataEvent;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -32,12 +35,6 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
     private object|null $temporaryEntityForEdit = null;
 
     /**
-     * @return class-string<TEntity>
-     */
-    #[Override]
-    abstract public static function getEntityFqcn(): string;
-
-    /**
      * @return class-string<TDto>
      */
     abstract public static function getDtoFqcn(): string;
@@ -48,6 +45,25 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
      * @return TEntity|null
      */
     abstract public function createEntityFromDto(object $dto): object|null;
+
+    /**
+     * @return TDto
+     */
+    #[Override]
+    final public function createEntity(string $entityFqcn): object
+    {
+        return $this->createDto();
+    }
+
+    /**
+     * @return TDto
+     */
+    public function createDto(): object
+    {
+        $className = static::getDtoFqcn();
+
+        return new $className();
+    }
 
     /**
      * @param TEntity $entity
@@ -70,6 +86,22 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
         $this->removeEntityInstanceFromAdminContext($context);
 
         return $form;
+    }
+
+    #[Override]
+    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formOptions->set('data_class', static::getDtoFqcn());
+        $formBuilder = parent::createNewFormBuilder($entityDto, $formOptions, $context);
+
+        $formBuilder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (PreSetDataEvent $event): void {
+                $event->setData($this->createDto());
+            },
+        );
+
+        return $formBuilder;
     }
 
     final public function convertDtoToEntityFromBeforeEntityPersistedEvent(BeforeEntityPersistedEvent $event): void
@@ -181,23 +213,7 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
 
     private function removeEntityInstanceFromAdminContext(AdminContext $adminContext): void
     {
-        $entity = $adminContext->getEntity();
-
-        $closure = function (): void {
-            $this->instance = null;
-        };
-        $closure->call($entity);
-    }
-
-    /**
-     * @return TDto
-     */
-    #[Override]
-    public function createEntity(string $entityFqcn): object
-    {
-        $className = static::getDtoFqcn();
-
-        return new $className();
+        $adminContext->getEntity()->setInstance(null);
     }
 
     /**

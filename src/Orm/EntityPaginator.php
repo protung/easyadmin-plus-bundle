@@ -75,7 +75,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
     }
 
     /**
-     * @return iterable<mixed>
+     * @return iterable<int|null>
      */
     #[Override]
     public function getPageRange(int|null $pagesOnEachSide = null, int|null $pagesOnEdges = null): iterable

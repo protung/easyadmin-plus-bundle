@@ -19,7 +19,7 @@ use function array_key_exists;
 abstract class DashboardControllerTestCase extends AdminWebTestCase
 {
     /**
-     * @param array<mixed> $routeParameters
+     * @param array<string, mixed> $routeParameters
      */
     protected function assertMenu(array $routeParameters = []): void
     {
@@ -80,7 +80,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param array<mixed> $routeParameters
+     * @param array<string, mixed> $routeParameters
      */
     protected function assertRequestGet(
         array $routeParameters = [],
@@ -94,7 +94,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param array<mixed> $routeParameters
+     * @param array<string, mixed> $routeParameters
      */
     protected function prepareDashboardUrl(array $routeParameters): string
     {

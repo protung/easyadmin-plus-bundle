@@ -32,12 +32,6 @@ abstract class BaseCrudController extends AbstractCrudController
     protected const string FIELD_SORT_DESC = 'DESC';
 
     /**
-     * @return class-string<TEntity>
-     */
-    #[Override]
-    abstract public static function getEntityFqcn(): string;
-
-    /**
      * Calling this method will disable all standard actions.
      */
     public function disableAllActions(Actions $actions): Actions
