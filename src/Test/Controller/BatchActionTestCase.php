@@ -63,6 +63,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($entityIds, $indexPageQueryParameters);
 
+        $expectedRedirectUrlParameters[EA::PAGE] ??= '1'; // Ensure we are redirected to the first page after a batch action.
         $this->assertResponseIsRedirect($expectedRedirectUrlParameters);
     }
 
