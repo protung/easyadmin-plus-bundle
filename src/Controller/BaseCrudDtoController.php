@@ -4,20 +4,31 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Controller;
 
+use BadMethodCallException;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Event\AfterCrudActionEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
+use EasyCorp\Bundle\EasyAdminBundle\Exception\ForbiddenActionException;
+use EasyCorp\Bundle\EasyAdminBundle\Exception\InsufficientEntityPermissionException;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
 use Override;
-use Psl\Class;
-use Psl\Type;
-use RuntimeException;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\FormInterface;
+use Psl\Str;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+
+use function class_exists;
 
 /**
  * Original inspiration from https://gist.github.com/ragboyjr/2ed5734eb839483ca22892f6955b2792
@@ -26,11 +37,8 @@ use Symfony\Component\Form\FormInterface;
  * @template TDto of object
  * @template-extends BaseCrudController<TEntity>
  */
-abstract class BaseCrudDtoController extends BaseCrudController implements EventSubscriberInterface
+abstract class BaseCrudDtoController extends BaseCrudController
 {
-    /** @var TEntity|null */
-    private object|null $temporaryEntityForEdit = null;
-
     /**
      * @return class-string<TDto>
      */
@@ -43,13 +51,15 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
      */
     abstract public function createEntityFromDto(object $dto): object|null;
 
-    /**
-     * @return TDto
-     */
     #[Override]
-    final public function createEntity(string $entityFqcn): object
+    final public function createEntity(string $entityFqcn): never
     {
-        return $this->createDto();
+        throw new BadMethodCallException(
+            Str\format(
+                'Method "%s" should not be called. Call createDto() if needed in DTO controllers. ',
+                __METHOD__,
+            ),
+        );
     }
 
     /**
@@ -75,161 +85,180 @@ abstract class BaseCrudDtoController extends BaseCrudController implements Event
      */
     abstract public function updateEntityFromDto(object $entity, object $dto): void;
 
+    /**
+     * This method should be identical to the parent edit() method except that:
+     *  - it uses updateEntityFromDto($originalEntity, $dto) to update the entity from the DTO.
+     */
     #[Override]
-    public function createNewForm(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormInterface
+    public function edit(AdminContext $context): KeyValueStore|Response
     {
-        $form = parent::createNewForm($entityDto, $formOptions, $context);
+        // phpcs:disable
+        $entityDto = $context->getEntity();
+        $entityInstance = $entityDto->getInstance();
 
-        $this->removeEntityInstanceFromAdminContext($context);
+        $dto = $this->createDtoFromEntity($entityInstance);
+        $entityDto->setInstance(null);
+        $entityDto->setInstance($dto);
 
-        return $form;
-    }
-
-    final public function convertDtoToEntityFromBeforeEntityPersistedEvent(BeforeEntityPersistedEvent $event): void
-    {
-        if (! $this->matchesCrudController()) {
-            return;
+        $event = new BeforeCrudActionEvent($context);
+        $this->container->get('event_dispatcher')->dispatch($event);
+        if ($event->isPropagationStopped()) {
+            return $event->getResponse();
         }
 
-        $dto = $event->getEntityInstance();
-        if (! Type\instance_of(static::getDtoFqcn())->matches($dto)) {
-            return;
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::EDIT, 'entity' => $context->getEntity(), 'entityFqcn' => $context->getEntity()->getFqcn()])) {
+            throw new ForbiddenActionException($context);
         }
 
-        $entity = $this->createEntityFromDto($dto);
-
-        /**
-         * @param TEntity|null $entity
-         */
-        $closure = function (object|null $entity): void {
-            $this->entityInstance = $entity;
-        };
-        $closure->call($event, $entity);
-    }
-
-    final public function convertEntityToDtoFromBeforeCrudActionEvent(BeforeCrudActionEvent $event): void
-    {
-        $adminContext = Type\instance_of(AdminContext::class)->coerce($event->getAdminContext());
-        $crud         = Type\instance_of(CrudDto::class)->coerce($adminContext->getCrud());
-
-        if (! $this->matchesCrudController()) {
-            return;
+        if (!$context->getEntity()->isAccessible()) {
+            throw new InsufficientEntityPermissionException($context);
         }
 
-        if ($crud->getCurrentAction() !== Action::EDIT) {
-            return;
+        $this->container->get(EntityFactory::class)->processFields($context->getEntity(), FieldCollection::new($this->configureFields(Crud::PAGE_EDIT)));
+        $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
+        $this->container->get(EntityFactory::class)->processActions($context->getEntity(), $context->getCrud()->getActionsConfig());
+        /** @var TDto $dto */
+        $dto = $context->getEntity()->getInstance();
+
+        if ($context->getRequest()->isXmlHttpRequest()) {
+            if ('PATCH' !== $context->getRequest()->getMethod()) {
+                throw new MethodNotAllowedHttpException(['PATCH']);
+            }
+
+            if (!$this->isCsrfTokenValid(BooleanField::CSRF_TOKEN_NAME, $context->getRequest()->query->get('csrfToken'))) {
+                if (class_exists(InvalidCsrfTokenException::class)) {
+                    throw new InvalidCsrfTokenException();
+                } else {
+                    return new Response('Invalid CSRF token.', 400);
+                }
+            }
+
+            $fieldName = $context->getRequest()->query->get('fieldName');
+            $newValue = 'true' === mb_strtolower($context->getRequest()->query->get('newValue'));
+
+            try {
+                $event = $this->ajaxEdit($context->getEntity(), $fieldName, $newValue);
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException($e->getMessage());
+            }
+
+            if ($event->isPropagationStopped()) {
+                return $event->getResponse();
+            }
+
+            return new Response($newValue ? '1' : '0');
         }
 
-        $entityDto = $adminContext->getEntity();
+        $editForm = $this->createEditForm($context->getEntity(), $context->getCrud()->getEditFormOptions(), $context);
+        $editForm->handleRequest($context->getRequest());
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->processUploadedFiles($editForm);
 
-        $instance = $entityDto->getInstance();
+            $this->updateEntityFromDto($entityInstance, $dto);
+            $entityDto->setInstance(null);
+            $entityDto->setInstance($entityInstance);
 
-        if (! Type\instance_of(static::getEntityFqcn())->matches($instance)) {
-            return;
+            $event = new BeforeEntityUpdatedEvent($entityInstance);
+            $this->container->get('event_dispatcher')->dispatch($event);
+            $entityInstance = $event->getEntityInstance();
+
+            $this->updateEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entityInstance);
+
+            $this->container->get('event_dispatcher')->dispatch(new AfterEntityUpdatedEvent($entityInstance));
+
+            return $this->getRedirectResponseAfterSave($context, Action::EDIT);
         }
 
-        // hack: this triggers the primary key value to be cached on the entity DTO.
-        // This is required because we won't have access to the actual entity with it's pkey from the entityDto.
-        $entityDto->getPrimaryKeyValue();
+        $responseParameters = $this->configureResponseParameters(KeyValueStore::new([
+            'pageName' => Crud::PAGE_EDIT,
+            'templateName' => 'crud/edit',
+            'edit_form' => $editForm,
+            'entity' => $context->getEntity(),
+        ]));
 
-        $this->temporaryEntityForEdit = $instance;
-        $dto                          = $this->createDtoFromEntity($this->temporaryEntityForEdit);
-
-        /**
-         * @param TDto $dto
-         */
-        $closure = function (object $dto): void {
-            $this->instance = $dto;
-        };
-        $closure->call($entityDto, $dto);
-    }
-
-    final public function convertDtoToUpdatedEntityFromBeforeEntityUpdatedEvent(BeforeEntityUpdatedEvent $event): void
-    {
-        if (! $this->matchesCrudController()) {
-            return;
+        $event = new AfterCrudActionEvent($context, $responseParameters);
+        $this->container->get('event_dispatcher')->dispatch($event);
+        if ($event->isPropagationStopped()) {
+            return $event->getResponse();
         }
 
-        $dto = $event->getEntityInstance();
-        if (! Type\instance_of(static::getDtoFqcn())->matches($dto)) {
-            return;
-        }
-
-        if ($this->temporaryEntityForEdit === null) {
-            throw new RuntimeException('Temporary entity for edit variable was not set, something went wrong with the edit process.');
-        }
-
-        $this->updateEntityFromDto($this->temporaryEntityForEdit, $dto);
-
-        /**
-         * @param TEntity $entity
-         */
-        $closure = function (object $entity): void {
-            $this->entityInstance = $entity;
-        };
-        $closure->call($event, $this->temporaryEntityForEdit);
+        return $responseParameters;
+        // phpcs:enable
     }
 
     /**
-     * The entityId query param will get left in the generated urls when you click around the admin.
-     * For example, if you visit show, and then hit the Back To Listings button, the url will have the recently shown entityId still in the url.
-     * When creating a new entity, it causes the admin context provider to try and load the old entity by id and set it on the EntityDto.
+     * This method should be identical to the parent new() method except that:
+     *  - it uses the createDto() method to create a new instance of the DTO instead of the entity.
+     *  - it uses createEntityFromDto($dto) to convert the DTO to the entity before persisting it.
+     *
+     * In some scenarios, the entityId query param will get left in the generated urls when :
+     *  - you click around the admin
+     *  - (by choice) setting some ID in the URL to be used in the `new` action (creating related entities)
+     * When creating a new entity, it causes the admin context provider to try and load the entity by ID and set it on the EntityDto.
      * This then causes an exception when we later try to setInstance on the EntityDto to a Dto class and not the Entity.
      */
-    final public function removeEntityFromContextOnBeforeCrudActionEvent(BeforeCrudActionEvent $event): void
-    {
-        if (! $this->matchesCrudController()) {
-            return;
-        }
-
-        $adminContext = Type\instance_of(AdminContext::class)->coerce($event->getAdminContext());
-        $crud         = Type\instance_of(CrudDto::class)->coerce($adminContext->getCrud());
-
-        if ($crud->getCurrentAction() !== Action::NEW) {
-            return;
-        }
-
-        $this->removeEntityInstanceFromAdminContext($adminContext);
-    }
-
-    private function removeEntityInstanceFromAdminContext(AdminContext $adminContext): void
-    {
-        $adminContext->getEntity()->setInstance(null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     #[Override]
-    public static function getSubscribedEvents(): array
+    public function new(AdminContext $context): KeyValueStore|Response
     {
-        return [
-            BeforeEntityPersistedEvent::class => [
-                ['convertDtoToEntityFromBeforeEntityPersistedEvent'],
-            ],
-            BeforeCrudActionEvent::class => [
-                ['convertEntityToDtoFromBeforeCrudActionEvent'],
-                ['removeEntityFromContextOnBeforeCrudActionEvent'],
-            ],
-            BeforeEntityUpdatedEvent::class => [
-                ['convertDtoToUpdatedEntityFromBeforeEntityUpdatedEvent'],
-            ],
-        ];
-    }
-
-    /**
-     * If multiple CRUD DTO controllers have the same EntityFQCN then we might need to skip handling the events.
-     */
-    private function matchesCrudController(): bool
-    {
-        $adminContext = $this->currentAdminContext();
-        $crud         = Type\instance_of(CrudDto::class)->coerce($adminContext->getCrud());
-
-        $controller = $crud->getControllerFqcn();
-        if ($controller === null || ! Class\exists($controller)) {
-            return false;
+        // phpcs:disable
+        $event = new BeforeCrudActionEvent($context);
+        $this->container->get('event_dispatcher')->dispatch($event);
+        if ($event->isPropagationStopped()) {
+            return $event->getResponse();
         }
 
-        return Type\instance_of($controller)->matches($this);
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::NEW, 'entity' => null, 'entityFqcn' => $context->getEntity()->getFqcn()])) {
+            throw new ForbiddenActionException($context);
+        }
+
+        if (!$context->getEntity()->isAccessible()) {
+            throw new InsufficientEntityPermissionException($context);
+        }
+
+        $context->getEntity()->setInstance(null);
+        $context->getEntity()->setInstance($this->createDto());
+        $this->container->get(EntityFactory::class)->processFields($context->getEntity(), FieldCollection::new($this->configureFields(Crud::PAGE_NEW)));
+        $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
+        $this->container->get(EntityFactory::class)->processActions($context->getEntity(), $context->getCrud()->getActionsConfig());
+
+        $newForm = $this->createNewForm($context->getEntity(), $context->getCrud()->getNewFormOptions(), $context);
+        $newForm->handleRequest($context->getRequest());
+
+        /** @var TDto $entityInstance */
+        $entityInstance = $newForm->getData();
+        $context->getEntity()->setInstance(null);
+        $context->getEntity()->setInstance($entityInstance);
+
+        if ($newForm->isSubmitted() && $newForm->isValid()) {
+            $this->processUploadedFiles($newForm);
+
+            $entityInstance = $this->createEntityFromDto($entityInstance);
+            $event = new BeforeEntityPersistedEvent($entityInstance);
+            $this->container->get('event_dispatcher')->dispatch($event);
+            $entityInstance = $event->getEntityInstance();
+
+            $this->persistEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entityInstance);
+
+            $this->container->get('event_dispatcher')->dispatch(new AfterEntityPersistedEvent($entityInstance));
+            $context->getEntity()->setInstance($entityInstance);
+
+            return $this->getRedirectResponseAfterSave($context, Action::NEW);
+        }
+
+        $responseParameters = $this->configureResponseParameters(KeyValueStore::new([
+            'pageName' => Crud::PAGE_NEW,
+            'templateName' => 'crud/new',
+            'entity' => $context->getEntity(),
+            'new_form' => $newForm,
+        ]));
+
+        $event = new AfterCrudActionEvent($context, $responseParameters);
+        $this->container->get('event_dispatcher')->dispatch($event);
+        if ($event->isPropagationStopped()) {
+            return $event->getResponse();
+        }
+
+        return $responseParameters;
+        // phpcs:enable
     }
 }
