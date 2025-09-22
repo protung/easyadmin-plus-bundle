@@ -9,18 +9,43 @@
     </MixedArgument>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
-    <ImplementedReturnTypeMismatch>
-      <code><![CDATA[TDto]]></code>
-    </ImplementedReturnTypeMismatch>
+    <InvalidArgument>
+      <code><![CDATA[$context->getEntity()]]></code>
+      <code><![CDATA[$context->getEntity()]]></code>
+      <code><![CDATA[$context->getEntity()]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+    </InvalidArgument>
+    <MixedArgument>
+      <code><![CDATA[$this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn())]]></code>
+      <code><![CDATA[$this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn())]]></code>
+    </MixedArgument>
     <MixedMethodCall>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[dispatch]]></code>
+      <code><![CDATA[getManagerForClass]]></code>
+      <code><![CDATA[getManagerForClass]]></code>
       <code><![CDATA[new $className()]]></code>
     </MixedMethodCall>
-    <UndefinedThisPropertyAssignment>
-      <code><![CDATA[$this->entityInstance]]></code>
-      <code><![CDATA[$this->entityInstance]]></code>
-      <code><![CDATA[$this->instance]]></code>
-      <code><![CDATA[$this->instance]]></code>
-    </UndefinedThisPropertyAssignment>
+    <PossiblyNullArgument>
+      <code><![CDATA[$context->getEntity()->getFields()]]></code>
+      <code><![CDATA[$context->getEntity()->getFields()]]></code>
+      <code><![CDATA[$context->getRequest()->query->get('newValue')]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+    </PossiblyNullArgument>
+    <PossiblyNullReference>
+      <code><![CDATA[setFieldAssets]]></code>
+      <code><![CDATA[setFieldAssets]]></code>
+    </PossiblyNullReference>
   </file>
   <file src="src/Field/AdvancedDisplayField.php">
     <MismatchingDocblockParamType>
@@ -125,6 +150,19 @@
     </PossiblyUndefinedMethod>
   </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
+    <InvalidArgument>
+      <code><![CDATA[Type\vec(Type\shape([0 => Type\non_empty_string(), 1 => Type\mixed_dict()]))->coerce(
+                $actionsCrawler->each(
+                    static fn (Crawler $crawler): array => [
+                        Type\non_empty_string()->assert($crawler->attr('data-action-name')),
+                        [
+                            'title' => $crawler->text(normalizeWhitespace: true) !== '' ? $crawler->text(normalizeWhitespace: true) : $crawler->attr('title') ?? '',
+                            'url' => $crawler->attr('href'),
+                        ],
+                    ],
+                ),
+            )]]></code>
+    </InvalidArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$fieldErrors]]></code>
       <code><![CDATA[$fieldErrors]]></code>
