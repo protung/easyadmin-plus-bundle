@@ -130,6 +130,15 @@ abstract class AdminWebTestCase extends WebTestCase
      * @param non-empty-string $expectedMessage
      * @param non-empty-string ...$expectedMessages
      */
+    protected function assertFlashMessageInfo(string $expectedMessage, string ...$expectedMessages): void
+    {
+        $this->assertFlashMessage('info', $expectedMessage, ...$expectedMessages);
+    }
+
+    /**
+     * @param non-empty-string $expectedMessage
+     * @param non-empty-string ...$expectedMessages
+     */
     protected function assertFlashMessageWarning(string $expectedMessage, string ...$expectedMessages): void
     {
         $this->assertFlashMessage('warning', $expectedMessage, ...$expectedMessages);

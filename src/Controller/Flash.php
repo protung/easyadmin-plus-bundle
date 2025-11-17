@@ -11,4 +11,6 @@ enum Flash: string
     case Warning = 'warning';
 
     case Error = 'danger';
+
+    case Info = 'info';
 }
