@@ -46,10 +46,10 @@
     "symfony/twig-bundle": "^6.4 || ^7.2"
   },
   "require-dev": {
-    "doctrine/coding-standard": "^13.0.1",
+    "doctrine/coding-standard": "^14.0.0",
     "ergebnis/composer-normalize": "^2.48.2",
     "php-standard-library/psalm-plugin": "^2.3.0",
-    "phpunit/phpunit": "^11.5.39",
+    "phpunit/phpunit": "^11.5.44",
     "psalm/plugin-phpunit": "^0.19.5",
     "psalm/plugin-symfony": "^5.2.7",
     "speicher210/functional-test-bundle": "2.x-dev",
