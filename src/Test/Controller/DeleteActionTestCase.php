@@ -16,6 +16,7 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_key_exists;
 use function array_merge;
 
 /**
@@ -38,8 +39,11 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         $indexPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::INDEX]);
         $crawler                  = $this->assertRequestGet($indexPageQueryParameters);
 
-        $form                             = $this->findForm($crawler);
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        $form = $this->findForm($crawler);
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
+
         $this->getClient()->request(
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
@@ -63,8 +67,11 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
 
         $crawler = $this->assertRequestGet($detailPageQueryParameters);
 
-        $form                             = $this->findForm($crawler);
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        $form = $this->findForm($crawler);
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
+
         $this->getClient()->request(
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),
@@ -80,7 +87,10 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertDeleteEntityRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
+
         $this->getClient()->request(
             Request::METHOD_POST,
             $this->prepareAdminUrl($queryParameters),

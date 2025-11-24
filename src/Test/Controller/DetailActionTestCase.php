@@ -14,6 +14,8 @@ use ReflectionProperty;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_key_exists;
+
 /**
  * @template TCrudController
  * @template-extends AdminControllerWebTestCase<TCrudController>
@@ -51,7 +53,9 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     public function assertRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
 
         $this->assertRequestGet($queryParameters, Response::HTTP_FORBIDDEN);
     }
@@ -61,7 +65,9 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertPage(array $queryParameters = []): void
     {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
 
         $this->assertRequestGet($queryParameters);
 

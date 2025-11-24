@@ -18,6 +18,8 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_key_exists;
+
 /**
  * @template TEntity of object
  * @template TCrudController of BaseCrudController<TEntity>
@@ -56,7 +58,9 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
      */
     public function assertShowingEntityToEditRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
 
         $this->assertRequestGet($queryParameters, Response::HTTP_FORBIDDEN);
     }
@@ -66,7 +70,9 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertShowingEntityToEdit(array $queryParameters = []): void
     {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
 
         $this->assertRequestGet($queryParameters);
 
@@ -174,7 +180,9 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $queryParameters = [],
         string $submitButton = Action::SAVE_AND_RETURN,
     ): Crawler {
-        $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
 
         $crawler = $this->assertRequestGet($queryParameters);
 
