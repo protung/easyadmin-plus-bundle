@@ -163,8 +163,13 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
      */
     protected function extractGlobalActions(): array
     {
+        $globalActions = $this->getClient()->getCrawler()->filter('.global-actions');
+        if ($globalActions->count() === 0) {
+            return [];
+        }
+
         return $this->mapActions(
-            $this->getClient()->getCrawler()->filter('.global-actions')->filter('[data-action-name]'),
+            $globalActions->children('[data-action-group-name], [data-action-name]'),
         );
     }
 
