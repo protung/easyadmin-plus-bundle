@@ -10,12 +10,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\PaginatorDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\ControllerFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
@@ -33,7 +33,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
 {
     public function __construct(
         private EntityPaginatorInterface $decoratedPaginator,
-        private AdminContextProvider $adminContextProvider,
+        private AdminContextProviderInterface $adminContextProvider,
         private ControllerFactory $controllerFactory,
         private EntityFactory $entityFactory,
         private AdminUrlGeneratorInterface $adminUrlGenerator,
@@ -177,7 +177,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
             return $this->decoratedPaginator->getResultsAsJson();
         }
 
-        $primaryKeyName = Type\string()->coerce($context->getEntity()->getPrimaryKeyName());
+        $primaryKeyName = $context->getEntity()->getClassMetadata()->getSingleIdentifierFieldName();
         $reindexResults = Dict\reindex(
             Type\vec(Type\object())->coerce($results),
             fn (object $entityInstance): string => (string) $this->propertyAccessor->getValue($entityInstance, $primaryKeyName),
