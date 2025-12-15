@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Override;
 use Psl\Dict;
@@ -78,14 +79,14 @@ abstract class BaseCrudController extends AbstractCrudController
     {
         return $this->applyToAllActions(
             $actions,
-            static function (ActionDto $actionDto) use ($actions, $permission): void {
+            static function (ActionDto|ActionGroupDto $actionDto) use ($actions, $permission): void {
                 $actions->setPermission($actionDto->getName(), $permission);
             },
         );
     }
 
     /**
-     * @param callable(ActionDto):void $apply
+     * @param callable(ActionDto|ActionGroupDto):void $apply
      */
     final protected function applyToAllActions(Actions $actions, callable $apply): Actions
     {
