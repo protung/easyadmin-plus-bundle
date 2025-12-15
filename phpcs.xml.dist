@@ -16,6 +16,7 @@
     <rule ref="Doctrine">
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment"/>
         <exclude name="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion.RequiredConstructorPropertyPromotion"/>
+        <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion.RequiredExplicitAssertion"/>
     </rule>
     <!-- inherit rules from: -->
     <rule ref="Generic.Files.LineLength">

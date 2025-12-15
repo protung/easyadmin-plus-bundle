@@ -7,10 +7,13 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\EasyAdminExtension;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository as EasyAdminEntityRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfigurator;
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfiguratorAfterCommonPostConfigurator;
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfiguratorBeforeCommonPreConfigurator;
@@ -31,6 +34,9 @@ return static function (ContainerConfigurator $container): void {
         ->load('Protung\\EasyAdminPlusBundle\\', '../../../src/*')
         ->exclude(['../../../src/Resources/**/*', '../../../src/Test/**/*']);
 
+    $services->alias(AdminContextProviderInterface::class, AdminContextProvider::class);
+    $services->alias(AdminUrlGeneratorInterface::class, AdminUrlGenerator::class);
+
     $services->set(EntityRepository::class)
         ->decorate(EasyAdminEntityRepository::class)
         ->autoconfigure()
@@ -44,13 +50,11 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(EntityPaginator::class)
         ->decorate(EntityPaginatorInterface::class)
-        ->arg('$adminUrlGenerator', service(AdminUrlGenerator::class))
         ->autowire()
         ->autoconfigure()
         ->private();
 
     $services->set(AutocompleteActionAdminUrlGenerator::class)
-        ->arg('$adminUrlGenerator', service(AdminUrlGenerator::class))
         ->autowire()
         ->autoconfigure()
         ->private();

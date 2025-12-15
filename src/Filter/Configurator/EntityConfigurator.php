@@ -60,7 +60,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $targetEntityFqcn = Type\string()->coerce($context->getCrudControllers()->findEntityFqcnByCrudFqcn($targetCrudControllerFqcn));
 
-        if (! $entityDto->isAssociation($propertyName)) {
+        if (! $entityDto->getClassMetadata()->hasAssociation($propertyName)) {
             $filterDto->setFormTypeOption('value_type_options.class', $targetEntityFqcn);
         }
 
@@ -73,8 +73,6 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
         $widgetMode       = Type\string()->coerce($fieldDto->getCustomOption(EntityField::OPTION_WIDGET));
         if ($widgetMode === EntityField::WIDGET_AUTOCOMPLETE) {
             $filterDto->setFormTypeOption('value_type_options.attr.data-ea-widget', 'ea-autocomplete');
-        } elseif ($widgetMode === EntityField::WIDGET_NATIVE) {
-            $filterDto->setFormTypeOption('value_type_options.class', $targetEntityFqcn);
         }
 
         if ($autocompleteMode !== true) {

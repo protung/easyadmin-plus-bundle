@@ -15,42 +15,43 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\SearchMode;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityRepositoryInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDataDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntitySearchEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FormFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\ComparisonType;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\Escaper;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Registry\CrudControllerRegistry;
 use InvalidArgumentException;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
-use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
 use ReflectionClass;
 use ReflectionNamedType;
-use ReflectionProperty;
 use ReflectionUnionType;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
-use function assert;
 use function class_exists;
 use function count;
 use function ctype_digit;
+use function current;
 use function explode;
 use function in_array;
 use function is_array;
 use function is_numeric;
 use function is_subclass_of;
 use function mb_strtolower;
+use function property_exists;
 use function sprintf;
+use function str_contains;
 
 /**
  * This class is fully copied from \EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository with code style fixes applied.
@@ -60,7 +61,7 @@ use function sprintf;
 final readonly class EntityRepository implements EntityRepositoryInterface
 {
     public function __construct(
-        private AdminContextProvider $adminContextProvider,
+        private AdminContextProviderInterface $adminContextProvider,
         private ManagerRegistry $doctrine,
         private EntityFactory $entityFactory,
         private FormFactory $formFactory,
@@ -72,9 +73,9 @@ final readonly class EntityRepository implements EntityRepositoryInterface
     #[Override]
     public function createQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->doctrine->getManagerForClass($entityDto->getFqcn());
-        assert($entityManager instanceof EntityManagerInterface);
-        $queryBuilder = $entityManager->createQueryBuilder()
+        $queryBuilder  = $entityManager->createQueryBuilder()
             ->select('entity')
             ->from($entityDto->getFqcn(), 'entity');
 
@@ -95,7 +96,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
             $this->addFilterClause($queryBuilder, $searchDto, $entityDto, $filters, $fields);
         }
 
-        $this->addOrderClause($queryBuilder, $searchDto, $entityDto);
+        $this->addOrderClause($queryBuilder, $searchDto, $entityDto, $fields);
 
         return $queryBuilder;
     }
@@ -173,11 +174,11 @@ final readonly class EntityRepository implements EntityRepositoryInterface
         $this->eventDispatcher->dispatch(new AfterEntitySearchEvent($queryBuilder, $searchDto, $entityDto));
     }
 
-    private function addOrderClause(QueryBuilder $queryBuilder, SearchDto $searchDto, EntityDto $entityDto): void
+    private function addOrderClause(QueryBuilder $queryBuilder, SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields): void
     {
         foreach ($searchDto->getSort() as $sortProperty => $sortOrder) {
             $aliases                        = $queryBuilder->getAllAliases();
-            $sortFieldIsDoctrineAssociation = $entityDto->isAssociation($sortProperty);
+            $sortFieldIsDoctrineAssociation = $this->isAssociation($entityDto, $sortProperty);
 
             if ($sortFieldIsDoctrineAssociation) {
                 $sortFieldParts = explode('.', $sortProperty, 2);
@@ -187,14 +188,12 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                 }
 
                 if (count($sortFieldParts) === 1) {
-                    if ($entityDto->isToManyAssociation($sortProperty)) {
-                        $metadata = $entityDto->getPropertyMetadata($sortProperty);
-
-                        $entityManager = $this->doctrine->getManagerForClass($entityDto->getFqcn());
-                        assert($entityManager instanceof EntityManagerInterface);
+                    if ($entityDto->getClassMetadata()->isCollectionValuedAssociation($sortProperty)) {
+                        /** @var EntityManagerInterface $entityManager */
+                        $entityManager     = $this->doctrine->getManagerForClass($entityDto->getFqcn());
                         $countQueryBuilder = $entityManager->createQueryBuilder();
 
-                        if ($metadata->get('type') === ClassMetadata::MANY_TO_MANY) {
+                        if ($entityDto->getClassMetadata()->getAssociationMapping($sortProperty)['type'] === ClassMetadata::MANY_TO_MANY) {
                             // many-to-many relation
                             $countQueryBuilder
                                 ->select($queryBuilder->expr()->count('subQueryEntity'))
@@ -205,15 +204,22 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                             // one-to-many relation
                             $countQueryBuilder
                                 ->select($queryBuilder->expr()->count('subQueryEntity'))
-                                ->from($metadata->get('targetEntity'), 'subQueryEntity')
-                                ->where(sprintf('subQueryEntity.%s = entity', $metadata->get('mappedBy')));
+                                ->from($entityDto->getClassMetadata()->getAssociationTargetClass($sortProperty), 'subQueryEntity')
+                                ->where(sprintf('subQueryEntity.%s = entity', $entityDto->getClassMetadata()->getAssociationMapping($sortProperty)['mappedBy']));
                         }
 
                         $queryBuilder->addSelect(sprintf('(%s) as HIDDEN sub_query_sort', $countQueryBuilder->getDQL()));
                         $queryBuilder->addOrderBy('sub_query_sort', $sortOrder);
-                        $queryBuilder->addOrderBy('entity.' . $entityDto->getPrimaryKeyName(), $sortOrder);
+                        $queryBuilder->addOrderBy('entity.' . $entityDto->getClassMetadata()->getSingleIdentifierFieldName(), $sortOrder);
                     } else {
-                        $queryBuilder->addOrderBy('entity.' . $sortProperty, $sortOrder);
+                        $field                   = $fields->getByProperty($sortProperty);
+                        $associationSortProperty = $field?->getCustomOption(AssociationField::OPTION_SORT_PROPERTY);
+
+                        if ($associationSortProperty === null) {
+                            $queryBuilder->addOrderBy('entity.' . $sortProperty, $sortOrder);
+                        } else {
+                            $queryBuilder->addOrderBy($sortProperty . '.' . $associationSortProperty, $sortOrder);
+                        }
                     }
                 } else {
                     $queryBuilder->addOrderBy($sortProperty, $sortOrder);
@@ -255,7 +261,10 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                 ];
             }
 
-            $filterDataDto = FilterDataDto::new($i, $filter, Iter\first($queryBuilder->getRootAliases()), $submittedData);
+            /** @var string $rootAlias */
+            $rootAlias = current($queryBuilder->getRootAliases());
+
+            $filterDataDto = FilterDataDto::new($i, $filter, $rootAlias, $submittedData);
             $filter->apply($queryBuilder, $filterDataDto, $fields->getByProperty($propertyName), $entityDto);
 
             ++$i;
@@ -263,17 +272,29 @@ final readonly class EntityRepository implements EntityRepositoryInterface
     }
 
     /**
-     * @return list<array<mixed>>
+     * @return array<array{
+     *     entity_name: string,
+     *     property_data_type: string,
+     *     property_name: string,
+     *     is_boolean: bool,
+     *     is_small_integer: bool,
+     *     is_integer: bool,
+     *     is_numeric: bool,
+     *     is_text: bool,
+     *     is_guid: bool,
+     *     is_ulid: bool,
+     *     is_json: bool,
+     * }>
      */
     private function getSearchablePropertiesConfig(QueryBuilder $queryBuilder, SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields): array
     {
         $searchablePropertiesConfig     = [];
         $configuredSearchableProperties = $searchDto->getSearchableProperties();
-        $searchableProperties           = $configuredSearchableProperties === null || count($configuredSearchableProperties) === 0 ? $entityDto->getAllPropertyNames() : $configuredSearchableProperties;
+        $searchableProperties           = $configuredSearchableProperties === null || count($configuredSearchableProperties) === 0 ? $entityDto->getClassMetadata()->getFieldNames() : $configuredSearchableProperties;
 
         $entitiesAlreadyJoined = [];
         foreach ($searchableProperties as $propertyName) {
-            if ($entityDto->isAssociation($propertyName)) {
+            if ($this->isAssociation($entityDto, $propertyName)) {
                 // support arbitrarily nested associations (e.g. foo.bar.baz.qux)
                 $associatedProperties    = explode('.', $propertyName);
                 $numAssociatedProperties = count($associatedProperties);
@@ -282,16 +303,15 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                     throw new InvalidArgumentException(sprintf('The "%s" property included in the setSearchFields() method is not a valid search field. When using associated properties in search, you must also define the exact field used in the search (e.g. \'%s.id\', \'%s.name\', etc.)', $propertyName, $propertyName, $propertyName));
                 }
 
-                $originalPropertyName     = $associatedProperties[0];
-                $originalPropertyMetadata = $entityDto->getPropertyMetadata($originalPropertyName);
+                $originalPropertyName = $associatedProperties[0];
 
                 $field = $fields->getByProperty($originalPropertyName);
                 if ($field !== null && $field->getFieldFqcn() === EntityField::class) {
                     $targetCrudControllerFqcn = Type\string()->coerce($field->getCustomOption(EntityField::OPTION_CRUD_CONTROLLER));
 
-                    $targetEntityFqcn = $this->crudControllerRegistry->findEntityFqcnByCrudFqcn($targetCrudControllerFqcn);
+                    $targetEntityFqcn = Type\nonnull()->coerce($this->crudControllerRegistry->findEntityFqcnByCrudFqcn($targetCrudControllerFqcn));
                 } else {
-                    $targetEntityFqcn = $originalPropertyMetadata->get('targetEntity');
+                    $targetEntityFqcn = $entityDto->getClassMetadata()->getAssociationTargetClass($associatedProperties[0]);
                 }
 
                 $associatedEntityDto = $this->entityFactory->create($targetEntityFqcn);
@@ -299,14 +319,14 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                 $associatedEntityAlias = $associatedPropertyName = '';
                 for ($i = 0; $i < $numAssociatedProperties - 1; ++$i) {
                     $associatedEntityName   = $associatedProperties[$i];
-                    $associatedEntityAlias  = Escaper::escapeDqlAlias($associatedEntityName);
+                    $associatedEntityAlias  = $entitiesAlreadyJoined[$associatedEntityName] ?? Escaper::escapeDqlAlias($associatedEntityName) . ($i === 0 ? '' : $i);
                     $associatedPropertyName = $associatedProperties[$i + 1];
 
-                    if (! in_array($associatedEntityName, $entitiesAlreadyJoined, true)) {
-                        $parentEntityName = $i === 0 ? 'entity' : $associatedProperties[$i - 1];
+                    if (! in_array($associatedEntityAlias, $entitiesAlreadyJoined, true)) {
+                        $parentEntityName = $i === 0 ? 'entity' : $entitiesAlreadyJoined[$associatedProperties[$i - 1]];
 
                         if ($field !== null && $field->getFieldFqcn() === EntityField::class) {
-                            $associatedEntityPrimaryKeyName = Type\string()->coerce($associatedEntityDto->getPrimaryKeyName());
+                            $associatedEntityPrimaryKeyName = Type\string()->coerce($associatedEntityDto->getClassMetadata()->getSingleIdentifierFieldName());
 
                             $queryBuilder->leftJoin(
                                 $targetEntityFqcn,
@@ -324,24 +344,51 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                             $queryBuilder->leftJoin(Escaper::escapeDqlAlias($parentEntityName) . '.' . $associatedEntityName, $associatedEntityAlias);
                         }
 
-                        $entitiesAlreadyJoined[] = $associatedEntityName;
+                        $entitiesAlreadyJoined[$associatedEntityName] = $associatedEntityAlias;
                     }
 
                     if ($i >= $numAssociatedProperties - 2) {
                         continue;
                     }
 
-                    $propertyMetadata    = $associatedEntityDto->getPropertyMetadata($associatedPropertyName);
-                    $targetEntity        = $propertyMetadata->get('targetEntity');
+                    $targetEntity        = $associatedEntityDto->getClassMetadata()->getAssociationTargetClass($associatedPropertyName);
                     $associatedEntityDto = $this->entityFactory->create($targetEntity);
                 }
 
-                $entityName       = $associatedEntityAlias;
-                $propertyName     = $associatedPropertyName;
-                $propertyDataType = $associatedEntityDto->getPropertyDataType($propertyName);
+                $entityName   = $associatedEntityAlias;
+                $propertyName = $associatedPropertyName;
+                if (! isset($associatedEntityDto->getClassMetadata()->fieldMappings[$propertyName])) {
+                    throw new InvalidArgumentException(sprintf('The "%s" property included in the setSearchFields() method is not a valid search field. When using associated properties in search, you must also define the exact field used in the search (e.g. \'%s.id\', \'%s.name\', etc.)', $propertyName, $propertyName, $propertyName));
+                }
+
+                // In Doctrine ORM 3.x, FieldMapping implements \ArrayAccess; in 4.x it's an object with properties
+                $fieldMapping = $associatedEntityDto->getClassMetadata()->getFieldMapping($propertyName);
+                // In Doctrine ORM 2.x, getFieldMapping() returns an array
+                /** @phpstan-ignore-next-line function.impossibleType */
+                if (is_array($fieldMapping)) {
+                    /** @phpstan-ignore-next-line cast.useless */
+                    $fieldMapping = (object) $fieldMapping;
+                }
+
+                /** @phpstan-ignore-next-line function.alreadyNarrowedType */
+                $propertyDataType = property_exists($fieldMapping, 'type') ? $fieldMapping->type : $fieldMapping['type'];
             } else {
-                $entityName       = 'entity';
-                $propertyDataType = $entityDto->getPropertyDataType($propertyName);
+                $entityName = 'entity';
+                if (! isset($entityDto->getClassMetadata()->fieldMappings[$propertyName])) {
+                    throw new InvalidArgumentException(sprintf('The "%s" property included in the setSearchFields() method is not a valid search field. When using associated properties in search, you must also define the exact field used in the search (e.g. \'%s.id\', \'%s.name\', etc.)', $propertyName, $propertyName, $propertyName));
+                }
+
+                // In Doctrine ORM 3.x, FieldMapping implements \ArrayAccess; in 4.x it's an object with properties
+                $fieldMapping = $entityDto->getClassMetadata()->getFieldMapping($propertyName);
+                // In Doctrine ORM 2.x, getFieldMapping() returns an array
+                /** @phpstan-ignore-next-line function.impossibleType */
+                if (is_array($fieldMapping)) {
+                    /** @phpstan-ignore-next-line cast.useless */
+                    $fieldMapping = (object) $fieldMapping;
+                }
+
+                /** @phpstan-ignore-next-line function.alreadyNarrowedType */
+                $propertyDataType = property_exists($fieldMapping, 'type') ? $fieldMapping->type : $fieldMapping['type'];
             }
 
             $isBoolean              = $propertyDataType === 'boolean';
@@ -349,7 +396,7 @@ final readonly class EntityRepository implements EntityRepositoryInterface
             $isIntegerProperty      = $propertyDataType === 'integer';
             $isNumericProperty      = in_array($propertyDataType, ['number', 'bigint', 'decimal', 'float'], true);
             // 'citext' is a PostgreSQL extension (https://github.com/EasyCorp/EasyAdminBundle/issues/2556)
-            $isTextProperty = in_array($propertyDataType, ['string', 'text', 'citext', 'array', 'simple_array'], true);
+            $isTextProperty = in_array($propertyDataType, ['ascii_string', 'string', 'text', 'citext', 'array', 'simple_array'], true);
             $isGuidProperty = in_array($propertyDataType, ['guid', 'uuid'], true);
             $isUlidProperty = $propertyDataType === 'ulid';
             $isJsonProperty = $propertyDataType === 'json';
@@ -364,11 +411,24 @@ final readonly class EntityRepository implements EntityRepositoryInterface
                 && ! $isUlidProperty
                 && ! $isJsonProperty
             ) {
-                $entityFqcn  = $entityName !== 'entity' && isset($associatedEntityDto)
+                $entityFqcn = $entityName !== 'entity' && isset($associatedEntityDto)
                     ? $associatedEntityDto->getFqcn()
                     : $entityDto->getFqcn();
-                $idClassType = (new ReflectionProperty($entityFqcn, $propertyName))->getType();
-                assert($idClassType instanceof ReflectionNamedType || $idClassType instanceof ReflectionUnionType || $idClassType === null);
+
+                /** @var ReflectionNamedType|ReflectionUnionType|null $idClassType */
+                $idClassType     = null;
+                $reflectionClass = new ReflectionClass($entityFqcn);
+
+                // this is needed to handle inherited properties
+                while ($reflectionClass !== false) {
+                    if ($reflectionClass->hasProperty($propertyName)) {
+                        $reflection  = $reflectionClass->getProperty($propertyName);
+                        $idClassType = $reflection->getType();
+                        break;
+                    }
+
+                    $reflectionClass = $reflectionClass->getParentClass();
+                }
 
                 if ($idClassType !== null) {
                     $idClassName = $idClassType->getName();
@@ -396,5 +456,20 @@ final readonly class EntityRepository implements EntityRepositoryInterface
         }
 
         return $searchablePropertiesConfig;
+    }
+
+    private function isAssociation(EntityDto $entityDto, string $propertyName): bool
+    {
+        if ($entityDto->getClassMetadata()->hasAssociation($propertyName)) {
+            return true;
+        }
+
+        if (! str_contains($propertyName, '.')) {
+            return false;
+        }
+
+        $propertyNameParts = explode('.', $propertyName, 2);
+
+        return ! isset($entityDto->getClassMetadata()->embeddedClasses[$propertyNameParts[0]]);
     }
 }
