@@ -6,7 +6,6 @@ namespace Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
-use Symfony\Contracts\Translation\TranslatableInterface;
 
 /**
  * @psalm-immutable
@@ -27,17 +26,13 @@ final class EntityMetadata
     /** @var class-string */
     private string $targetEntityFqcn;
 
-    /** @var string|(callable(object):string|TranslatableInterface|null)|null */
-    private $targetEntityDisplayField;
-
     private object|int|string|null $targetEntityId;
 
     /**
-     * @param class-string<CrudControllerInterface>                            $sourceCrudControllerFqcn
-     * @param class-string<DashboardControllerInterface>                       $targetDashboardControllerFqcn
-     * @param class-string<CrudControllerInterface>                            $targetCrudControllerFqcn
-     * @param class-string                                                     $targetEntityFqcn
-     * @param string|(callable(object):string|TranslatableInterface|null)|null $targetEntityDisplayField
+     * @param class-string<CrudControllerInterface>      $sourceCrudControllerFqcn
+     * @param class-string<DashboardControllerInterface> $targetDashboardControllerFqcn
+     * @param class-string<CrudControllerInterface>      $targetCrudControllerFqcn
+     * @param class-string                               $targetEntityFqcn
      */
     public function __construct(
         object|int|string|null $sourceEntityId,
@@ -45,7 +40,6 @@ final class EntityMetadata
         string $targetDashboardControllerFqcn,
         string $targetCrudControllerFqcn,
         string $targetEntityFqcn,
-        string|callable|null $targetEntityDisplayField,
         object|int|string|null $targetEntityId,
     ) {
         $this->sourceEntityId                = $sourceEntityId;
@@ -53,7 +47,6 @@ final class EntityMetadata
         $this->targetDashboardControllerFqcn = $targetDashboardControllerFqcn;
         $this->targetCrudControllerFqcn      = $targetCrudControllerFqcn;
         $this->targetEntityFqcn              = $targetEntityFqcn;
-        $this->targetEntityDisplayField      = $targetEntityDisplayField;
         $this->targetEntityId                = $targetEntityId;
     }
 
@@ -92,14 +85,6 @@ final class EntityMetadata
     public function targetEntityFqcn(): string
     {
         return $this->targetEntityFqcn;
-    }
-
-    /**
-     * @return string|(callable(object):string|TranslatableInterface|null)|null
-     */
-    public function targetEntityDisplayField(): string|callable|null
-    {
-        return $this->targetEntityDisplayField;
     }
 
     public function targetEntityId(): object|int|string|null

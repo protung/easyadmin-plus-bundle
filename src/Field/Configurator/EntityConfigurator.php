@@ -82,7 +82,6 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
             Type\class_string(DashboardControllerInterface::class)->coerce($context->getDashboardControllerFqcn()),
             $targetCrudControllerFqcn,
             $targetEntityFqcn,
-            EntityField::getEntityDisplayField($field),
             $field->getValue(),
         );
 
@@ -98,10 +97,10 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
             throw new RuntimeException('Unknown association type.');
         }
 
-        if ($entityMetadata->targetEntityDisplayField() !== null) {
-            // even if the entity has __toString method EntityType form type will not use it if option value is set to NULL.
-            $field->setFormTypeOption('choice_label', $entityMetadata->targetEntityDisplayField());
-        }
+        $field->setFormTypeOption(
+            'choice_label',
+            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $field, $this->translator),
+        );
 
         $autocompleteMode = Type\bool()->coerce($field->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
         $widgetMode       = Type\string()->coerce($field->getCustomOption(EntityField::OPTION_WIDGET));

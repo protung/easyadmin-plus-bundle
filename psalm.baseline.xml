@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.14.2@bbd217fc98c0daa0a13aea2a7f119d03ba3fc9a0">
+<files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
   <file src="src/Controller/BaseCrudController.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$apply]]></code>
@@ -43,6 +43,10 @@
       <code><![CDATA[$entityInstance]]></code>
     </PossiblyNullArgument>
     <PossiblyNullReference>
+      <code><![CDATA[getActionsConfig]]></code>
+      <code><![CDATA[getActionsConfig]]></code>
+      <code><![CDATA[getEditFormOptions]]></code>
+      <code><![CDATA[getNewFormOptions]]></code>
       <code><![CDATA[setFieldAssets]]></code>
       <code><![CDATA[setFieldAssets]]></code>
     </PossiblyNullReference>
@@ -73,14 +77,6 @@
       <code><![CDATA[$entityDto->getPrimaryKeyValue()]]></code>
       <code><![CDATA[$field->getValue()]]></code>
     </MixedArgument>
-  </file>
-  <file src="src/Field/Configurator/EntityConfigurator/EntityMetadata.php">
-    <MismatchingDocblockParamType>
-      <code><![CDATA[string|(callable(object):string|TranslatableInterface|null)|null]]></code>
-    </MismatchingDocblockParamType>
-    <MismatchingDocblockReturnType>
-      <code><![CDATA[string|(callable(object):string|TranslatableInterface|null)|null]]></code>
-    </MismatchingDocblockReturnType>
   </file>
   <file src="src/Form/DataTransformer/EntityFieldDataTransformer.php">
     <MissingTemplateParam>
