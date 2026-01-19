@@ -115,6 +115,9 @@ abstract class BaseCrudController extends AbstractCrudController
         return $action;
     }
 
+    /**
+     * @return AdminContext<TEntity>
+     */
     protected function currentAdminContext(): AdminContext
     {
         $currentAdminContext = $this->getContext();
