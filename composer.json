@@ -27,7 +27,7 @@
     "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
     "ext-dom": "*",
     "azjezz/psl": "^2.9.1 || ^3.0.0 || ^4.0.0",
-    "easycorp/easyadmin-bundle": "~4.27.5",
+    "easycorp/easyadmin-bundle": "~4.27.7",
     "symfony/asset": "^6.4 || ^7.4",
     "symfony/cache": "^6.4 || ^7.4",
     "symfony/config": "^6.4 || ^7.4",

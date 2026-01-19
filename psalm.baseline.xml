@@ -4,19 +4,24 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$apply]]></code>
     </ArgumentTypeCoercion>
+    <InvalidReturnStatement>
+      <code><![CDATA[$currentAdminContext]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[AdminContext<TEntity>]]></code>
+    </InvalidReturnType>
     <MixedArgument>
       <code><![CDATA[$pageActions]]></code>
     </MixedArgument>
   </file>
   <file src="src/Controller/BaseCrudDtoController.php">
     <InvalidArgument>
-      <code><![CDATA[$context->getEntity()]]></code>
-      <code><![CDATA[$context->getEntity()]]></code>
-      <code><![CDATA[$context->getEntity()]]></code>
+      <code><![CDATA[$dto]]></code>
       <code><![CDATA[$entityInstance]]></code>
       <code><![CDATA[$entityInstance]]></code>
       <code><![CDATA[$entityInstance]]></code>
       <code><![CDATA[$entityInstance]]></code>
+      <code><![CDATA[$this->createDto()]]></code>
     </InvalidArgument>
     <MixedArgument>
       <code><![CDATA[$this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn())]]></code>
@@ -39,6 +44,8 @@
       <code><![CDATA[$context->getEntity()->getFields()]]></code>
       <code><![CDATA[$context->getEntity()->getFields()]]></code>
       <code><![CDATA[$context->getRequest()->query->get('newValue')]]></code>
+      <code><![CDATA[$entityInstance]]></code>
+      <code><![CDATA[$entityInstance]]></code>
       <code><![CDATA[$entityInstance]]></code>
       <code><![CDATA[$entityInstance]]></code>
     </PossiblyNullArgument>
