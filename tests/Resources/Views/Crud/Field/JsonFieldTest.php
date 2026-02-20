@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Tests\Resources\Views\Crud\Field;
 
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Protung\EasyAdminPlusBundle\Field\JsonField;
 use Speicher210\FunctionalTestBundle\Test\Twig\TemplateTestCase;
 
@@ -69,9 +70,8 @@ final class JsonFieldTest extends TemplateTestCase
 
     /**
      * @param array<mixed> $context
-     *
-     * @dataProvider dataProviderTestOutput
      */
+    #[DataProvider('dataProviderTestOutput')]
     public function testOutput(array $context): void
     {
         $actualTemplate = JsonField::new('test')->getAsDto()->getTemplatePath();
