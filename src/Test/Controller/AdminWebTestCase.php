@@ -106,15 +106,17 @@ abstract class AdminWebTestCase extends WebTestCase
         self::$authentication = $user;
     }
 
-    protected static function loginAsDefaultUser(): void
+    protected static function loginAsDefaultUser(): UserInterface
     {
-        static::loginAsAdmin();
+        return static::loginAsAdmin();
     }
 
-    protected static function loginAsAdmin(): void
+    protected static function loginAsAdmin(): UserInterface
     {
         $user = new InMemoryUser('admin-test', 'admin-test', ['ROLE_ADMIN']);
         static::loginAs($user);
+
+        return $user;
     }
 
     /**
