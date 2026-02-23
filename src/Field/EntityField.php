@@ -26,6 +26,12 @@ final class EntityField implements FieldInterface
 
     public const string OPTION_AUTOCOMPLETE = AssociationField::OPTION_AUTOCOMPLETE;
 
+    public const string OPTION_AUTOCOMPLETE_CALLBACK = AssociationField::OPTION_AUTOCOMPLETE_CALLBACK;
+
+    public const string OPTION_AUTOCOMPLETE_TEMPLATE = AssociationField::OPTION_AUTOCOMPLETE_TEMPLATE;
+
+    public const string OPTION_ESCAPE_HTML_CONTENTS = AssociationField::OPTION_ESCAPE_HTML_CONTENTS;
+
     public const string OPTION_WIDGET = AssociationField::OPTION_WIDGET;
 
     public const string WIDGET_AUTOCOMPLETE = AssociationField::WIDGET_AUTOCOMPLETE;
@@ -139,9 +145,31 @@ final class EntityField implements FieldInterface
         return $this;
     }
 
-    public function autocomplete(bool $autocomplete = true): self
+    public function autocomplete(bool $enable = true, callable|null $callback = null, string|null $template = null, bool $renderAsHtml = false): self
     {
-        $this->setCustomOption(self::OPTION_AUTOCOMPLETE, $autocomplete);
+        $this->setCustomOption(self::OPTION_AUTOCOMPLETE, $enable);
+
+        if (! $enable) {
+            return $this;
+        }
+
+        if ($callback !== null) {
+            $this->setCustomOption(self::OPTION_AUTOCOMPLETE_CALLBACK, $callback);
+        }
+
+        if ($template !== null) {
+            $this->setCustomOption(self::OPTION_AUTOCOMPLETE_TEMPLATE, $template);
+        }
+
+        // the renderAsHtml parameter controls the same option as renderAsHtml() method
+        $this->setCustomOption(self::OPTION_ESCAPE_HTML_CONTENTS, ! $renderAsHtml);
+
+        return $this;
+    }
+
+    public function renderAsHtml(bool $asHtml = true): self
+    {
+        $this->setCustomOption(self::OPTION_ESCAPE_HTML_CONTENTS, ! $asHtml);
 
         return $this;
     }
@@ -188,7 +216,7 @@ final class EntityField implements FieldInterface
     }
 
     /**
-     * @param (callable(QueryBuilder): void) $callable
+     * @param (callable(QueryBuilder): QueryBuilder) $callable
      */
     public function setQueryBuilderCallable(callable $callable): self
     {

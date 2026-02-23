@@ -12,8 +12,13 @@ use Stringable;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
+use function htmlspecialchars;
 use function is_callable;
+
+use const ENT_QUOTES;
+use const ENT_SUBSTITUTE;
 
 trait AdvancedDisplayField
 {
@@ -46,7 +51,7 @@ trait AdvancedDisplayField
         return Type\nullable(Type\string())->coerce($value);
     }
 
-    public static function formatAsString(object|null $entityInstance, FieldDto $field, TranslatorInterface $translator): string|null
+    public static function formatAsString(object|null $entityInstance, FieldDto $field, TranslatorInterface $translator, Environment $twig): string|null
     {
         if ($entityInstance === null) {
             return null;
@@ -65,6 +70,18 @@ trait AdvancedDisplayField
 
         if ($entityInstance instanceof Stringable) {
             return (string) $entityInstance;
+        }
+
+        // This is only for autocomplete fields.
+        $twigTemplate = $field->getCustomOption(EntityField::OPTION_AUTOCOMPLETE_TEMPLATE);
+        if ($twigTemplate !== null) {
+            $renderAsHtml   = $field->getCustomOption(EntityField::OPTION_ESCAPE_HTML_CONTENTS) === false;
+            $entityAsString = $twig->render(Type\string()->coerce($twigTemplate), ['entity' => $entityInstance]);
+            if (! $renderAsHtml) {
+                $entityAsString = htmlspecialchars($entityAsString, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            }
+
+            return $entityAsString;
         }
 
         throw new RuntimeException(

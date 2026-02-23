@@ -30,6 +30,7 @@ use Psl\Vec;
 use RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 use function is_bool;
 use function is_callable;
@@ -42,6 +43,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         private AdminUrlGenerator $adminUrlGenerator,
         private AutocompleteActionAdminUrlGenerator $autocompleteActionAdminUrlGenerator,
         private TranslatorInterface $translator,
+        private Environment $twig,
         private PropertyAccessorInterface $propertyAccessor,
         private EntityManagerInterface $entityManager,
     ) {
@@ -72,7 +74,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $sourceCrudControllerFqcn = Type\class_string(CrudControllerInterface::class)->coerce($crud->getControllerFqcn());
 
-        $targetEntityFqcn = Type\string()->coerce($context->getCrudControllers()->findEntityFqcnByCrudFqcn($targetCrudControllerFqcn));
+        $targetEntityFqcn = Type\string()->coerce($context->getAdminControllers()->findEntityByCrudController($targetCrudControllerFqcn));
         invariant(Class\exists($targetEntityFqcn), 'Could not determine target entity for set CRUD controller.');
         invariant(Class\exists($targetCrudControllerFqcn), 'Could not determine target CRUD controller.');
 
@@ -99,13 +101,17 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setFormTypeOption(
             'choice_label',
-            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $field, $this->translator),
+            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $field, $this->translator, $this->twig),
         );
 
         $autocompleteMode = Type\bool()->coerce($field->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
         $widgetMode       = Type\string()->coerce($field->getCustomOption(EntityField::OPTION_WIDGET));
         if ($widgetMode === EntityField::WIDGET_AUTOCOMPLETE) {
             $field->setFormTypeOption('attr.data-ea-widget', 'ea-autocomplete');
+
+            // both autocomplete(renderAsHtml: true) and renderAsHtml(true) set the same option.
+            // OPTION_ESCAPE_HTML_CONTENTS has inverted logic (true = escape, false = render as HTML)
+            $field->setFormTypeOption('attr.data-ea-autocomplete-render-items-as-html', $field->getCustomOption(EntityField::OPTION_ESCAPE_HTML_CONTENTS) === true ? 'false' : 'true');
         } elseif ($widgetMode === EntityField::WIDGET_NATIVE) {
             $field->setFormTypeOption('class', $entityMetadata->targetEntityFqcn());
         }
@@ -134,14 +140,16 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         } else {
             $field->setFormTypeOptionIfNotSet('query_builder', static function (EntityRepository $repository) use ($field): QueryBuilder {
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here
-                $queryBuilder         = $repository->createQueryBuilder('entity');
+                $queryBuilder = $repository->createQueryBuilder('entity');
+                /** @var (callable(QueryBuilder): QueryBuilder)|null $queryBuilderCallable */
                 $queryBuilderCallable = $field->getCustomOption(EntityField::OPTION_QUERY_BUILDER_CALLABLE);
                 if ($queryBuilderCallable !== null) {
                     invariant(
                         is_callable($queryBuilderCallable),
                         Str\format('Query builder callable option is not null or callable.'),
                     );
-                    $queryBuilderCallable($queryBuilder);
+
+                    return $queryBuilderCallable($queryBuilder);
                 }
 
                 return $queryBuilder;
@@ -191,7 +199,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setValue($targetEntityInstance);
         $field->setFormattedValue(
-            EntityField::formatAsString($targetEntityInstance, $field, $this->translator),
+            EntityField::formatAsString($targetEntityInstance, $field, $this->translator, $this->twig),
         );
     }
 
@@ -227,7 +235,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
                     return [
                         'relatedUrl' => $relatedUrl,
-                        'formattedValue' => EntityField::formatAsString($entity, $field, $this->translator),
+                        'formattedValue' => EntityField::formatAsString($entity, $field, $this->translator, $this->twig),
                     ];
                 },
             );

@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Twig\Component\Option\AlertVariant;
 use Override;
 use Psl\Dict;
 use Psl\Iter;
@@ -29,9 +30,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class BaseCrudController extends AbstractCrudController
 {
-    protected const string FIELD_SORT_ASC  = 'ASC';
-    protected const string FIELD_SORT_DESC = 'DESC';
-
     /**
      * Calling this method will disable all standard actions.
      */
@@ -97,24 +95,6 @@ abstract class BaseCrudController extends AbstractCrudController
         return $actions;
     }
 
-    protected function addConfirmationForAction(
-        Action $action,
-        string|Stringable|TranslatableInterface $title,
-        string|Stringable|TranslatableInterface $description,
-    ): Action {
-        $action
-            ->getAsDto()
-            ->addHtmlAttributes(
-                [
-                    'data-protung-easyadmin-plus-extension-modal-confirm-trigger' => '1',
-                    'data-protung-easyadmin-plus-extension-modal-confirm-title' => $this->translate($title),
-                    'data-protung-easyadmin-plus-extension-modal-confirm-description' => $this->translate($description),
-                ],
-            );
-
-        return $action;
-    }
-
     /**
      * @return AdminContext<TEntity>
      */
@@ -130,20 +110,20 @@ abstract class BaseCrudController extends AbstractCrudController
 
     protected function addFlashMessageSuccess(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(Flash::Success, $message);
+        $this->addFlashMessage(AlertVariant::Success, $message);
     }
 
     protected function addFlashMessageWarning(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(Flash::Warning, $message);
+        $this->addFlashMessage(AlertVariant::Warning, $message);
     }
 
     protected function addFlashMessageError(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(Flash::Error, $message);
+        $this->addFlashMessage(AlertVariant::Error, $message);
     }
 
-    protected function addFlashMessage(Flash $type, string|Stringable|TranslatableInterface $message): void
+    protected function addFlashMessage(AlertVariant $type, string|Stringable|TranslatableInterface $message): void
     {
         $this->addFlash($type->value, $this->translate($message));
     }

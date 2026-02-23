@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\EasyAdminExtension;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher;
-use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository as EasyAdminEntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -19,7 +18,6 @@ use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfigura
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfiguratorBeforeCommonPreConfigurator;
 use Protung\EasyAdminPlusBundle\Filter\Configurator\EntityConfigurator;
 use Protung\EasyAdminPlusBundle\Orm\EntityPaginator;
-use Protung\EasyAdminPlusBundle\Orm\EntityRepository;
 use Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -36,11 +34,6 @@ return static function (ContainerConfigurator $container): void {
 
     $services->alias(AdminContextProviderInterface::class, AdminContextProvider::class);
     $services->alias(AdminUrlGeneratorInterface::class, AdminUrlGenerator::class);
-
-    $services->set(EntityRepository::class)
-        ->decorate(EasyAdminEntityRepository::class)
-        ->autoconfigure()
-        ->autowire();
 
     $services->set(EntityConfigurator::class)
         ->autowire()
