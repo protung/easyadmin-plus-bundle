@@ -108,7 +108,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
 
     protected function deleteFormSelector(): string
     {
-        return $this->mainContentSelector() . ' form#delete-form';
+        return $this->mainContentSelector() . ' form#action-confirmation-form';
     }
 
     protected function entityIdUnderTest(): string|int

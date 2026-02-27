@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Twig\Component\Option\AlertVariant;
 use Override;
 use Psl\Dict;
 use Stringable;
@@ -17,20 +18,20 @@ abstract class BaseController extends AbstractController
 {
     protected function addFlashMessageSuccess(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(Flash::Success, $message);
+        $this->addFlashMessage(AlertVariant::Success, $message);
     }
 
     protected function addFlashMessageWarning(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(Flash::Warning, $message);
+        $this->addFlashMessage(AlertVariant::Warning, $message);
     }
 
     protected function addFlashMessageError(string|Stringable|TranslatableInterface $message): void
     {
-        $this->addFlashMessage(Flash::Error, $message);
+        $this->addFlashMessage(AlertVariant::Error, $message);
     }
 
-    protected function addFlashMessage(Flash $type, string|Stringable|TranslatableInterface $message): void
+    protected function addFlashMessage(AlertVariant $type, string|Stringable|TranslatableInterface $message): void
     {
         // We check against TranslatableInterface because the implementation might be Stringable as well.
         if (! $message instanceof TranslatableInterface) {

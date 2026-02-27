@@ -20,6 +20,7 @@ use Psl\Str;
 use Psl\Type;
 use RuntimeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * @see https://github.com/EasyCorp/EasyAdminBundle/issues/4244
@@ -29,6 +30,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
     public function __construct(
         private AutocompleteActionAdminUrlGenerator $autocompleteActionAdminUrlGenerator,
         private TranslatorInterface $translator,
+        private Environment $twig,
     ) {
     }
 
@@ -58,7 +60,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
             );
         }
 
-        $targetEntityFqcn = Type\string()->coerce($context->getCrudControllers()->findEntityFqcnByCrudFqcn($targetCrudControllerFqcn));
+        $targetEntityFqcn = Type\string()->coerce($context->getAdminControllers()->findEntityByCrudController($targetCrudControllerFqcn));
 
         if (! $entityDto->getClassMetadata()->hasAssociation($propertyName)) {
             $filterDto->setFormTypeOption('value_type_options.class', $targetEntityFqcn);
@@ -66,7 +68,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $filterDto->setFormTypeOption(
             'value_type_options.choice_label',
-            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto, $this->translator),
+            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto, $this->translator, $this->twig),
         );
 
         $autocompleteMode = Type\bool()->coerce($fieldDto->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));

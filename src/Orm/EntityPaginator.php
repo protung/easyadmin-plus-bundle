@@ -19,15 +19,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
-use Psl\Dict;
-use Psl\Json;
 use Psl\Type;
 use Psl\Type\Exception\CoercionException;
-use Psl\Vec;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-
-use function array_key_exists;
+use Twig\Environment;
 
 final readonly class EntityPaginator implements EntityPaginatorInterface
 {
@@ -39,6 +35,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         private AdminUrlGeneratorInterface $adminUrlGenerator,
         private PropertyAccessorInterface $propertyAccessor,
         private TranslatorInterface $translator,
+        private Environment $twig,
     ) {
     }
 
@@ -53,6 +50,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
             $this->adminUrlGenerator,
             $this->propertyAccessor,
             $this->translator,
+            $this->twig,
         );
     }
 
@@ -138,12 +136,16 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
     }
 
     #[Override]
-    public function getResultsAsJson(): string
+    public function getResultsAsJson(callable|null $callback = null, string|null $twigTemplate = null, bool $renderAsHtml = false): string
     {
+        if ($callback !== null) {
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
+        }
+
         $context = $this->adminContextProvider->getContext();
 
         if ($context === null) {
-            return $this->decoratedPaginator->getResultsAsJson();
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
         }
 
         try {
@@ -156,7 +158,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
                 ],
             )->coerce($context->getRequest()->query->all(AssociationField::PARAM_AUTOCOMPLETE_CONTEXT));
         } catch (CoercionException) {
-            return $this->decoratedPaginator->getResultsAsJson();
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
         }
 
         $controller = $this->controllerFactory->getCrudControllerInstance(
@@ -166,57 +168,21 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         );
 
         if ($controller === null) {
-            return $this->decoratedPaginator->getResultsAsJson();
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
         }
 
         $fields = Type\vec(Type\instance_of(FieldInterface::class))->coerce($controller->configureFields($autocompleteContext['originatingPage']));
-        $field  = Type\instance_of(FieldDto::class)->coerce(FieldCollection::new($fields)->getByProperty($autocompleteContext['propertyName']));
+        $field  = Type\instance_of(FieldDto::class)->coerce(new FieldCollection($fields)->getByProperty($autocompleteContext['propertyName']));
 
-        $results = $this->decoratedPaginator->getResults();
-        if ($results === null) {
-            return $this->decoratedPaginator->getResultsAsJson();
-        }
-
-        $primaryKeyName = $context->getEntity()->getClassMetadata()->getSingleIdentifierFieldName();
-        $reindexResults = Dict\reindex(
-            Type\vec(Type\object())->coerce($results),
-            fn (object $entityInstance): string => (string) $this->propertyAccessor->getValue($entityInstance, $primaryKeyName),
-        );
-
-        $generatedJson = Json\typed(
-            $this->decoratedPaginator->getResultsAsJson(),
-            Type\shape(
-                [
-                    'results' => Type\optional(
-                        Type\vec(
-                            Type\shape(
-                                [
-                                    EA::ENTITY_ID => Type\non_empty_string(),
-                                    'entityAsString' => Type\non_empty_string(),
-                                ],
-                            ),
-                        ),
-                    ),
-                    'next_page' => Type\nullable(Type\string()),
-                ],
+        return $this->decoratedPaginator->getResultsAsJson(
+            fn (object $entityInstance): string|null => EntityField::formatAsString(
+                $entityInstance,
+                $field,
+                $this->translator,
+                $this->twig,
             ),
+            $twigTemplate,
+            $renderAsHtml,
         );
-
-        if (array_key_exists('results', $generatedJson)) {
-            $generatedJson['results'] = Vec\map(
-                $generatedJson['results'],
-                function (array $result) use ($reindexResults, $field): array {
-                    $result['entityAsString'] = EntityField::formatAsString(
-                        Type\object()->coerce($reindexResults[$result[EA::ENTITY_ID]]),
-                        $field,
-                        $this->translator,
-                    );
-
-                    return $result;
-                },
-            );
-        }
-
-        return Json\encode($generatedJson);
     }
 }

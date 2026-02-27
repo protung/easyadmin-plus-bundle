@@ -115,7 +115,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
             throw new InsufficientEntityPermissionException($context);
         }
 
-        $this->container->get(FieldFactory::class)->processFields($context->getEntity(), FieldCollection::new($this->configureFields(Crud::PAGE_EDIT)), Crud::PAGE_EDIT);
+        $this->container->get(FieldFactory::class)->processFields($context->getEntity(), new FieldCollection($this->configureFields(Crud::PAGE_EDIT)), Crud::PAGE_EDIT);
         $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
         $this->container->get(ActionFactory::class)->processEntityActions($context->getEntity(), $context->getCrud()->getActionsConfig());
         /** @var TDto $dto */
@@ -129,9 +129,9 @@ abstract class BaseCrudDtoController extends BaseCrudController
             if (!$this->isCsrfTokenValid(BooleanField::CSRF_TOKEN_NAME, $context->getRequest()->query->get('csrfToken'))) {
                 if (class_exists(InvalidCsrfTokenException::class)) {
                     throw new InvalidCsrfTokenException();
-                } else {
-                    return new Response('Invalid CSRF token.', 400);
                 }
+
+                return new Response('Invalid CSRF token.', 400);
             }
 
             $fieldName = $context->getRequest()->query->get('fieldName');
@@ -218,7 +218,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
 
         $context->getEntity()->setInstance(null);
         $context->getEntity()->setInstance($this->createDto());
-        $this->container->get(FieldFactory::class)->processFields($context->getEntity(), FieldCollection::new($this->configureFields(Crud::PAGE_NEW)), Crud::PAGE_NEW);
+        $this->container->get(FieldFactory::class)->processFields($context->getEntity(), new FieldCollection($this->configureFields(Crud::PAGE_NEW)), Crud::PAGE_NEW);
         $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
         $this->container->get(ActionFactory::class)->processEntityActions($context->getEntity(), $context->getCrud()->getActionsConfig());
 
