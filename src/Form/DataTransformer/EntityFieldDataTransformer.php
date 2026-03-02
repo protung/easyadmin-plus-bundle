@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Override;
 use Psl\Dict;
 use Psl\Type;
+use Stringable;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -45,8 +46,22 @@ final readonly class EntityFieldDataTransformer implements DataTransformerInterf
 
             return Dict\map(
                 $value,
-                fn (mixed $id): object|null => $this->entityManager->find($this->class, $id),
+                function (mixed $id): object|null {
+                    // If the ID is an object that can be cast to a string, cast it to a string before passing it to the entity manager.
+                    // Otherwise, the entity manager will throw an exception because it expects a scalar value for the ID if the identifier is for example an integer.
+                    if ($id instanceof Stringable) {
+                        $id = (string) $id;
+                    }
+
+                    return $this->entityManager->find($this->class, $id);
+                },
             );
+        }
+
+        // If the ID is an object that can be cast to a string, cast it to a string before passing it to the entity manager.
+        // Otherwise, the entity manager will throw an exception because it expects a scalar value for the ID if the identifier is for example an integer.
+        if ($value instanceof Stringable) {
+            $value = (string) $value;
         }
 
         return $this->entityManager->find($this->class, $value);
