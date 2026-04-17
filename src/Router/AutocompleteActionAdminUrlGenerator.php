@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Router;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
@@ -21,7 +21,7 @@ final readonly class AutocompleteActionAdminUrlGenerator
      * @param class-string<CrudControllerInterface> $targetCrudControllerFqcn
      */
     public function generate(
-        AdminContext $context,
+        AdminContextInterface $context,
         string $targetCrudControllerFqcn,
         string $propertyName,
         string $originatingPage,
