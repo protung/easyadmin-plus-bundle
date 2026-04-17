@@ -10,7 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Twig\Component\Option\AlertVariant;
 use Override;
 use Psl\Dict;
@@ -144,9 +144,9 @@ abstract class BaseCrudController extends AbstractCrudController
         return $this->container->get(TranslatorInterface::class);
     }
 
-    protected function adminUrlGenerator(): AdminUrlGenerator
+    protected function adminUrlGenerator(): AdminUrlGeneratorInterface
     {
-        return $this->container->get(AdminUrlGenerator::class);
+        return $this->container->get(AdminUrlGeneratorInterface::class);
     }
 
     /**

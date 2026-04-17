@@ -17,7 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
@@ -40,7 +40,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(
         private EntityFactory $entityFactory,
-        private AdminUrlGenerator $adminUrlGenerator,
+        private AdminUrlGeneratorInterface $adminUrlGenerator,
         private AutocompleteActionAdminUrlGenerator $autocompleteActionAdminUrlGenerator,
         private TranslatorInterface $translator,
         private Environment $twig,
