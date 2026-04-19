@@ -74,7 +74,7 @@ final class EntityField implements FieldInterface
     public const string PARAM_ON_CHANGE_CONTEXT_HANDLE_URL = 'ea-custom-entity-field-on-change-handle-url';
 
     #[Override]
-    public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         return (new self())
             ->setProperty($propertyName)
