@@ -26,7 +26,7 @@ jobs:
         symfony:
           - 6.4.*
           - 7.4.*
-#          - 8.*
+          - 8.*
         dependencies: [ lowest, highest ]
     name: 'PHP ${{ matrix.php }} + Symfony ${{ matrix.symfony }} + ${{ matrix.dependencies }} dependencies'
     steps:
