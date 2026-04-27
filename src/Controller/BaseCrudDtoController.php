@@ -23,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
 use Override;
+use Protung\EasyAdminPlusBundle\Dto\EntityDtoInstanceSetter;
 use Psl\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -98,8 +99,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
         $entityInstance = $entityDto->getInstance();
 
         $dto = $this->createDtoFromEntity($entityInstance);
-        $entityDto->setInstance(null);
-        $entityDto->setInstance($dto);
+        EntityDtoInstanceSetter::setInstance($entityDto, $dto);
 
         $event = new BeforeCrudActionEvent($context);
         $this->container->get('event_dispatcher')->dispatch($event);
@@ -156,8 +156,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
             $this->processUploadedFiles($editForm);
 
             $this->updateEntityFromDto($entityInstance, $dto);
-            $entityDto->setInstance(null);
-            $entityDto->setInstance($entityInstance);
+            EntityDtoInstanceSetter::setInstance($entityDto, $entityInstance);
 
             $event = new BeforeEntityUpdatedEvent($entityInstance);
             $this->container->get('event_dispatcher')->dispatch($event);
@@ -216,8 +215,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
             throw new InsufficientEntityPermissionException($context);
         }
 
-        $context->getEntity()->setInstance(null);
-        $context->getEntity()->setInstance($this->createDto());
+        EntityDtoInstanceSetter::setInstance($context->getEntity(), $this->createDto());
         $this->container->get(FieldFactory::class)->processFields($context->getEntity(), new FieldCollection($this->configureFields(Crud::PAGE_NEW)), Crud::PAGE_NEW);
         $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
         $this->container->get(ActionFactory::class)->processEntityActions($context->getEntity(), $context->getCrud()->getActionsConfig());
@@ -227,8 +225,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
 
         /** @var TDto $entityInstance */
         $entityInstance = $newForm->getData();
-        $context->getEntity()->setInstance(null);
-        $context->getEntity()->setInstance($entityInstance);
+        EntityDtoInstanceSetter::setInstance($context->getEntity(), $entityInstance);
 
         if ($newForm->isSubmitted() && $newForm->isValid()) {
             $this->processUploadedFiles($newForm);
