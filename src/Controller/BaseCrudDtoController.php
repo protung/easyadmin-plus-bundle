@@ -238,7 +238,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
             $this->persistEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entityInstance);
 
             $this->container->get('event_dispatcher')->dispatch(new AfterEntityPersistedEvent($entityInstance));
-            $context->getEntity()->setInstance($entityInstance);
+            EntityDtoInstanceSetter::setInstance($context->getEntity(), $entityInstance);
 
             return $this->getRedirectResponseAfterSave($context, Action::NEW);
         }
