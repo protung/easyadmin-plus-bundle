@@ -181,6 +181,7 @@
   <file src="src/Test/Controller/NewActionTestCase.php">
     <InvalidReturnStatement>
       <code><![CDATA[$entity]]></code>
+      <code><![CDATA[$this->findAllEntities($this->controllerUnderTest()::getEntityFqcn())]]></code>
       <code><![CDATA[$this->findEntity(
             $this->controllerUnderTest()::getEntityFqcn(),
             $id,
@@ -188,6 +189,7 @@
     </InvalidReturnStatement>
     <InvalidReturnType>
       <code><![CDATA[TEntity]]></code>
+      <code><![CDATA[iterable<TEntity>]]></code>
     </InvalidReturnType>
   </file>
   <file src="src/Translation/EasyAdminTranslationMessage.php">

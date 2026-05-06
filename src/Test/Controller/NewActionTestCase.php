@@ -196,6 +196,12 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         );
     }
 
+    /** @return iterable<TEntity> */
+    protected function findAllEntitiesForControllerUnderTest(): iterable
+    {
+        return $this->findAllEntities($this->controllerUnderTest()::getEntityFqcn());
+    }
+
     /** @return TEntity */
     protected function getEntityForControllerUnderTest(int|string|object $id): object
     {
