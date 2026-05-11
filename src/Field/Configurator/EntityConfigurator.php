@@ -101,7 +101,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setFormTypeOption(
             'choice_label',
-            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $field, $this->translator, $this->twig),
+            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $field, $this->translator, $this->twig, $context),
         );
 
         $autocompleteMode = Type\bool()->coerce($field->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
@@ -199,7 +199,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
         $field->setValue($targetEntityInstance);
         $field->setFormattedValue(
-            EntityField::formatAsString($targetEntityInstance, $field, $this->translator, $this->twig),
+            EntityField::formatAsString($targetEntityInstance, $field, $this->translator, $this->twig, $context),
         );
     }
 
@@ -235,7 +235,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
 
                     return [
                         'relatedUrl' => $relatedUrl,
-                        'formattedValue' => EntityField::formatAsString($entity, $field, $this->translator, $this->twig),
+                        'formattedValue' => EntityField::formatAsString($entity, $field, $this->translator, $this->twig, $context),
                     ];
                 },
             );
