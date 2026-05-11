@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Field;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use Psl\Str;
 use Psl\Type;
@@ -25,7 +26,7 @@ trait AdvancedDisplayField
     public const string OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
     /**
-     * @param string|(callable(TEntity):string|TranslatableInterface) $entityDisplayField
+     * @param string|(callable(TEntity, AdminContextInterface):string|TranslatableInterface) $entityDisplayField
      *
      * @template TEntity of object
      */
@@ -37,11 +38,11 @@ trait AdvancedDisplayField
     }
 
     /**
-     * @return string|(callable(object):string|TranslatableInterface)|null
+     * @return string|(callable(object, AdminContextInterface):string|TranslatableInterface)|null
      */
     public static function getEntityDisplayField(FieldDto $field): string|callable|null
     {
-        /** @var string|(callable(object):string|TranslatableInterface)|null $value */
+        /** @var string|(callable(object, AdminContextInterface):string|TranslatableInterface)|null $value */
         $value = $field->getCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD);
 
         if (is_callable($value)) {
@@ -51,7 +52,7 @@ trait AdvancedDisplayField
         return Type\nullable(Type\string())->coerce($value);
     }
 
-    public static function formatAsString(object|null $entityInstance, FieldDto $field, TranslatorInterface $translator, Environment $twig): string|null
+    public static function formatAsString(object|null $entityInstance, FieldDto $field, TranslatorInterface $translator, Environment $twig, AdminContextInterface $adminContext): string|null
     {
         if ($entityInstance === null) {
             return null;
@@ -60,7 +61,7 @@ trait AdvancedDisplayField
         $targetEntityDisplayField = self::getEntityDisplayField($field);
         if ($targetEntityDisplayField !== null) {
             if (is_callable($targetEntityDisplayField)) {
-                $displayValue = $targetEntityDisplayField($entityInstance);
+                $displayValue = $targetEntityDisplayField($entityInstance, $adminContext);
 
                 return $displayValue instanceof TranslatableInterface ? $displayValue->trans($translator) : $displayValue;
             }

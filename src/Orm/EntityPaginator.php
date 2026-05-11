@@ -180,6 +180,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
                 $field,
                 $this->translator,
                 $this->twig,
+                $context,
             ),
             $twigTemplate,
             $renderAsHtml,

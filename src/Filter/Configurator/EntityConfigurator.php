@@ -68,7 +68,7 @@ final readonly class EntityConfigurator implements FilterConfiguratorInterface
 
         $filterDto->setFormTypeOption(
             'value_type_options.choice_label',
-            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto, $this->translator, $this->twig),
+            fn (object $targetEntityInstance): string|null => EntityField::formatAsString($targetEntityInstance, $fieldDto, $this->translator, $this->twig, $context),
         );
 
         $autocompleteMode = Type\bool()->coerce($fieldDto->getCustomOption(EntityField::OPTION_AUTOCOMPLETE));
