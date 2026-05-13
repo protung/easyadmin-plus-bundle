@@ -52,7 +52,6 @@ final class CrudAutocompleteType extends AbstractType
     {
         $resolver->setDefault('is_association', false);
         $resolver->setAllowedTypes('is_association', 'bool');
-        $resolver->define('choice_label');
         $resolver->define('placeholder');
     }
 
