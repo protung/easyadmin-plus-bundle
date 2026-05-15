@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Dto;
 
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use ReflectionProperty;
+use ReflectionClass;
 
 final readonly class EntityDtoInstanceSetter
 {
     public static function setInstance(EntityDto $entityDto, object|null $instance): void
     {
-        $instanceProperty = new ReflectionProperty($entityDto, 'instance');
+        $entityDtoReflection = new ReflectionClass($entityDto);
+        if ($entityDtoReflection->hasProperty('entityInstance')) { // EasyAdmin 5+
+            $instanceProperty = $entityDtoReflection->getProperty('entityInstance');
+        } else {
+            $instanceProperty = $entityDtoReflection->getProperty('instance');
+        }
+
         $instanceProperty->setValue($entityDto, $instance);
 
-        $primaryKeyProperty = new ReflectionProperty($entityDto, 'primaryKeyValue');
+        $primaryKeyProperty = $entityDtoReflection->getProperty('primaryKeyValue');
         $primaryKeyProperty->setValue($entityDto, null);
     }
 }

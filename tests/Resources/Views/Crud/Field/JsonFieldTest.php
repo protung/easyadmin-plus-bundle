@@ -16,14 +16,7 @@ final class JsonFieldTest extends TemplateTestCase
      */
     public static function dataProviderTestOutput(): Generator
     {
-        $ea = new class {
-            public function templatePath(): string
-            {
-                return '@EasyAdmin/label/null.html.twig';
-            }
-        };
-
-        yield 'no-data' => [['ea' => $ea]];
+        yield 'no-data' => [[]];
 
         yield 'with-value' => [
             [
@@ -77,6 +70,16 @@ final class JsonFieldTest extends TemplateTestCase
         $actualTemplate = JsonField::new('test')->getAsDto()->getTemplatePath();
 
         self::assertNotNull($actualTemplate);
+
+        $this->mockTwigFunction(
+            'ea',
+            static fn () => new class {
+                public function templatePath(): string
+                {
+                    return '@EasyAdmin/label/null.html.twig';
+                }
+            },
+        );
 
         $this->assertTwigTemplateEqualsHtmlFile(
             $actualTemplate,
