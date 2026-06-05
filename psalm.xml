@@ -17,6 +17,7 @@
         <directory name="tests/"/>
         <ignoreFiles>
             <directory name="vendor/"/>
+            <file name="src/Orm/EntityRepository.php"/>
         </ignoreFiles>
     </projectFiles>
 

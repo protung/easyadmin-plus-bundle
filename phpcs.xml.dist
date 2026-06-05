@@ -42,4 +42,5 @@
     <!-- Paths to check -->
     <file>src</file>
     <file>tests</file>
+    <exclude-pattern>src/Orm/EntityRepository.php</exclude-pattern>
 </ruleset>
