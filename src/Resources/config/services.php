@@ -14,6 +14,7 @@ use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfigura
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfiguratorBeforeCommonPreConfigurator;
 use Protung\EasyAdminPlusBundle\Filter\Configurator\EntityConfigurator;
 use Protung\EasyAdminPlusBundle\Orm\EntityPaginator;
+use Protung\EasyAdminPlusBundle\Orm\EntityRepository;
 use Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -39,6 +40,9 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure()
         ->private();
+
+    $services->set(EntityRepository::class)
+        ->decorate(\EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository::class);
 
     $services->set(AutocompleteActionAdminUrlGenerator::class)
         ->autowire()

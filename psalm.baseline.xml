@@ -130,6 +130,11 @@
       <code><![CDATA[getResultsAsJson]]></code>
     </TooManyArguments>
   </file>
+  <file src="src/ProtungEasyAdminPlusBundle.php">
+    <DeprecatedInterface>
+      <code><![CDATA[ProtungEasyAdminPlusBundle]]></code>
+    </DeprecatedInterface>
+  </file>
   <file src="src/Test/Controller/AdminControllerWebTestCase.php">
     <InvalidArgument>
       <code><![CDATA[Type\vec(Type\shape([0 => Type\non_empty_string(), 1 => Type\mixed_dict()]))->coerce(
@@ -196,5 +201,10 @@
     <ImpureMethodCall>
       <code><![CDATA[trans]]></code>
     </ImpureMethodCall>
+  </file>
+  <file src="tests/Test/TestApplication/TestKernel.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function configureContainer(ContainerConfigurator $container): void]]></code>
+    </MissingOverrideAttribute>
   </file>
 </files>
