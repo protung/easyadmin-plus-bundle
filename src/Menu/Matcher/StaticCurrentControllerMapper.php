@@ -9,11 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use Override;
 use Protung\EasyAdminPlusBundle\Menu\Matcher;
 
-use function parse_str;
-use function parse_url;
-
-use const PHP_URL_QUERY;
-
 /**
  * Select a menu item based of the current controller (FQCN, id, etc.).
  *
@@ -43,13 +38,7 @@ final class StaticCurrentControllerMapper implements Matcher
     #[Override]
     public function shouldBeSelected(MenuItemDto $menuItemDto, string $currentController): bool
     {
-        $menuItemQueryString     = $menuItemDto->getLinkUrl() === null ? null : parse_url($menuItemDto->getLinkUrl(), PHP_URL_QUERY);
-        $menuItemQueryParameters = [];
-        if ($menuItemQueryString !== null) {
-            parse_str($menuItemQueryString, $menuItemQueryParameters);
-        }
-
-        $controllerInLink = $menuItemQueryParameters[EA::CRUD_CONTROLLER_FQCN] ?? null;
+        $controllerInLink = $menuItemDto->getRouteParameters()[EA::CRUD_CONTROLLER_FQCN] ?? null;
 
         return $controllerInLink === ($this->controllersMap[$currentController] ?? $currentController);
     }
