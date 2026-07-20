@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityUpdatedEvent;
@@ -25,6 +26,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
 use Override;
 use Protung\EasyAdminPlusBundle\Dto\EntityDtoInstanceSetter;
 use Psl\Str;
+use Psl\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -258,5 +263,40 @@ abstract class BaseCrudDtoController extends BaseCrudController
 
         return $responseParameters;
         // phpcs:enable
+    }
+
+    #[Override]
+    public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        return parent::createNewFormBuilder($entityDto, $formOptions, $context)
+            ->addEventListener(
+                FormEvents::POST_SUBMIT,
+                function (FormEvent $event): void {
+                    $this->onPostSubmit(
+                        Type\instance_of(static::getDtoFqcn())->coerce($event->getData()),
+                    );
+                },
+                priority: 100, // Must stay above Symfony's ValidationListener, which subscribes to POST_SUBMIT at the default priority of 0.
+            );
+    }
+
+    #[Override]
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        return parent::createEditFormBuilder($entityDto, $formOptions, $context)
+            ->addEventListener(
+                FormEvents::POST_SUBMIT,
+                function (FormEvent $event): void {
+                    $this->onPostSubmit(
+                        Type\instance_of(static::getDtoFqcn())->coerce($event->getData()),
+                    );
+                },
+                priority: 100, // Must stay above Symfony's ValidationListener, which subscribes to POST_SUBMIT at the default priority of 0.
+            );
+    }
+
+    /** @param TDto $dto */
+    protected function onPostSubmit(object $dto): void
+    {
     }
 }
