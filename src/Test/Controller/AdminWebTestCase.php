@@ -19,6 +19,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use function array_merge;
 use function serialize;
 
 abstract class AdminWebTestCase extends WebTestCase
@@ -38,9 +39,28 @@ abstract class AdminWebTestCase extends WebTestCase
         static::loginAsDefaultUser();
     }
 
+    /** @return non-empty-string */
+    protected static function serverHost(): string
+    {
+        return 'localhost';
+    }
+
+    /** @return non-empty-string */
     protected static function authenticationFirewallContext(): string
     {
         return 'easyadmin';
+    }
+
+    /** @param array<mixed> $server */
+    #[Override]
+    protected static function createClient(array $server = []): KernelBrowser
+    {
+        return parent::createClient(
+            array_merge(
+                ['HTTP_HOST' => static::serverHost()],
+                $server,
+            ),
+        );
     }
 
     #[Override]

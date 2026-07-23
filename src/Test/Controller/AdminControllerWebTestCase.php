@@ -207,7 +207,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function assertResponseIsRedirect(array $redirectQueryParameters): void
     {
-        $expectedRedirectUrl = 'http://localhost' . $this->prepareAdminUrl($redirectQueryParameters);
+        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->prepareAdminUrl($redirectQueryParameters);
 
         self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
     }
