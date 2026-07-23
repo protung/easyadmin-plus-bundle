@@ -63,9 +63,9 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     /**
      * @param array<array-key, mixed> $queryParameters
      */
-    protected function prepareAdminUrl(array $queryParameters): string
+    protected function prepareAdminUrl(array $queryParameters, string|null $fragment = null): string
     {
-        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters);
+        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
     }
 
     /**
@@ -205,9 +205,9 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     /**
      * @param array<array-key, mixed> $redirectQueryParameters
      */
-    protected function assertResponseIsRedirect(array $redirectQueryParameters): void
+    protected function assertResponseIsRedirect(array $redirectQueryParameters, string|null $fragment = null): void
     {
-        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->prepareAdminUrl($redirectQueryParameters);
+        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->prepareAdminUrl($redirectQueryParameters, $fragment);
 
         self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
     }
