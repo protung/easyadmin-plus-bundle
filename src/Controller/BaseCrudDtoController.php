@@ -161,7 +161,6 @@ abstract class BaseCrudDtoController extends BaseCrudController
             $this->processUploadedFiles($editForm);
 
             $this->updateEntityFromDto($entityInstance, $dto);
-            EntityDtoInstanceSetter::setInstance($entityDto, $entityInstance);
 
             $event = new BeforeEntityUpdatedEvent($entityInstance);
             $this->container->get('event_dispatcher')->dispatch($event);
@@ -170,6 +169,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
             $this->updateEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entityInstance);
 
             $this->container->get('event_dispatcher')->dispatch(new AfterEntityUpdatedEvent($entityInstance));
+            EntityDtoInstanceSetter::setInstance($entityDto, $entityInstance);
 
             return $this->getRedirectResponseAfterSave($context, Action::EDIT);
         }
