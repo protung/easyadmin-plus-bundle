@@ -7,6 +7,8 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use DOMElement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
@@ -17,6 +19,7 @@ use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use function array_merge;
 use function http_build_query;
@@ -34,6 +37,11 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     abstract protected function controllerUnderTest(): string;
 
     abstract protected function actionName(): string;
+
+    protected static function usePrettyUrls(): bool
+    {
+        return false;
+    }
 
     protected static function easyAdminRoutePath(): string
     {
@@ -65,7 +73,36 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function prepareAdminUrl(array $queryParameters, string|null $fragment = null): string
     {
-        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+        if (! static::usePrettyUrls()) {
+            return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+        }
+
+        $route = $this->getContainerService(AdminRouteGenerator::class)->findRouteName(
+            dashboardFqcn: static::dashboardFqcn(),
+            crudControllerFqcn: $this->controllerUnderTest(),
+            actionName: $this->actionName(),
+        );
+
+        $path = $this->getContainerService(UrlGeneratorInterface::class)->generate(
+            Type\non_empty_string()->assert($route),
+            $this->prepareAdminUrlRouteParameters(),
+        );
+
+        return $path . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+    }
+
+    /**
+     * @return array<array-key, mixed> $routeParameters
+     */
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        return [];
+    }
+
+    /** @return class-string<DashboardControllerInterface>|null */
+    protected static function dashboardFqcn(): string|null
+    {
+        return null;
     }
 
     /**

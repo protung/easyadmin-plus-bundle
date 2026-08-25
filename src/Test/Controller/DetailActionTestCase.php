@@ -49,11 +49,24 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * @return array<array-key, mixed> $routeParameters
+     */
+    #[Override]
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        $routeParameters = parent::prepareAdminUrlRouteParameters();
+
+        $routeParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        return $routeParameters;
+    }
+
+    /**
      * @param array<array-key, mixed> $queryParameters
      */
     public function assertRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
@@ -65,7 +78,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertPage(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 

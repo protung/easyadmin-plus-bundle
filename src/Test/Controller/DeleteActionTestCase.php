@@ -87,7 +87,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertDeleteEntityRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
@@ -127,6 +127,19 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         }
 
         return static::$expectedEntityIdUnderTest;
+    }
+
+    /**
+     * @return array<array-key, mixed> $routeParameters
+     */
+    #[Override]
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        $routeParameters = parent::prepareAdminUrlRouteParameters();
+
+        $routeParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        return $routeParameters;
     }
 
     /**
