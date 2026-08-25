@@ -246,14 +246,19 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         $field->setFormattedValue($formattedValue);
     }
 
-    private function generateLinkToAssociatedEntity(EntityMetadata $entityMetadata, EntityDto $entityDto): string
+    private function generateLinkToAssociatedEntity(EntityMetadata $entityMetadata, EntityDto $entityDto): string|null
     {
+        $entityId = $entityDto->getPrimaryKeyValue();
+        if ($entityId === null) {
+            return null;
+        }
+
         return $this->adminUrlGenerator
             ->unsetAll()
             ->setDashboard($entityMetadata->targetDashboardControllerFqcn())
             ->setController($entityMetadata->targetCrudControllerFqcn())
             ->setAction(Action::DETAIL)
-            ->setEntityId($entityDto->getPrimaryKeyValue())
+            ->setEntityId($entityId)
             ->generateUrl();
     }
 
