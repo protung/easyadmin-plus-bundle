@@ -36,7 +36,8 @@ final readonly class AutocompleteActionAdminUrlGenerator
             ->set(
                 EntityField::PARAM_AUTOCOMPLETE_CONTEXT,
                 [
-                    EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
+                    // when using pretty URLs, the data is in the request attributes instead of the autocomplete context
+                    EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN) ?? $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
                     'propertyName' => $propertyName,
                     'originatingPage' => $originatingPage,
                     EntityField::OPTION_ENTITY_DISPLAY_FIELD => $hasOptionEntityFieldDisplayField,
