@@ -116,7 +116,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
             $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::INDEX,
-                [],
+                null,
                 $redirectQueryParameters,
             );
         } else {
@@ -144,7 +144,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
             $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::DETAIL,
-                [EA::ENTITY_ID => $this->entityIdUnderTest()],
+                $this->entityIdUnderTest(),
                 $redirectQueryParameters,
             );
         } else {

@@ -64,7 +64,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
             $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::INDEX,
-                [],
+                null,
                 $redirectQueryParameters,
             );
         } else {
@@ -92,7 +92,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
             $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::DETAIL,
-                [EA::ENTITY_ID => $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString()],
+                $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString(),
                 $redirectQueryParameters,
             );
         } else {

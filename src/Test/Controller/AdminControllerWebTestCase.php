@@ -243,17 +243,21 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     /**
      * @param class-string<CrudControllerInterface> $crudControllerFqcn
      * @param non-empty-string                      $actionName
-     * @param array<array-key, mixed>               $redirectRouteParameters
      * @param array<array-key, mixed>               $redirectQueryParameters
      */
     protected function assertResponseRedirectsToCrudController(
         string $crudControllerFqcn,
         string $actionName,
-        array $redirectRouteParameters = [],
+        string|int|null $entityId = null,
         array $redirectQueryParameters = [],
         string|null $fragment = null,
     ): void {
         if (static::usePrettyUrls()) {
+            $redirectRouteParameters = [];
+            if ($entityId !== null) {
+                $redirectRouteParameters[EA::ENTITY_ID] = $entityId;
+            }
+
             $expectedRedirectUrl = 'http://' . static::serverHost() . $this->generateAdminPrettyUrl(
                 static::dashboardFqcn(),
                 $crudControllerFqcn,
@@ -267,6 +271,10 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         } else {
             $redirectQueryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $crudControllerFqcn;
             $redirectQueryParameters[EA::CRUD_ACTION]          ??= $actionName;
+
+            if ($entityId !== null) {
+                $redirectQueryParameters[EA::ENTITY_ID] = $entityId;
+            }
 
             $this->assertResponseIsRedirect($redirectQueryParameters, $fragment);
         }
