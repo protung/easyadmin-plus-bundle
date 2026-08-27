@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use Override;
+use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
@@ -15,11 +19,13 @@ use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionFactoryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 use function array_merge;
+use function http_build_query;
 use function serialize;
 
 abstract class AdminWebTestCase extends WebTestCase
@@ -137,6 +143,51 @@ abstract class AdminWebTestCase extends WebTestCase
         static::loginAs($user);
 
         return $user;
+    }
+
+    /**
+     * @param class-string<DashboardControllerInterface>|null $dashboardFqcn
+     * @param class-string<CrudControllerInterface>           $crudControllerFqcn
+     * @param non-empty-string                                $actionName
+     * @param array<array-key, mixed>                         $routeParameters
+     * @param array<array-key, mixed>                         $queryParameters
+     */
+    protected function generateAdminPrettyUrl(
+        string|null $dashboardFqcn,
+        string $crudControllerFqcn,
+        string $actionName,
+        array $routeParameters = [],
+        array $queryParameters = [],
+        string|null $fragment = null,
+    ): string {
+        $route = $this->getContainerService(AdminRouteGenerator::class)->findRouteName(
+            dashboardFqcn: $dashboardFqcn,
+            crudControllerFqcn: $crudControllerFqcn,
+            actionName: $actionName,
+        );
+
+        $path = $this->getContainerService(UrlGeneratorInterface::class)->generate(
+            Type\non_empty_string()->assert($route),
+            $routeParameters,
+        );
+
+        $queryAndFragment = $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+        if ($queryAndFragment !== '') {
+            return $path . '?' . $queryAndFragment;
+        }
+
+        return $path;
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    protected function prepareAdminUrlQueryParameters(array $queryParameters): string
+    {
+        // we need to prepare the URL having some query parameters in a specific order
+        $queryParameters = Dict\sort_by_key($queryParameters);
+
+        return http_build_query($queryParameters);
     }
 
     /**

@@ -9,7 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
+use Override;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
@@ -20,10 +20,8 @@ use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use function array_merge;
-use function http_build_query;
 use function is_array;
 use function iterator_to_array;
 
@@ -73,40 +71,6 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param class-string<DashboardControllerInterface>|null $dashboardFqcn
-     * @param class-string<CrudControllerInterface>           $crudControllerFqcn
-     * @param non-empty-string                                $actionName
-     * @param array<array-key, mixed>                         $routeParameters
-     * @param array<array-key, mixed>                         $queryParameters
-     */
-    protected function generateAdminPrettyUrl(
-        string|null $dashboardFqcn,
-        string $crudControllerFqcn,
-        string $actionName,
-        array $routeParameters = [],
-        array $queryParameters = [],
-        string|null $fragment = null,
-    ): string {
-        $route = $this->getContainerService(AdminRouteGenerator::class)->findRouteName(
-            dashboardFqcn: $dashboardFqcn,
-            crudControllerFqcn: $crudControllerFqcn,
-            actionName: $actionName,
-        );
-
-        $path = $this->getContainerService(UrlGeneratorInterface::class)->generate(
-            Type\non_empty_string()->assert($route),
-            $routeParameters,
-        );
-
-        $queryAndFragment = $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
-        if ($queryAndFragment !== '') {
-            return $path . '?' . $queryAndFragment;
-        }
-
-        return $path;
-    }
-
-    /**
      * @param array<array-key, mixed> $queryParameters
      */
     protected function prepareAdminUrl(array $queryParameters, string|null $fragment = null): string
@@ -150,6 +114,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     /**
      * @param array<array-key, mixed> $queryParameters
      */
+    #[Override]
     protected function prepareAdminUrlQueryParameters(array $queryParameters): string
     {
         if (! static::usePrettyUrls()) {
@@ -157,10 +122,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
             $queryParameters[EA::CRUD_ACTION]          ??= $this->actionName();
         }
 
-        // we need to prepare the URL having some query parameters in a specific order
-        $queryParameters = Dict\sort_by_key($queryParameters);
-
-        return http_build_query($queryParameters);
+        return parent::prepareAdminUrlQueryParameters($queryParameters);
     }
 
     /**
