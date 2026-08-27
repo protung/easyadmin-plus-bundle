@@ -143,19 +143,6 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
-     */
-    #[Override]
-    protected function prepareAdminUrlQueryParameters(array $queryParameters): string
-    {
-        if (! static::usePrettyUrls()) {
-            $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
-        }
-
-        return parent::prepareAdminUrlQueryParameters($queryParameters);
-    }
-
-    /**
      * @return TEntity|null
      */
     protected function findEntityUnderTest(): object|null
