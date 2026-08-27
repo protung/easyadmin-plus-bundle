@@ -65,6 +65,19 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     /**
      * @param array<array-key, mixed> $queryParameters
      */
+    #[Override]
+    protected function prepareAdminUrlQueryParameters(array $queryParameters): string
+    {
+        if (! static::usePrettyUrls()) {
+            $queryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        }
+
+        return parent::prepareAdminUrlQueryParameters($queryParameters);
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
     public function assertRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
         if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
