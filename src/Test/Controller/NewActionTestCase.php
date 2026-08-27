@@ -61,7 +61,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         $this->submitFormRequest($data, $files, $queryParameters);
 
         if (static::usePrettyUrls()) {
-            $this->assertResponseIsRedirectWithPrettyUrl(
+            $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::INDEX,
                 [],
@@ -89,7 +89,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
         $this->submitFormRequest($data, $files, $queryParameters);
 
         if (static::usePrettyUrls()) {
-            $this->assertResponseIsRedirectWithPrettyUrl(
+            $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::DETAIL,
                 [EA::ENTITY_ID => $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString()],

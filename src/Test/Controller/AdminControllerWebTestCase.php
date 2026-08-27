@@ -241,36 +241,43 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $redirectQueryParameters
-     */
-    protected function assertResponseIsRedirect(array $redirectQueryParameters, string|null $fragment = null): void
-    {
-        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->prepareAdminUrl($redirectQueryParameters, $fragment);
-
-        self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
-    }
-
-    /**
      * @param class-string<CrudControllerInterface> $crudControllerFqcn
      * @param non-empty-string                      $actionName
      * @param array<array-key, mixed>               $redirectRouteParameters
      * @param array<array-key, mixed>               $redirectQueryParameters
      */
-    protected function assertResponseIsRedirectWithPrettyUrl(
+    protected function assertResponseRedirectsToCrudController(
         string $crudControllerFqcn,
         string $actionName,
         array $redirectRouteParameters = [],
         array $redirectQueryParameters = [],
         string|null $fragment = null,
     ): void {
-        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->generateAdminPrettyUrl(
-            static::dashboardFqcn(),
-            $crudControllerFqcn,
-            $actionName,
-            $redirectRouteParameters,
-            $redirectQueryParameters,
-            $fragment,
-        );
+        if (static::usePrettyUrls()) {
+            $expectedRedirectUrl = 'http://' . static::serverHost() . $this->generateAdminPrettyUrl(
+                static::dashboardFqcn(),
+                $crudControllerFqcn,
+                $actionName,
+                $redirectRouteParameters,
+                $redirectQueryParameters,
+                $fragment,
+            );
+
+            self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
+        } else {
+            $redirectQueryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $crudControllerFqcn;
+            $redirectQueryParameters[EA::CRUD_ACTION]          ??= $actionName;
+
+            $this->assertResponseIsRedirect($redirectQueryParameters, $fragment);
+        }
+    }
+
+    /**
+     * @param array<array-key, mixed> $redirectQueryParameters
+     */
+    protected function assertResponseIsRedirect(array $redirectQueryParameters, string|null $fragment = null): void
+    {
+        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->prepareAdminUrl($redirectQueryParameters, $fragment);
 
         self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
     }
