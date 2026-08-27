@@ -40,11 +40,6 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     abstract protected function actionName(): string;
 
-    protected static function usePrettyUrls(): bool
-    {
-        return false;
-    }
-
     protected static function easyAdminRoutePath(): string
     {
         return '/admin';

@@ -57,6 +57,11 @@ abstract class AdminWebTestCase extends WebTestCase
         return 'easyadmin';
     }
 
+    protected static function usePrettyUrls(): bool
+    {
+        return false;
+    }
+
     /** @param array<mixed> $server */
     #[Override]
     protected static function createClient(array $server = []): KernelBrowser
