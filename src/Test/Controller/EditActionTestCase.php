@@ -112,9 +112,18 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
-        $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
+        if (static::usePrettyUrls()) {
+            $this->assertResponseIsRedirectWithPrettyUrl(
+                $this->controllerUnderTest(),
+                Action::INDEX,
+                [],
+                $redirectQueryParameters,
+            );
+        } else {
+            $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
 
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectQueryParameters);
+        }
     }
 
     /**
@@ -131,10 +140,19 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
-        $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
-        $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest();
+        if (static::usePrettyUrls()) {
+            $this->assertResponseIsRedirectWithPrettyUrl(
+                $this->controllerUnderTest(),
+                Action::DETAIL,
+                [EA::ENTITY_ID => $this->entityIdUnderTest()],
+                $redirectQueryParameters,
+            );
+        } else {
+            $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
+            $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest();
 
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectQueryParameters);
+        }
     }
 
     /**

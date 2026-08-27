@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use Override;
 use Psl\Type;
 use Symfony\Component\DomCrawler\Crawler;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @template TCrudController
+ * @template TCrudController of CrudControllerInterface
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class CustomActionTestCase extends AdminControllerWebTestCase

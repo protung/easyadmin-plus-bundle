@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use LogicException;
 use Override;
 use Psl\Str;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use function array_key_exists;
 
 /**
- * @template TCrudController
+ * @template TCrudController of CrudControllerInterface
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class DetailActionTestCase extends AdminControllerWebTestCase
