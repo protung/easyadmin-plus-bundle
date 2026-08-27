@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
 use Psl\Str;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use function array_key_exists;
 
 /**
- * @template TDashboardController
+ * @template TDashboardController of DashboardControllerInterface
  */
 abstract class DashboardControllerTestCase extends AdminWebTestCase
 {
