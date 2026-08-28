@@ -75,7 +75,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         }
 
         return $this->generateAdminPrettyUrl(
-            dashboardFqcn: static::dashboardFqcn(),
+            dashboardFqcn: $this->dashboardControllerFqcn(),
             crudControllerFqcn: $this->controllerUnderTest(),
             actionName: $this->actionName(),
             routeParameters: $this->prepareAdminUrlRouteParameters(),
@@ -101,7 +101,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /** @return class-string<DashboardControllerInterface>|null */
-    protected static function dashboardFqcn(): string|null
+    protected function dashboardControllerFqcn(): string|null
     {
         return null;
     }
@@ -259,7 +259,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
             }
 
             $expectedRedirectUrl = 'http://' . static::serverHost() . $this->generateAdminPrettyUrl(
-                static::dashboardFqcn(),
+                $this->dashboardControllerFqcn(),
                 $crudControllerFqcn,
                 $actionName,
                 $redirectRouteParameters,

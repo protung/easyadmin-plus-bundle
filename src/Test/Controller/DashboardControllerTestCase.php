@@ -101,7 +101,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
     {
         return $this->getContainerService(AdminUrlGenerator::class)
             ->setAll(Dict\sort_by_key($routeParameters))
-            ->setDashboard($this->getDashboardControllerFqcn())
+            ->setDashboard($this->dashboardControllerFqcn())
             ->generateUrl();
     }
 
@@ -119,5 +119,5 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
     /**
      * @return class-string<TDashboardController>
      */
-    abstract protected function getDashboardControllerFqcn(): string;
+    abstract protected function dashboardControllerFqcn(): string;
 }
