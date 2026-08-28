@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use Override;
 use Psl\Dict;
 use Psl\Type;
@@ -13,7 +14,7 @@ use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
- * @template TCrudController
+ * @template TCrudController of CrudControllerInterface
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class IndexActionTestCase extends AdminControllerWebTestCase

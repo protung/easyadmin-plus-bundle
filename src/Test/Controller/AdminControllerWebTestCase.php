@@ -7,6 +7,9 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use DOMElement;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
+use Override;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Str;
@@ -19,12 +22,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_merge;
-use function http_build_query;
 use function is_array;
 use function iterator_to_array;
 
 /**
- * @template TCrudController
+ * @template TCrudController of CrudControllerInterface
  */
 abstract class AdminControllerWebTestCase extends AdminWebTestCase
 {
@@ -33,6 +35,9 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     abstract protected function controllerUnderTest(): string;
 
+    /**
+     * @return non-empty-string
+     */
     abstract protected function actionName(): string;
 
     protected static function easyAdminRoutePath(): string
@@ -65,21 +70,54 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
      */
     protected function prepareAdminUrl(array $queryParameters, string|null $fragment = null): string
     {
-        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+        if (! static::usePrettyUrls()) {
+            return $this->prepareLegacyAdminUrl($queryParameters, $fragment);
+        }
+
+        return $this->generateAdminPrettyUrl(
+            dashboardFqcn: $this->dashboardControllerFqcn(),
+            crudControllerFqcn: $this->controllerUnderTest(),
+            actionName: $this->actionName(),
+            routeParameters: $this->prepareAdminUrlRouteParameters(),
+            queryParameters: $queryParameters,
+            fragment: $fragment,
+        );
     }
 
     /**
      * @param array<array-key, mixed> $queryParameters
      */
+    protected function prepareLegacyAdminUrl(array $queryParameters, string|null $fragment = null): string
+    {
+        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+    }
+
+    /**
+     * @return array<array-key, mixed> $routeParameters
+     */
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        return [];
+    }
+
+    /** @return class-string<DashboardControllerInterface>|null */
+    protected function dashboardControllerFqcn(): string|null
+    {
+        return null;
+    }
+
+    /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    #[Override]
     protected function prepareAdminUrlQueryParameters(array $queryParameters): string
     {
-        $queryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $this->controllerUnderTest();
-        $queryParameters[EA::CRUD_ACTION]          ??= $this->actionName();
+        if (! static::usePrettyUrls()) {
+            $queryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $this->controllerUnderTest();
+            $queryParameters[EA::CRUD_ACTION]          ??= $this->actionName();
+        }
 
-        // we need to prepare the URL having some query parameters in a specific order
-        $queryParameters = Dict\sort_by_key($queryParameters);
-
-        return http_build_query($queryParameters);
+        return parent::prepareAdminUrlQueryParameters($queryParameters);
     }
 
     /**
@@ -200,6 +238,46 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
 
         self::assertCount(1, $title);
         self::assertSame($expectedPageTitle, $title->text(normalizeWhitespace: true));
+    }
+
+    /**
+     * @param class-string<CrudControllerInterface> $crudControllerFqcn
+     * @param non-empty-string                      $actionName
+     * @param array<array-key, mixed>               $redirectQueryParameters
+     */
+    protected function assertResponseRedirectsToCrudController(
+        string $crudControllerFqcn,
+        string $actionName,
+        string|int|null $entityId = null,
+        array $redirectQueryParameters = [],
+        string|null $fragment = null,
+    ): void {
+        if (static::usePrettyUrls()) {
+            $redirectRouteParameters = [];
+            if ($entityId !== null) {
+                $redirectRouteParameters[EA::ENTITY_ID] = $entityId;
+            }
+
+            $expectedRedirectUrl = 'http://' . static::serverHost() . $this->generateAdminPrettyUrl(
+                $this->dashboardControllerFqcn(),
+                $crudControllerFqcn,
+                $actionName,
+                $redirectRouteParameters,
+                $redirectQueryParameters,
+                $fragment,
+            );
+
+            self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
+        } else {
+            $redirectQueryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $crudControllerFqcn;
+            $redirectQueryParameters[EA::CRUD_ACTION]          ??= $actionName;
+
+            if ($entityId !== null) {
+                $redirectQueryParameters[EA::ENTITY_ID] = $entityId;
+            }
+
+            $this->assertResponseIsRedirect($redirectQueryParameters, $fragment);
+        }
     }
 
     /**

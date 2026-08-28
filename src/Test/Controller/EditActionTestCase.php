@@ -54,11 +54,24 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * @return array<array-key, mixed> $routeParameters
+     */
+    #[Override]
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        $routeParameters = parent::prepareAdminUrlRouteParameters();
+
+        $routeParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        return $routeParameters;
+    }
+
+    /**
      * @param array<array-key, mixed> $queryParameters
      */
     public function assertShowingEntityToEditRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
@@ -70,7 +83,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertShowingEntityToEdit(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
@@ -99,9 +112,18 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
-        $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
+        if (static::usePrettyUrls()) {
+            $this->assertResponseRedirectsToCrudController(
+                $this->controllerUnderTest(),
+                Action::INDEX,
+                null,
+                $redirectQueryParameters,
+            );
+        } else {
+            $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
 
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectQueryParameters);
+        }
     }
 
     /**
@@ -118,10 +140,19 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
-        $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
-        $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest();
+        if (static::usePrettyUrls()) {
+            $this->assertResponseRedirectsToCrudController(
+                $this->controllerUnderTest(),
+                Action::DETAIL,
+                $this->entityIdUnderTest(),
+                $redirectQueryParameters,
+            );
+        } else {
+            $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
+            $redirectQueryParameters[EA::ENTITY_ID]   = $this->entityIdUnderTest();
 
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectQueryParameters);
+        }
     }
 
     /**
@@ -180,7 +211,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
         array $queryParameters = [],
         string $submitButton = Action::SAVE_AND_RETURN,
     ): Crawler {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 

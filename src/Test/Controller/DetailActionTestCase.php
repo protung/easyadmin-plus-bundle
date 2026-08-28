@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use LogicException;
 use Override;
 use Psl\Str;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use function array_key_exists;
 
 /**
- * @template TCrudController
+ * @template TCrudController of CrudControllerInterface
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class DetailActionTestCase extends AdminControllerWebTestCase
@@ -49,11 +50,24 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * @return array<array-key, mixed> $routeParameters
+     */
+    #[Override]
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        $routeParameters = parent::prepareAdminUrlRouteParameters();
+
+        $routeParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+
+        return $routeParameters;
+    }
+
+    /**
      * @param array<array-key, mixed> $queryParameters
      */
     public function assertRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
@@ -65,7 +79,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
      */
     protected function assertPage(array $queryParameters = []): void
     {
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 

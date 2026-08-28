@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use function array_merge;
 
 /**
- * @template TController
+ * @template TController of CrudControllerInterface
  * @template-extends CustomActionTestCase<TController>
  */
 abstract class AutocompleteActionTestCase extends CustomActionTestCase

@@ -60,9 +60,18 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
-        $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
+        if (static::usePrettyUrls()) {
+            $this->assertResponseRedirectsToCrudController(
+                $this->controllerUnderTest(),
+                Action::INDEX,
+                null,
+                $redirectQueryParameters,
+            );
+        } else {
+            $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
 
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectQueryParameters);
+        }
     }
 
     /**
@@ -79,10 +88,19 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($data, $files, $queryParameters);
 
-        $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
-        $redirectQueryParameters[EA::ENTITY_ID]   = $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString();
+        if (static::usePrettyUrls()) {
+            $this->assertResponseRedirectsToCrudController(
+                $this->controllerUnderTest(),
+                Action::DETAIL,
+                $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString(),
+                $redirectQueryParameters,
+            );
+        } else {
+            $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
+            $redirectQueryParameters[EA::ENTITY_ID]   = $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString();
 
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectQueryParameters);
+        }
     }
 
     /**
