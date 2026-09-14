@@ -1,4 +1,4 @@
-let Encore = require('@symfony/webpack-encore');
+import Encore from '@symfony/webpack-encore';
 
 Encore
     .setOutputPath('./src/Resources/public/')
@@ -9,8 +9,11 @@ Encore
     .enableSourceMaps(false)
     .enableVersioning(false)
     .disableSingleRuntimeChunk()
+    .configureCssMinimizerPlugin((options, MinimizerPlugin) => {
+        options.minify = MinimizerPlugin.lightningCssMinify;
+    })
 
     .addEntry('app', '/assets/js/app.js')
 ;
 
-module.exports = Encore.getWebpackConfig();
+export default Encore.getWebpackConfig();
