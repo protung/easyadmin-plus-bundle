@@ -40,7 +40,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         $crawler                  = $this->assertRequestGet($indexPageQueryParameters);
 
         $form = $this->findForm($crawler);
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
@@ -62,13 +62,16 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
         array $queryParameters = [],
         array $redirectQueryParameters = [],
     ): void {
-        $detailPageQueryParameters                  = array_merge($queryParameters, [EA::CRUD_ACTION => Action::DETAIL]);
-        $detailPageQueryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        $detailPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::DETAIL]);
+        if (! static::usePrettyUrls()) {
+            // when using pretty URLs the entity ID is part of the route path, not a query parameter.
+            $detailPageQueryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+        }
 
         $crawler = $this->assertRequestGet($detailPageQueryParameters);
 
         $form = $this->findForm($crawler);
-        if (! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 

@@ -21,6 +21,7 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_key_exists;
 use function array_merge;
 use function is_array;
 use function iterator_to_array;
@@ -74,10 +75,18 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
             return $this->prepareLegacyAdminUrl($queryParameters, $fragment);
         }
 
+        // when using pretty URLs every action has its own route, so an explicitly requested CRUD action
+        // selects the route to generate instead of being passed along as a query parameter.
+        $actionName = $this->actionName();
+        if (array_key_exists(EA::CRUD_ACTION, $queryParameters)) {
+            $actionName = Type\non_empty_string()->assert($queryParameters[EA::CRUD_ACTION]);
+            unset($queryParameters[EA::CRUD_ACTION]);
+        }
+
         return $this->generateAdminPrettyUrl(
             dashboardFqcn: $this->dashboardControllerFqcn(),
             crudControllerFqcn: $this->controllerUnderTest(),
-            actionName: $this->actionName(),
+            actionName: $actionName,
             routeParameters: $this->prepareAdminUrlRouteParameters(),
             queryParameters: $queryParameters,
             fragment: $fragment,

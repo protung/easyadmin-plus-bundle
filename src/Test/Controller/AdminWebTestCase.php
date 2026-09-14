@@ -20,6 +20,8 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -165,15 +167,17 @@ abstract class AdminWebTestCase extends WebTestCase
         array $queryParameters = [],
         string|null $fragment = null,
     ): string {
-        $route = $this->getContainerService(AdminRouteGenerator::class)->findRouteName(
-            dashboardFqcn: $dashboardFqcn,
-            crudControllerFqcn: $crudControllerFqcn,
-            actionName: $actionName,
+        $routeName = Type\non_empty_string()->assert(
+            $this->getContainerService(AdminRouteGenerator::class)->findRouteName(
+                dashboardFqcn: $dashboardFqcn,
+                crudControllerFqcn: $crudControllerFqcn,
+                actionName: $actionName,
+            ),
         );
 
         $path = $this->getContainerService(UrlGeneratorInterface::class)->generate(
-            Type\non_empty_string()->assert($route),
-            $routeParameters,
+            $routeName,
+            $this->filterRouteParameters($routeName, $routeParameters),
         );
 
         $queryAndFragment = $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
@@ -182,6 +186,31 @@ abstract class AdminWebTestCase extends WebTestCase
         }
 
         return $path;
+    }
+
+    /**
+     * Route parameters that are not placeholders of the route are appended to the generated URL as query parameters.
+     * The same route parameters are prepared for every action, but each action route defines its own placeholders,
+     * so keep only the ones the route actually uses to avoid generating stray query parameters.
+     *
+     * @param non-empty-string        $routeName
+     * @param array<array-key, mixed> $routeParameters
+     *
+     * @return array<array-key, mixed>
+     */
+    private function filterRouteParameters(string $routeName, array $routeParameters): array
+    {
+        $route = Type\instance_of(Route::class)->assert(
+            $this->getContainerService(RouterInterface::class, 'router')->getRouteCollection()->get($routeName),
+        );
+
+        // both the path and the host of a route can define placeholders and both are mandatory when generating it.
+        $routeVariables = $route->compile()->getVariables();
+
+        return Dict\filter_keys(
+            $routeParameters,
+            static fn (string|int $parameterName): bool => Iter\contains($routeVariables, $parameterName),
+        );
     }
 
     /**
