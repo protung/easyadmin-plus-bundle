@@ -25,7 +25,10 @@ jobs:
           - 6.4.*
           - 7.4.*
           - 8.*
-    name: PHP ${{ matrix.php-versions }} and Symfony ${{ matrix.symfony }} checks with ${{ matrix.dependencies }} dependencies
+        easyadmin:
+          - 4.*
+          - 5.*
+    name: PHP ${{ matrix.php-versions }}, Symfony ${{ matrix.symfony }} and EasyAdmin ${{ matrix.easyadmin }} checks with ${{ matrix.dependencies }} dependencies
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -45,16 +48,16 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-${{ matrix.php-versions }}-symfony-${{ matrix.symfony }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.json') }}
-          restore-keys: "php-${{ matrix.php-versions }}-symfony-${{ matrix.symfony }}-composer-${{ matrix.dependencies }}-"
+          key: php-${{ matrix.php-versions }}-symfony-${{ matrix.symfony }}-easyadmin-${{ matrix.easyadmin }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.json') }}
+          restore-keys: "php-${{ matrix.php-versions }}-symfony-${{ matrix.symfony }}-easyadmin-${{ matrix.easyadmin }}-composer-${{ matrix.dependencies }}-"
 
       - name: Install lowest dependencies
         if: ${{ matrix.dependencies == 'lowest' }}
-        run: composer update --prefer-lowest --prefer-dist --no-progress --no-interaction
+        run: composer update --prefer-lowest --prefer-dist --no-progress --no-interaction --with "easycorp/easyadmin-bundle:${{ matrix.easyadmin }}"
 
       - name: Install highest dependencies
         if: ${{ matrix.dependencies == 'highest' }}
-        run: composer update --prefer-dist --no-progress --no-interaction
+        run: composer update --prefer-dist --no-progress --no-interaction --with "easycorp/easyadmin-bundle:${{ matrix.easyadmin }}"
 
       - name: Setup just
         uses: extractions/setup-just@v4
