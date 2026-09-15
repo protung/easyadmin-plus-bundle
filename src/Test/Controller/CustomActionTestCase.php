@@ -8,10 +8,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use Override;
+use Psl\Str;
 use Psl\Type;
+use Psl\Vec;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Field\FormField;
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\DomCrawler\Link;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -153,5 +156,28 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     private function findForm(Crawler $crawler): Form
     {
         return $crawler->filter($this->mainContentSelector() . ' form')->form();
+    }
+
+    /**
+     * @return list<array{text: string, uri: string}>
+     */
+    final protected function extractLinks(Crawler $crawler): array
+    {
+        return Vec\map(
+            $crawler->filter('a')->links(),
+            /** @return array{text: string, uri: string} */
+            static fn (Link $link): array => [
+                'text' => Str\trim($link->getNode()->textContent),
+                'uri' => $link->getUri(),
+            ],
+        );
+    }
+
+    protected function extractPageTitle(): string
+    {
+        return $this->getClient()
+            ->getCrawler()
+            ->filter('h1.title')
+            ->text(default: '', normalizeWhitespace: true);
     }
 }
