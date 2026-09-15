@@ -59,6 +59,22 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * @param array<array-key, mixed> $queryParameters
+     */
+    #[Override]
+    protected function prepareAdminUrlQueryParameters(array $queryParameters): string
+    {
+        if (! static::usePrettyUrls()) {
+            $entityIdUnderTest = $this->entityIdUnderTest();
+            if ($entityIdUnderTest !== null) {
+                $queryParameters[EA::ENTITY_ID] ??= $entityIdUnderTest;
+            }
+        }
+
+        return parent::prepareAdminUrlQueryParameters($queryParameters);
+    }
+
+    /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $queryParameters

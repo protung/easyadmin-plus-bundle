@@ -180,12 +180,12 @@ abstract class AdminWebTestCase extends WebTestCase
             $this->filterRouteParameters($routeName, $routeParameters),
         );
 
-        $queryAndFragment = $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
-        if ($queryAndFragment !== '') {
-            return $path . '?' . $queryAndFragment;
+        $queryString = $this->prepareAdminUrlQueryParameters($queryParameters);
+        if ($queryString !== '') {
+            $path .= '?' . $queryString;
         }
 
-        return $path;
+        return $path . ($fragment ?? '');
     }
 
     /**
