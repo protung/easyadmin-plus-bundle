@@ -35,6 +35,30 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
+     * Null for a custom action that acts on no single entity; its route then declares no `{entityId}`.
+     */
+    protected function entityIdUnderTest(): string|int|null
+    {
+        return null;
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    #[Override]
+    protected function prepareAdminUrlRouteParameters(): array
+    {
+        $routeParameters = parent::prepareAdminUrlRouteParameters();
+
+        $entityIdUnderTest = $this->entityIdUnderTest();
+        if ($entityIdUnderTest !== null) {
+            $routeParameters[EA::ENTITY_ID] ??= (string) $entityIdUnderTest;
+        }
+
+        return $routeParameters;
+    }
+
+    /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
      * @param array<array-key, mixed> $queryParameters

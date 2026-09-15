@@ -262,7 +262,7 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
         string|null $fragment = null,
     ): void {
         if (static::usePrettyUrls()) {
-            $redirectRouteParameters = [];
+            $redirectRouteParameters = $this->prepareAdminUrlRouteParameters();
             if ($entityId !== null) {
                 $redirectRouteParameters[EA::ENTITY_ID] = $entityId;
             }
