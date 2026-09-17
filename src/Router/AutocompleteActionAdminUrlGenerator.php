@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Protung\EasyAdminPlusBundle\Field\EntityField;
+use Psl\Type;
 
 final readonly class AutocompleteActionAdminUrlGenerator
 {
@@ -36,8 +37,7 @@ final readonly class AutocompleteActionAdminUrlGenerator
             ->set(
                 EntityField::PARAM_AUTOCOMPLETE_CONTEXT,
                 [
-                    // when using pretty URLs, the data is in the request attributes instead of the autocomplete context
-                    EA::CRUD_CONTROLLER_FQCN => $context->getRequest()->attributes->get(EA::CRUD_CONTROLLER_FQCN) ?? $context->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
+                    EA::CRUD_CONTROLLER_FQCN => Type\nonnull()->coerce($context->getCrud()?->getControllerFqcn()),
                     'propertyName' => $propertyName,
                     'originatingPage' => $originatingPage,
                     EntityField::OPTION_ENTITY_DISPLAY_FIELD => $hasOptionEntityFieldDisplayField,
