@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
+use SensitiveParameter;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -24,9 +25,16 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
     /**
      * @param array<string>        $entityIds
      * @param array<string, mixed> $indexPageQueryParameters
+     * @param string|null          $csrfToken                The CSRF token to submit instead of the one from the index page.
+     * @param array<string, mixed> $server                   Server parameters for the batch action request (e.g. HTTP_REFERER).
      */
-    public function submitFormRequest(array $entityIds, array $indexPageQueryParameters = []): Crawler
-    {
+    public function submitFormRequest(
+        array $entityIds,
+        array $indexPageQueryParameters = [],
+        #[SensitiveParameter]
+        string|null $csrfToken = null,
+        array $server = [],
+    ): Crawler {
         $listingPageCrawler = $this->getClient()->request(
             Request::METHOD_GET,
             $this->prepareAdminUrl($indexPageQueryParameters),
@@ -46,8 +54,9 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
                     EA::BATCH_ACTION_NAME => $this->getBatchActionName(),
                     EA::ENTITY_FQCN => $actionAnchorElement->attr('data-entity-fqcn'),
                     EA::BATCH_ACTION_ENTITY_IDS => $entityIds,
-                    EA::BATCH_ACTION_CSRF_TOKEN => $actionAnchorElement->attr('data-action-csrf-token'),
+                    EA::BATCH_ACTION_CSRF_TOKEN => $csrfToken ?? $actionAnchorElement->attr('data-action-csrf-token'),
                 ],
+                server: $server,
             );
     }
 
@@ -55,13 +64,18 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
      * @param array<string>        $entityIds
      * @param array<string, mixed> $indexPageQueryParameters
      * @param array<string, mixed> $expectedRedirectUrlParameters
+     * @param string|null          $csrfToken                     The CSRF token to submit instead of the one from the index page.
+     * @param array<string, mixed> $server                        Server parameters for the batch action request (e.g. HTTP_REFERER).
      */
     public function assertBatchActionForEntityIds(
         array $entityIds,
         array $indexPageQueryParameters = [],
         array $expectedRedirectUrlParameters = [],
+        #[SensitiveParameter]
+        string|null $csrfToken = null,
+        array $server = [],
     ): void {
-        $this->submitFormRequest($entityIds, $indexPageQueryParameters);
+        $this->submitFormRequest($entityIds, $indexPageQueryParameters, $csrfToken, $server);
 
         $expectedRedirectUrlParameters[EA::PAGE] ??= '1'; // Ensure we are redirected to the first page after a batch action.
         $this->assertResponseIsRedirect($expectedRedirectUrlParameters);
