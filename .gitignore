@@ -1,8 +1,22 @@
+# phpstorm project files
 .idea/
-/.notes/
-/node_modules/
+# vs code project files
+.vscode
+
+# composer vendor dir
 /vendor/
-composer.lock
+
+# node modules for the asset build
+/node_modules/
+
+# build cache
 /config/.phpcs-cache
 /config/.phpunit.cache
 /var/
+
+# working notes
+/.notes/
+
+# user specific
+composer.lock
+phpunit.xml
