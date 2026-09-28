@@ -6,6 +6,9 @@ parameters:
         - ../src
         - ../tests
     treatPhpDocTypesAsCertain: false
+    # The baseline covers the findings of every CI job, and some of them only occur with certain dependency
+    # versions (e.g. Symfony 6.4). Report unmatched entries again once the baseline is empty.
+    reportUnmatchedIgnoredErrors: false
 
 includes:
     - phpstan-baseline.neon

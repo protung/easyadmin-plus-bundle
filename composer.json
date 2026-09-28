@@ -76,6 +76,13 @@
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "ergebnis/composer-normalize": true
     },
+    "policy": {
+      "abandoned": {
+        "ignore": {
+          "doctrine/cache": "Required by doctrine/orm 2, which is still supported"
+        }
+      }
+    },
     "preferred-install": "dist",
     "sort-packages": true
   },
@@ -84,26 +91,5 @@
       "indent-size": 2,
       "indent-style": "space"
     }
-  },
-  "scripts": {
-    "analyse": [
-      "@analyse-phpstan"
-    ],
-    "analyse-phpstan": [
-      "phpstan --memory-limit=1G --configuration=config/phpstan.neon"
-    ],
-    "analyse-phpstan-update": [
-      "phpstan --memory-limit=1G --configuration=config/phpstan.neon --generate-baseline=config/phpstan-baseline.neon --allow-empty-baseline"
-    ],
-    "check": [
-      "composer validate",
-      "composer normalize --dry-run",
-      "@cs-check",
-      "@analyse",
-      "@test"
-    ],
-    "cs-check": "phpcs -p",
-    "cs-fix": "phpcbf -p",
-    "test": "phpunit --testdox --color=always"
   }
 }

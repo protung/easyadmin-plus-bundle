@@ -2,42 +2,39 @@ name: Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ '*.x' ]
   pull_request:
-    branches: [ main ]
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+    branches: [ '*.x' ]
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 jobs:
   build:
-    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     env:
       SYMFONY_REQUIRE: ${{ matrix.symfony }}
     strategy:
       fail-fast: false
       matrix:
-        php:
+        dependencies: [lowest, highest]
+        php-versions:
           - 8.4
           - 8.5
         symfony:
           - 6.4.*
           - 7.4.*
           - 8.*
-        dependencies: [ lowest, highest ]
-    name: 'PHP ${{ matrix.php }} + Symfony ${{ matrix.symfony }} + ${{ matrix.dependencies }} dependencies'
+    name: PHP ${{ matrix.php-versions }} and Symfony ${{ matrix.symfony }} checks with ${{ matrix.dependencies }} dependencies
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          coverage: pcov
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
           tools: flex
 
       - name: Get composer cache directory
@@ -45,22 +42,46 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-${{ hashFiles('**/composer.json **/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-${{ matrix.php }}-symfony-${{ matrix.symfony }}-composer-
+          key: php-${{ matrix.php-versions }}-symfony-${{ matrix.symfony }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.json') }}
+          restore-keys: "php-${{ matrix.php-versions }}-symfony-${{ matrix.symfony }}-composer-${{ matrix.dependencies }}-"
 
-      - name: Install dependencies
-        uses: ramsey/composer-install@v4
-        with:
-          dependency-versions: ${{ matrix.dependencies }}
-          composer-options: --prefer-dist
-
-      - name: Run checks lowest
+      - name: Install lowest dependencies
         if: ${{ matrix.dependencies == 'lowest' }}
-        run: composer test
+        run: composer update --prefer-lowest --prefer-dist --no-progress --no-interaction
 
-      - name: Run checks highest
+      - name: Install highest dependencies
         if: ${{ matrix.dependencies == 'highest' }}
-        run: composer check
+        run: composer update --prefer-dist --no-progress --no-interaction
+
+      - name: Setup just
+        uses: extractions/setup-just@v4
+
+      - name: Run checks
+        run: just check
+
+  assets:
+    runs-on: ubuntu-latest
+    name: Built assets are up to date
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install node modules
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Check that the committed assets match the build
+        run: |
+          git status --short -- src/Resources/public
+          test -z "$(git status --porcelain -- src/Resources/public)"

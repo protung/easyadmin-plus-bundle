@@ -1,9 +1,9 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    bootstrap="vendor/autoload.php"
+    xsi:noNamespaceSchemaLocation="../vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="../vendor/autoload.php"
     cacheResult="true"
-    cacheDirectory=".build/phpunit"
+    cacheDirectory=".phpunit.cache"
     colors="true"
     columns="max"
     executionOrder="random"
@@ -15,7 +15,7 @@
 
     <testsuites>
         <testsuite name="Tests">
-            <directory>tests</directory>
+            <directory>../tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
