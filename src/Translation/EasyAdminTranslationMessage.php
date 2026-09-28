@@ -10,7 +10,7 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @psalm-immutable
+ * @immutable
  */
 final class EasyAdminTranslationMessage implements TranslatableInterface
 {

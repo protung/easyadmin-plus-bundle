@@ -25,7 +25,6 @@ abstract class AutocompleteActionTestCase extends CustomActionTestCase
     }
 
     /**
-     * @psalm-return class-string<CrudControllerInterface>
      * @phpstan-return class-string<CrudControllerInterface<*>>
      */
     abstract protected function autocompleteContextCrudControllerFqcn(): string;

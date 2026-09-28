@@ -1,0 +1,601 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Parameter #1 $translator of method Symfony\Contracts\Translation\TranslatableInterface::trans() expects Symfony\Contracts\Translation\TranslatorInterface, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseController.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Controller\BaseCrudController::adminUrlGenerator() should return EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: ../src/Controller/BaseCrudController.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Controller\BaseCrudController::translator() should return Symfony\Contracts\Translation\TranslatorInterface but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: ../src/Controller/BaseCrudController.php
+
+		-
+			rawMessage: 'Parameter #1 $iterable of function Psl\Iter\apply expects iterable, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudController.php
+
+		-
+			rawMessage: 'Parameter #2 $function of function Psl\Iter\apply expects Closure(mixed): mixed, callable(EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto|EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto): void given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudController.php
+
+		-
+			rawMessage: Access to internal constant EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField::CSRF_TOKEN_NAME from outside its root namespace EasyCorp.
+			identifier: classConstant.internal
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method dispatch() on mixed.'
+			identifier: method.nonObject
+			count: 8
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method getActionsConfig() on EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto|null.'
+			identifier: method.nonObject
+			count: 2
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method getEditFormOptions() on EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto|null.'
+			identifier: method.nonObject
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method getManagerForClass() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method getNewFormOptions() on EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto|null.'
+			identifier: method.nonObject
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method processEntityActions() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method processFields() on mixed.'
+			identifier: method.nonObject
+			count: 2
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Cannot call method setFieldAssets() on EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto|null.'
+			identifier: method.nonObject
+			count: 2
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::createEditFormBuilder() return type with generic interface Symfony\Component\Form\FormBuilderInterface does not specify its types: TData'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::createNewFormBuilder() return type with generic interface Symfony\Component\Form\FormBuilderInterface does not specify its types: TData'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'PHPDoc tag @var with type TDto of object is not subtype of type (TEntity of object)|null.'
+			identifier: varTag.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $entity of method Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController<TEntity of object,TDto of object>::createDtoFromEntity() expects TEntity of object, (TEntity of object)|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $entity of method Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController<TEntity of object,TDto of object>::updateEntityFromDto() expects TEntity of object, (TEntity of object)|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $entityInstance of class EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent constructor expects TEntity of object, (TEntity of object)|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $entityInstance of class EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent constructor expects TEntity of object, (TEntity of object)|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $entityManager of method EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController<TEntity of object>::persistEntity() expects Doctrine\ORM\EntityManagerInterface, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $entityManager of method EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController<TEntity of object>::updateEntity() expects Doctrine\ORM\EntityManagerInterface, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $fieldDtos of method EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController<TEntity of object>::getFieldAssets() expects EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection, EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection|null given.'
+			identifier: argument.type
+			count: 2
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Parameter #1 $string of function mb_strtolower expects string, string|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Controller/BaseCrudDtoController.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Dto\EntityDtoInstanceSetter::setInstance() has parameter $entityDto with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Dto/EntityDtoInstanceSetter.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption::getCallbackAfterCommonPostConfigurator() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/CallbackConfigurableFieldOption.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption::getCallbackAfterCommonPostConfigurator() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/CallbackConfigurableFieldOption.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption::getCallbackBeforeCommonPreConfigurator() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/CallbackConfigurableFieldOption.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption::getCallbackBeforeCommonPreConfigurator() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/CallbackConfigurableFieldOption.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption::getCallbackConfigurator() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/CallbackConfigurableFieldOption.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\CallbackConfigurableFieldOption::getCallbackConfigurator() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/CallbackConfigurableFieldOption.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator::configureToManyAssociation() has parameter $context with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator::configureToOneAssociation() has parameter $context with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator::generateLinkToAssociatedEntity() has parameter $entityDto with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator::resolveLinkToEntityOption() has parameter $context with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator.php
+
+		-
+			rawMessage: 'Parameter #1 $sourceEntityId of class Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata constructor expects int|object|string|null, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator.php
+
+		-
+			rawMessage: 'Parameter #6 $targetEntityId of class Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata constructor expects int|object|string|null, mixed given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::__construct() has parameter $sourceCrudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator/EntityMetadata.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::__construct() has parameter $targetCrudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator/EntityMetadata.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::sourceCrudControllerFqcn() return type with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator/EntityMetadata.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::targetCrudControllerFqcn() return type with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator/EntityMetadata.php
+
+		-
+			rawMessage: 'Property Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::$sourceCrudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator/EntityMetadata.php
+
+		-
+			rawMessage: 'Property Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::$targetCrudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Configurator/EntityConfigurator/EntityMetadata.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Decorator\CallbackConfigurableField::afterCommonPostConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Decorator/CallbackConfigurableField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Decorator\CallbackConfigurableField::afterCommonPostConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Decorator/CallbackConfigurableField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Decorator\CallbackConfigurableField::beforeCommonPreConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Decorator/CallbackConfigurableField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Decorator\CallbackConfigurableField::beforeCommonPreConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Decorator/CallbackConfigurableField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Decorator\CallbackConfigurableField::new() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Decorator/CallbackConfigurableField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\Decorator\CallbackConfigurableField::new() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/Decorator/CallbackConfigurableField.php
+
+		-
+			rawMessage: Access to internal constant EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField::OPTION_DOCTRINE_ASSOCIATION_TYPE from outside its root namespace EasyCorp.
+			identifier: classConstant.internal
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: Access to internal constant EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField::OPTION_RELATED_URL from outside its root namespace EasyCorp.
+			identifier: classConstant.internal
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: Access to internal constant EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField::PARAM_AUTOCOMPLETE_CONTEXT from outside its root namespace EasyCorp.
+			identifier: classConstant.internal
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::formatAsString() has parameter $adminContext with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::formatAsString() should return string|null but returns mixed.'
+			identifier: return.type
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setCallbackConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setCallbackConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setCallbackConfiguratorAfterCommonPostConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setCallbackConfiguratorAfterCommonPostConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setCallbackConfiguratorBeforeCommonPreConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setCallbackConfiguratorBeforeCommonPreConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\EntityField::setEntityDtoFactoryCallable() has parameter $callable with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'PHPDoc tag @param for parameter $entityDisplayField with type (callable)|string|Symfony\Contracts\Translation\TranslatableInterface is not subtype of native type (callable)|string.'
+			identifier: parameter.phpDocType
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'PHPDoc tag @param references unknown parameter: $callable'
+			identifier: parameter.notFound
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'PHPDoc tag @return with type (callable)|string|Symfony\Contracts\Translation\TranslatableInterface|null is not subtype of native type (callable)|string|null.'
+			identifier: return.phpDocType
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'PHPDoc tag @var for variable $value contains generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Parameter #1 $label of method Protung\EasyAdminPlusBundle\Field\EntityField::setLabel() expects string|Symfony\Contracts\Translation\TranslatableInterface|false|null, bool|string|Symfony\Contracts\Translation\TranslatableInterface|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Template type TEntity of method Protung\EasyAdminPlusBundle\Field\EntityField::setEntityDisplayField() is not referenced in a parameter.'
+			identifier: method.templateTypeNotInParameter
+			count: 1
+			path: ../src/Field/EntityField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\JsonField::setCallbackConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\JsonField::setCallbackConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\JsonField::setCallbackConfiguratorAfterCommonPostConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\JsonField::setCallbackConfiguratorAfterCommonPostConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\JsonField::setCallbackConfiguratorBeforeCommonPreConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Field\JsonField::setCallbackConfiguratorBeforeCommonPreConfigurator() has parameter $configurator with generic class EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Parameter #1 $label of method Protung\EasyAdminPlusBundle\Field\JsonField::setLabel() expects string|Symfony\Contracts\Translation\TranslatableInterface|false|null, bool|string|Symfony\Contracts\Translation\TranslatableInterface|null given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Field/JsonField.php
+
+		-
+			rawMessage: 'Call to method Psl\Type\TypeInterface<iterable<(int|string), object>>::matches() with mixed will always evaluate to true.'
+			identifier: method.alreadyNarrowedType
+			count: 1
+			path: ../src/Form/DataTransformer/EntityFieldDataTransformer.php
+
+		-
+			rawMessage: 'Class Protung\EasyAdminPlusBundle\Form\DataTransformer\EntityFieldDataTransformer implements generic interface Symfony\Component\Form\DataTransformerInterface but does not specify its types: TValue, TTransformedValue'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Form/DataTransformer/EntityFieldDataTransformer.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Form\DataTransformer\EntityFieldDataTransformer::transform() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: ../src/Form/DataTransformer/EntityFieldDataTransformer.php
+
+		-
+			rawMessage: 'Parameter #1 $iterable of function Psl\Dict\map expects iterable<(int|string), mixed>, iterable given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Form/DataTransformer/EntityFieldDataTransformer.php
+
+		-
+			rawMessage: Unable to resolve the template type Tk in call to function Psl\Dict\map
+			identifier: argument.templateType
+			count: 1
+			path: ../src/Form/DataTransformer/EntityFieldDataTransformer.php
+
+		-
+			rawMessage: 'Class Protung\EasyAdminPlusBundle\Form\Type\CrudAutocompleteType extends generic class Symfony\Component\Form\AbstractType but does not specify its types: TData'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Form/Type/CrudAutocompleteType.php
+
+		-
+			rawMessage: 'Class Protung\EasyAdminPlusBundle\Form\Type\EntityFieldDoctrineType extends generic class Symfony\Component\Form\AbstractType but does not specify its types: TData'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Form/Type/EntityFieldDoctrineType.php
+
+		-
+			rawMessage: PHPDoc tag @extends contains generic type Symfony\Component\Form\AbstractTypeExtension<object|null> but class Symfony\Component\Form\AbstractTypeExtension is not generic.
+			identifier: generics.notGeneric
+			count: 1
+			path: ../src/Form/Type/Extension/EntityTypeExtension.php
+
+		-
+			rawMessage: Access to internal constant EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField::PARAM_AUTOCOMPLETE_CONTEXT from outside its root namespace EasyCorp.
+			identifier: classConstant.internal
+			count: 1
+			path: ../src/Orm/EntityPaginator.php
+
+		-
+			rawMessage: 'Method EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface::getResultsAsJson() invoked with 3 parameters, 0 required.'
+			identifier: arguments.count
+			count: 5
+			path: ../src/Orm/EntityPaginator.php
+
+		-
+			rawMessage: 'Property Protung\EasyAdminPlusBundle\Orm\EntityPaginator::$adminUrlGenerator is never read, only written.'
+			identifier: property.onlyWritten
+			count: 1
+			path: ../src/Orm/EntityPaginator.php
+
+		-
+			rawMessage: 'Property Protung\EasyAdminPlusBundle\Orm\EntityPaginator::$entityFactory is never read, only written.'
+			identifier: property.onlyWritten
+			count: 1
+			path: ../src/Orm/EntityPaginator.php
+
+		-
+			rawMessage: 'Property Protung\EasyAdminPlusBundle\Orm\EntityPaginator::$propertyAccessor is never read, only written.'
+			identifier: property.onlyWritten
+			count: 1
+			path: ../src/Orm/EntityPaginator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator::generate() has parameter $context with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Router/AutocompleteActionAdminUrlGenerator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Router\AutocompleteActionAdminUrlGenerator::generate() has parameter $targetCrudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Router/AutocompleteActionAdminUrlGenerator.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase::assertResponseRedirectsToCrudController() has parameter $crudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase::getAdminContextFromLastRequest() return type with generic class EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			rawMessage: 'Parameter #1 $fieldErrors of method Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase<TCrudController of EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface>::extractFieldErrorsTexts() expects array<array<DOMElement>|DOMElement>, array<mixed> given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			rawMessage: 'Parameter #1 $fieldErrors of method Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase<TCrudController of EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface>::flattenFieldErrors() expects array<array<DOMElement>|DOMElement>, array<mixed> given.'
+			identifier: argument.type
+			count: 1
+			path: ../src/Test/Controller/AdminControllerWebTestCase.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Test\Controller\AdminWebTestCase::generateAdminPrettyUrl() has parameter $crudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface but does not specify its types: TEntity'
+			identifier: missingType.generics
+			count: 1
+			path: ../src/Test/Controller/AdminWebTestCase.php
+
+		-
+			rawMessage: Unsafe access to private property Protung\EasyAdminPlusBundle\Test\Controller\AdminWebTestCase::$authentication through static::.
+			identifier: staticClassAccess.privateProperty
+			count: 2
+			path: ../src/Test/Controller/AdminWebTestCase.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Test\Controller\NewActionTestCase::getCreatedEntityUnderTest() should return TEntity of object but returns object.'
+			identifier: return.type
+			count: 1
+			path: ../src/Test/Controller/NewActionTestCase.php
+
+		-
+			rawMessage: 'Method Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\TestKernel::registerBundles() return type with generic class Generator does not specify its types: TKey, TValue, TSend, TReturn'
+			identifier: missingType.generics
+			count: 1
+			path: ../tests/Test/TestApplication/TestKernel.php
+
+		-
+			rawMessage: 'Return type (Generator) of method Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\TestKernel::registerBundles() should be covariant with return type (iterable<Symfony\Component\HttpKernel\Bundle\BundleInterface>) of method Symfony\Component\HttpKernel\Kernel::registerBundles()'
+			identifier: method.childReturnType
+			count: 1
+			path: ../tests/Test/TestApplication/TestKernel.php
+
+		-
+			rawMessage: 'Return type (Generator) of method Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\TestKernel::registerBundles() should be covariant with return type (iterable<Symfony\Component\HttpKernel\Bundle\BundleInterface>) of method Symfony\Component\HttpKernel\KernelInterface::registerBundles()'
+			identifier: method.childReturnType
+			count: 1
+			path: ../tests/Test/TestApplication/TestKernel.php
