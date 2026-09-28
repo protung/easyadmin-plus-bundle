@@ -1,0 +1,67 @@
+variant = "loose"
+
+[[issues]]
+file = "src/Controller/BaseCrudDtoController.php"
+code = "psl-string-functions"
+message = "Use the Psl string function instead of the PHP counterpart."
+count = 1
+
+[[issues]]
+file = "src/Menu/ChainMenuItemMatcher.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 1
+
+[[issues]]
+file = "src/Test/Controller/AdminControllerWebTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 3
+
+[[issues]]
+file = "src/Test/Controller/AdminWebTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 1
+
+[[issues]]
+file = "src/Test/Controller/AutocompleteActionTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 1
+
+[[issues]]
+file = "src/Test/Controller/DashboardControllerTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 2
+
+[[issues]]
+file = "src/Test/Controller/DeleteActionTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 5
+
+[[issues]]
+file = "src/Test/Controller/DetailActionTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 2
+
+[[issues]]
+file = "src/Test/Controller/EditActionTestCase.php"
+code = "psl-array-functions"
+message = "Use the Psl array function instead of the PHP counterpart."
+count = 3
+
+[[issues]]
+file = "src/Test/Controller/IndexActionTestCase.php"
+code = "prefer-arrow-function"
+message = "This closure can be simplified to a more concise arrow function."
+count = 3
+
+[[issues]]
+file = "tests/Resources/Views/Crud/Field/JsonFieldTest.php"
+code = "readable-literal"
+message = "Numeric literal could use underscore separators for readability."
+count = 2

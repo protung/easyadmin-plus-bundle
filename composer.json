@@ -46,6 +46,7 @@
     "twig/twig": "^3.27.0"
   },
   "require-dev": {
+    "carthage-software/mago": "^1.50.0",
     "doctrine/coding-standard": "^14.0.0",
     "ergebnis/composer-normalize": "^2.54.0",
     "php-standard-library/phpstan-extension": "^2.1.0",
@@ -79,6 +80,7 @@
   },
   "config": {
     "allow-plugins": {
+      "carthage-software/mago": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "ergebnis/composer-normalize": true
     },

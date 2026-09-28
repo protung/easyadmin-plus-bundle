@@ -1,0 +1,415 @@
+variant = "loose"
+
+[[issues]]
+file = 'src/Controller/BaseController.php'
+code = 'incompatible-return-type'
+message = 'Return type `array<array-key, Symfony\Contracts\Service\Attribute\SubscribedService|string>` of `Protung\EasyAdminPlusBundle\Controller\BaseController::getsubscribedservices()` is incompatible with parent return type `array<array-key, string>` of `Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getsubscribedservices()`'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #1 of `Symfony\Component\Translation\TranslatableMessage::trans`: expected `Symfony\Contracts\Translation\TranslatorInterface`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #1 of `Symfony\Contracts\Translation\TranslatableInterface::trans`: expected `Symfony\Contracts\Translation\TranslatorInterface`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'incompatible-return-type'
+message = 'Return type `array<array-key, Symfony\Contracts\Service\Attribute\SubscribedService|string>` of `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::getsubscribedservices()` is incompatible with parent return type `array<array-key, string>` of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::getsubscribedservices()`'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'invalid-argument'
+message = 'Invalid argument type for argument #2 of `Psl\Iter\apply`: expected `(closure(EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto|EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto): mixed)`, but found `(callable(EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto|EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto): void)`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'invalid-return-statement'
+message = '''Invalid return type for function `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::currentAdminContext`: expected `EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext<('TEntity.protung\easyadminplusbundle\controller\basecrudcontroller extends object)>`, but found `EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext<object>`.'''
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #1 of `Psl\Iter\apply`: expected `iterable<mixed, EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto|EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'mixed-return-statement'
+message = 'Could not infer a precise return type for function `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::adminUrlGenerator`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'mixed-return-statement'
+message = 'Could not infer a precise return type for function `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::translator`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::persistEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::updateEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #2 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::createEditForm`: expected `EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #2 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::createNewForm`: expected `EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to access a method on a non-object type (`mixed`).'
+count = 14
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possible-method-access-on-null'
+message = 'Attempting to call a method on `null`.'
+count = 6
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection::__construct`: expected `array<array-key, EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface|string>`, but possibly received `iterable<mixed, EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface|string>`.'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #1 of `mb_strtolower`: expected `string`, but possibly received `bool|float|int|null|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #2 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::ajaxEdit`: expected `null|string`, but possibly received `bool|float|int|null|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #2 of `Symfony\Bundle\FrameworkBundle\Controller\AbstractController::isCsrfTokenValid`: expected `null|string`, but possibly received `bool|float|int|null|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-null-argument'
+message = 'Argument #1 of function `mb_strtolower` is possibly `null`, but parameter type `string` does not accept it.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-null-argument'
+message = 'Argument #1 of method `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::getFieldAssets` is possibly `null`, but parameter type `EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection` does not accept it.'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-null-argument'
+message = '''Argument #1 of method `EasyCorp\Bundle\EasyAdminBundle\Event\AbstractLifecycleEvent::__construct` is possibly `null`, but parameter type `('TEntity.easycorp\bundle\easyadminbundle\event\abstractlifecycleevent extends object)` does not accept it.'''
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-null-argument'
+message = '''Argument #1 of method `Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::createDtoFromEntity` is possibly `null`, but parameter type `('TEntity.protung\easyadminplusbundle\controller\basecruddtocontroller extends object)` does not accept it.'''
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'possibly-null-argument'
+message = '''Argument #1 of method `Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::updateEntityFromDto` is possibly `null`, but parameter type `('TEntity.protung\easyadminplusbundle\controller\basecruddtocontroller extends object)` does not accept it.'''
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'template-constraint-violation'
+message = 'Argument type mismatch for template `TEntity`.'
+count = 4
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'unknown-class-instantiation'
+message = 'Cannot determine the concrete class for instantiation.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'unused-parameter'
+message = 'Parameter `$dto` is never used.'
+count = 1
+
+[[issues]]
+file = 'src/Field/AdvancedDisplayField.php'
+code = 'docblock-type-mismatch'
+message = 'Docblock return type `(callable(object, EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface): string)|Symfony\Contracts\Translation\TranslatableInterface|null|string` is incompatible with native return type `(callable(...mixed=): mixed)|null|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/AdvancedDisplayField.php'
+code = 'docblock-type-mismatch'
+message = '''Docblock type `(callable(('TEntity.protung\easyadminplusbundle\field\advanceddisplayfield::setentitydisplayfield() extends object), EasyCorp\Bundle\EasyAdminBundle\Contracts\Context\AdminContextInterface<object>): string)|Symfony\Contracts\Translation\TranslatableInterface|string` for parameter `$entityDisplayField` is incompatible with native type `(callable(...mixed=): mixed)|string`.'''
+count = 1
+
+[[issues]]
+file = 'src/Field/AdvancedDisplayField.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 2
+
+[[issues]]
+file = 'src/Field/AdvancedDisplayField.php'
+code = 'mixed-return-statement'
+message = 'Could not infer a precise return type for function `Protung\EasyAdminPlusBundle\Field\AdvancedDisplayField::formatAsString`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/AdvancedDisplayField.php'
+code = 'non-existent-method'
+message = 'Method `setcustomoption` does not exist on type `Protung\EasyAdminPlusBundle\Field\AdvancedDisplayField`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/AdvancedDisplayField.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #2 of `Symfony\Component\PropertyAccess\PropertyAccessor::getValue`: expected `Symfony\Component\PropertyAccess\PropertyPathInterface|string`, but possibly received `Symfony\Contracts\Translation\TranslatableInterface|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/CallbackConfigurableField.php'
+code = 'non-existent-method'
+message = 'Method `setcustomoption` does not exist on type `Protung\EasyAdminPlusBundle\Field\CallbackConfigurableField`.'
+count = 3
+
+[[issues]]
+file = 'src/Field/CallbackConfigurableFieldOption.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 3
+
+[[issues]]
+file = 'src/Field/Configurator/EntityConfigurator.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #1 of `Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::__construct`: expected `int|null|object|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/Configurator/EntityConfigurator.php'
+code = 'mixed-argument'
+message = 'Invalid argument type for argument #6 of `Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata::__construct`: expected `int|null|object|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/Configurator/EntityConfigurator.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 5
+
+[[issues]]
+file = 'src/Field/Configurator/EntityConfigurator.php'
+code = 'redundant-type-comparison'
+message = 'Redundant type assertion: `$queryBuilderCallable` is already `(callable(Doctrine\ORM\QueryBuilder): Doctrine\ORM\QueryBuilder)`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/Configurator/EntityConfigurator.php'
+code = 'redundant-type-comparison'
+message = 'Redundant type assertion: `$targetCrudControllerFqcn` is already `class-string<EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface<object>>`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/EntityField.php'
+code = 'invalid-param-tag'
+message = 'The @param tag references an unknown parameter.'
+count = 1
+
+[[issues]]
+file = 'src/Field/EntityField.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait::setLabel`: expected `Symfony\Contracts\Translation\TranslatableInterface|false|null|string`, but possibly received `Symfony\Contracts\Translation\TranslatableInterface|bool|null|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Field/JsonField.php'
+code = 'possibly-invalid-argument'
+message = 'Possible argument type mismatch for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait::setLabel`: expected `Symfony\Contracts\Translation\TranslatableInterface|false|null|string`, but possibly received `Symfony\Contracts\Translation\TranslatableInterface|bool|null|string`.'
+count = 1
+
+[[issues]]
+file = 'src/Filter/EnumFilter.php'
+code = 'possibly-static-access-on-interface'
+message = 'Potential static method call on interface `BackedEnum` via `class-string`.'
+count = 1
+
+[[issues]]
+file = 'src/Form/DataTransformer/EntityFieldDataTransformer.php'
+code = 'less-specific-nested-argument-type'
+message = '''Argument type mismatch for argument #1 of `Psl\Dict\map`: expected `iterable<('Tk.psl\dict\map() extends array-key), mixed>`, but provided type `iterable<mixed, mixed>` is less specific.'''
+count = 1
+
+[[issues]]
+file = 'src/Form/DataTransformer/EntityFieldDataTransformer.php'
+code = 'missing-template-parameter'
+message = 'Too few template arguments for `Symfony\Component\Form\DataTransformerInterface`: expected at least 2, but found 0.'
+count = 1
+
+[[issues]]
+file = 'src/Form/DataTransformer/EntityFieldDataTransformer.php'
+code = 'template-constraint-violation'
+message = 'Argument type mismatch for template `Tk`.'
+count = 1
+
+[[issues]]
+file = 'src/Form/Type/Extension/EntityTypeExtension.php'
+code = 'excess-template-parameter'
+message = 'Too many template arguments for `Symfony\Component\Form\AbstractTypeExtension`: expected 0, but found 1.'
+count = 1
+
+[[issues]]
+file = 'src/Menu/ChainMenuItemMatcher.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 1
+
+[[issues]]
+file = 'src/Menu/Matcher/StaticCurrentControllerMapper.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 1
+
+[[issues]]
+file = 'src/Orm/EntityPaginator.php'
+code = 'too-many-arguments'
+message = 'Too many arguments provided for method `EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface::getResultsAsJson`.'
+count = 5
+
+[[issues]]
+file = 'src/Test/Controller/AdminControllerWebTestCase.php'
+code = 'less-specific-nested-argument-type'
+message = 'Argument type mismatch for argument #1 of `Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase::extractFieldErrorsTexts`: expected `array<array-key, DOMElement|array<array-key, DOMElement>>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/AdminControllerWebTestCase.php'
+code = 'less-specific-nested-argument-type'
+message = 'Argument type mismatch for argument #1 of `Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase::flattenFieldErrors`: expected `array<array-key, DOMElement|array<array-key, DOMElement>>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/AdminControllerWebTestCase.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/AutocompleteActionTestCase.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/BatchActionTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/BatchDeleteActionTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\BatchActionTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/DeleteActionCrudDtoTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\DeleteActionTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/DeleteActionTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/DetailActionCrudDtoTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\DetailActionTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/EditActionCrudDtoTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\EditActionTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/EditActionTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/EditActionTestCase.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/NewActionCrudDtoTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\NewActionTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/NewActionTestCase.php'
+code = 'invalid-return-statement'
+message = '''Invalid return type for function `Protung\EasyAdminPlusBundle\Test\Controller\NewActionTestCase::getCreatedEntityUnderTest`: expected `('TEntity.protung\easyadminplusbundle\test\controller\newactiontestcase extends object)`, but found `object`.'''
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/NewActionTestCase.php'
+code = 'invalid-template-parameter'
+message = 'Template argument for `Protung\EasyAdminPlusBundle\Test\Controller\AdminControllerWebTestCase` is not compatible with its constraint.'
+count = 1
+
+[[issues]]
+file = 'src/Test/Controller/NewActionTestCase.php'
+code = 'mixed-assignment'
+message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
+count = 2
+
+[[issues]]
+file = 'tests/Test/TestApplication/TestKernel.php'
+code = 'unused-parameter'
+message = 'Parameter `$routes` is never used.'
+count = 1

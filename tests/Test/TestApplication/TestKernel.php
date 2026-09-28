@@ -77,6 +77,7 @@ final class TestKernel extends SymfonyKernel
             'framework',
             [
                 'router' => ['utf8' => true],
+                // @mago-expect lint:no-literal-password The kernel secret of the test application.
                 'secret' => '$3cr3t',
                 'session' => [
                     'handler_id' => null,
@@ -110,6 +111,7 @@ final class TestKernel extends SymfonyKernel
                         'memory' => [
                             'users' => [
                                 'admin' => [
+                                    // @mago-expect lint:no-literal-password The password of the in-memory test user.
                                     'password' => '1234',
                                     'roles' => ['ROLE_ADMIN'],
                                 ],
