@@ -34,7 +34,7 @@ composer-install:
 assets-install:
     {{ node }} npm ci
 
-[doc("Build the assets into src/Resources/public (in Docker)")]
+[doc("Build the assets into public (in Docker)")]
 [group("Assets")]
 assets-build:
     {{ node }} npm run build

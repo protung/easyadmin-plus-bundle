@@ -1,7 +1,7 @@
 import Encore from '@symfony/webpack-encore';
 
 Encore
-    .setOutputPath('./src/Resources/public/')
+    .setOutputPath('./public/')
     .setPublicPath('/')
     .setManifestKeyPrefix('bundles/protung-easyadmin-plus')
 

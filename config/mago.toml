@@ -42,5 +42,7 @@ perform-heuristic-checks = true
 
 # Ignore a specific error code across the whole project
 ignore = [
-    "unhandled-thrown-type", # 243 errors
+    "unhandled-thrown-type", # 242 errors
+    # Symfony 6.4 names the parameters of AbstractBundle::loadExtension() $container and $builder, 7.4 and later $configurator and $container
+    { code = "incompatible-parameter-name", in = ["src/ProtungEasyAdminPlusBundle.php"] }, # 2 errors on Symfony 6.4
 ]
