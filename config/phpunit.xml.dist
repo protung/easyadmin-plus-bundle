@@ -1,15 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="../vendor/autoload.php"
-    cacheResult="true"
     cacheDirectory=".phpunit.cache"
     colors="true"
     columns="max"
     executionOrder="random"
+    displayDetailsOnTestsThatTriggerWarnings="true"
+    displayDetailsOnPhpunitDeprecations="true"
 >
 
     <php>
+        <ini name="error_reporting" value="-1"/>
         <env name="KERNEL_CLASS" value="Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\TestKernel"/>
     </php>
 
@@ -18,4 +21,10 @@
             <directory>../tests</directory>
         </testsuite>
     </testsuites>
+
+    <source>
+        <include>
+            <directory>../src</directory>
+        </include>
+    </source>
 </phpunit>

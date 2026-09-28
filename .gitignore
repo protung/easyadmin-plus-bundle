@@ -5,3 +5,4 @@
 composer.lock
 /config/.phpcs-cache
 /config/.phpunit.cache
+/var/

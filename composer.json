@@ -55,6 +55,7 @@
     "phpstan/phpstan-symfony": "^2.0.20",
     "phpunit/phpunit": "^13.1.14",
     "speicher210/functional-test-bundle": "2.x-dev",
+    "symfony/error-handler": "^6.4.44 || ^7.4.17 || ^8.1.5",
     "symfony/var-exporter": "^6.4 || ^7.4 || ^8.0"
   },
   "suggest": {

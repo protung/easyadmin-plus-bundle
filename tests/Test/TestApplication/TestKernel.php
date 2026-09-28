@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Generator;
 use Override;
 use Protung\EasyAdminPlusBundle\ProtungEasyAdminPlusBundle;
-use Psl\Env;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -18,6 +17,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Security\Core\User\InMemoryUser;
+
+use function dirname;
 
 final class TestKernel extends SymfonyKernel
 {
@@ -43,13 +44,21 @@ final class TestKernel extends SymfonyKernel
     #[Override]
     public function getCacheDir(): string
     {
-        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->getEnvironment() . '/cache';
+        return $this->varDir() . '/cache/' . $this->getEnvironment();
     }
 
     #[Override]
     public function getLogDir(): string
     {
-        return Env\temp_dir() . '/com.github.protung.easyadmin-plus-bundle/tests/var/' . $this->getEnvironment() . '/log';
+        return $this->varDir() . '/log/' . $this->getEnvironment();
+    }
+
+    /**
+     * Inside the checkout, so that checkouts don't share a compiled container.
+     */
+    private function varDir(): string
+    {
+        return dirname(__DIR__, 3) . '/var';
     }
 
     public function configureRoutes(RoutingConfigurator $routes): void
