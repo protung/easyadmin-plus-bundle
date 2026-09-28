@@ -46,7 +46,7 @@
   },
   "require-dev": {
     "doctrine/coding-standard": "^14.0.0",
-    "ergebnis/composer-normalize": "^2.52.0",
+    "ergebnis/composer-normalize": "^2.54.0",
     "php-standard-library/phpstan-extension": "^2.1.0",
     "phpstan/phpstan": "^2.2.16",
     "phpstan/phpstan-deprecation-rules": "^2.0.5",
@@ -54,6 +54,7 @@
     "phpstan/phpstan-strict-rules": "^2.0.12",
     "phpstan/phpstan-symfony": "^2.0.20",
     "phpunit/phpunit": "^13.1.14",
+    "roave/security-advisories": "dev-master",
     "speicher210/functional-test-bundle": "2.x-dev",
     "symfony/error-handler": "^6.4.44 || ^7.4.17 || ^8.1.5",
     "symfony/var-exporter": "^6.4 || ^7.4 || ^8.0"
@@ -61,6 +62,7 @@
   "suggest": {
     "speicher210/functional-test-bundle": "For testing support."
   },
+  "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "Protung\\EasyAdminPlusBundle\\": "src/"
@@ -73,7 +75,6 @@
   },
   "config": {
     "allow-plugins": {
-      "composer/package-versions-deprecated": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "ergebnis/composer-normalize": true
     },
@@ -84,7 +85,9 @@
         }
       }
     },
-    "preferred-install": "dist",
+    "preferred-install": {
+      "*": "dist"
+    },
     "sort-packages": true
   },
   "extra": {
