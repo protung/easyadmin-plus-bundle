@@ -7,18 +7,6 @@ message = 'Return type `array<array-key, Symfony\Contracts\Service\Attribute\Sub
 count = 1
 
 [[issues]]
-file = 'src/Controller/BaseController.php'
-code = 'mixed-argument'
-message = 'Invalid argument type for argument #1 of `Symfony\Component\Translation\TranslatableMessage::trans`: expected `Symfony\Contracts\Translation\TranslatorInterface`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = 'src/Controller/BaseController.php'
-code = 'mixed-argument'
-message = 'Invalid argument type for argument #1 of `Symfony\Contracts\Translation\TranslatableInterface::trans`: expected `Symfony\Contracts\Translation\TranslatorInterface`, but found `mixed`.'
-count = 2
-
-[[issues]]
 file = 'src/Controller/BaseCrudController.php'
 code = 'incompatible-return-type'
 message = 'Return type `array<array-key, Symfony\Contracts\Service\Attribute\SubscribedService|string>` of `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::getsubscribedservices()` is incompatible with parent return type `array<array-key, string>` of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::getsubscribedservices()`'
@@ -52,12 +40,6 @@ count = 1
 file = 'src/Controller/BaseCrudController.php'
 code = 'mixed-return-statement'
 message = 'Could not infer a precise return type for function `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::adminUrlGenerator`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = 'src/Controller/BaseCrudController.php'
-code = 'mixed-return-statement'
-message = 'Could not infer a precise return type for function `Protung\EasyAdminPlusBundle\Controller\BaseCrudController::translator`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -166,6 +148,12 @@ count = 1
 file = 'src/Controller/BaseCrudDtoController.php'
 code = 'unused-parameter'
 message = 'Parameter `$dto` is never used.'
+count = 1
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'incompatible-return-type'
+message = 'Return type `array<array-key, Symfony\Contracts\Service\Attribute\SubscribedService|string>` of `Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::getsubscribedservices()` is incompatible with parent return type `array<array-key, string>` of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::getsubscribedservices()`'
 count = 1
 
 [[issues]]

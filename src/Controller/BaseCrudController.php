@@ -11,18 +11,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Twig\Component\Option\AlertVariant;
-use Override;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Type;
 use Psl\Vec;
 use RuntimeException;
-use Stringable;
-use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Contracts\Service\Attribute\SubscribedService;
-use Symfony\Contracts\Translation\TranslatableInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @template TEntity of object
@@ -30,6 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 abstract class BaseCrudController extends AbstractCrudController
 {
+    use FlashMessages;
+
     /**
      * Calling this method will disable all standard actions.
      */
@@ -108,58 +103,16 @@ abstract class BaseCrudController extends AbstractCrudController
         return $currentAdminContext;
     }
 
-    protected function addFlashMessageSuccess(string|Stringable|TranslatableInterface $message): void
+    /**
+     * Flash messages given as strings are translated in the translation domain of the EasyAdmin context.
+     */
+    protected function flashMessageTranslationDomain(): string
     {
-        $this->addFlashMessage(AlertVariant::Success, $message);
-    }
-
-    protected function addFlashMessageWarning(string|Stringable|TranslatableInterface $message): void
-    {
-        $this->addFlashMessage(AlertVariant::Warning, $message);
-    }
-
-    protected function addFlashMessageError(string|Stringable|TranslatableInterface $message): void
-    {
-        $this->addFlashMessage(AlertVariant::Error, $message);
-    }
-
-    protected function addFlashMessage(AlertVariant $type, string|Stringable|TranslatableInterface $message): void
-    {
-        $this->addFlash($type->value, $this->translate($message));
-    }
-
-    private function translate(string|Stringable|TranslatableInterface $message): string
-    {
-        // We check against TranslatableInterface because the implementation might be Stringable as well.
-        if (! $message instanceof TranslatableInterface) {
-            $translationDomain = $this->currentAdminContext()->getI18n()->getTranslationDomain();
-            $message           = new TranslatableMessage((string) $message, [], $translationDomain);
-        }
-
-        return $message->trans($this->translator());
-    }
-
-    protected function translator(): TranslatorInterface
-    {
-        return $this->container->get(TranslatorInterface::class);
+        return $this->currentAdminContext()->getI18n()->getTranslationDomain();
     }
 
     protected function adminUrlGenerator(): AdminUrlGeneratorInterface
     {
         return $this->container->get(AdminUrlGeneratorInterface::class);
-    }
-
-    /**
-     * @return array<array-key, string|SubscribedService>
-     */
-    #[Override]
-    public static function getSubscribedServices(): array
-    {
-        return Dict\merge(
-            parent::getSubscribedServices(),
-            [
-                TranslatorInterface::class => '?' . TranslatorInterface::class,
-            ],
-        );
     }
 }

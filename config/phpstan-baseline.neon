@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: 'Parameter #1 $translator of method Symfony\Contracts\Translation\TranslatableInterface::trans() expects Symfony\Contracts\Translation\TranslatorInterface, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: ../src/Controller/BaseController.php
-
-		-
 			rawMessage: 'Return type (array<string|Symfony\Contracts\Service\Attribute\SubscribedService>) of method Protung\EasyAdminPlusBundle\Controller\BaseController::getSubscribedServices() should be covariant with return type (array<string>) of method Symfony\Bundle\FrameworkBundle\Controller\AbstractController::getSubscribedServices()'
 			identifier: method.childReturnType
 			count: 1
@@ -44,12 +38,6 @@ parameters:
 
 		-
 			rawMessage: 'Method Protung\EasyAdminPlusBundle\Controller\BaseCrudController::adminUrlGenerator() should return EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface but returns mixed.'
-			identifier: return.type
-			count: 1
-			path: ../src/Controller/BaseCrudController.php
-
-		-
-			rawMessage: 'Method Protung\EasyAdminPlusBundle\Controller\BaseCrudController::translator() should return Symfony\Contracts\Translation\TranslatorInterface but returns mixed.'
 			identifier: return.type
 			count: 1
 			path: ../src/Controller/BaseCrudController.php
