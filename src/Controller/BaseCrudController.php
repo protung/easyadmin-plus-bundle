@@ -104,11 +104,12 @@ abstract class BaseCrudController extends AbstractCrudController
     }
 
     /**
-     * Flash messages given as strings are translated in the translation domain of the EasyAdmin context.
+     * Flash messages given as strings are translated in the translation domain of the EasyAdmin context,
+     * or in the default domain when there is no context yet (for example while the actions are configured).
      */
-    protected function flashMessageTranslationDomain(): string
+    protected function flashMessageTranslationDomain(): string|null
     {
-        return $this->currentAdminContext()->getI18n()->getTranslationDomain();
+        return $this->getContext()?->getI18n()->getTranslationDomain();
     }
 
     protected function adminUrlGenerator(): AdminUrlGeneratorInterface
