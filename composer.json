@@ -1,12 +1,18 @@
 {
   "name": "protung/easyadmin-plus-bundle",
-  "description": "This bundle provides some extensions to easycorp/easyadmin-bundle",
+  "description": "Extensions for EasyAdmin: base CRUD controllers, also for editing entities through DTOs, an entity field linking to the CRUD controller of the related entity, JSON and callback-configurable fields, an enum filter, menu item matchers, and PHPUnit test cases for dashboards and CRUD actions.",
   "license": "MIT",
   "type": "symfony-bundle",
   "keywords": [
-    "backend",
+    "easyadmin",
+    "easyadmin bundle",
+    "symfony",
+    "symfony bundle",
     "admin",
-    "generator"
+    "backend",
+    "crud",
+    "doctrine",
+    "phpunit"
   ],
   "authors": [
     {

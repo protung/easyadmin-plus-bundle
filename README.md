@@ -17,18 +17,6 @@ $ composer require protung/easyadmin-plus-bundle
 
 
 
-## Changelog
-
-Please have a look at [`CHANGELOG.md`](CHANGELOG.md).
-
-## Contributing
-
-Please have a look at [`CONTRIBUTING.md`](.github/CONTRIBUTING.md).
-
-## Code of Conduct
-
-Please have a look at [`CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md).
-
 ## License
 
 This package is licensed using the MIT License.
