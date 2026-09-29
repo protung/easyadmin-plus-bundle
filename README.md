@@ -9,15 +9,21 @@ Extensions for [EasyAdmin](https://github.com/EasyCorp/EasyAdminBundle): DTO-bac
 
 ## Installation
 
-Run
+Require using composer:
 
-```sh
+```shell
 $ composer require protung/easyadmin-plus-bundle
 ```
 
-## Usage
+Symfony Flex registers the bundle. Without Flex, add it to `config/bundles.php`:
 
-
+```php
+return [
+    // ...
+    Protung\EasyAdminPlusBundle\ProtungEasyAdminPlusBundle::class => ['all' => true],
+    // ...
+];
+```
 
 ## License
 
