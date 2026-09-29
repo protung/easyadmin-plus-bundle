@@ -1,4 +1,4 @@
 {
-  "bundles/protung-easyadmin-plus/app.css": "/app.css",
-  "bundles/protung-easyadmin-plus/app.js": "/app.js"
+  "bundles/protungeasyadminplus/app.css": "/bundles/protungeasyadminplus/app.css",
+  "bundles/protungeasyadminplus/app.js": "/bundles/protungeasyadminplus/app.js"
 }

@@ -2,10 +2,10 @@
   "entrypoints": {
     "app": {
       "css": [
-        "/app.css"
+        "/bundles/protungeasyadminplus/app.css"
       ],
       "js": [
-        "/app.js"
+        "/bundles/protungeasyadminplus/app.js"
       ]
     }
   }
