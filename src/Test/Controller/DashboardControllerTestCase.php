@@ -28,27 +28,11 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
             $this->prepareDashboardUrl($routeParameters),
         );
 
-        /** @var list<array{label: string, url: string}> $actualMenuItems */
-        $actualMenuItems = $crawler->filter('#main-menu ul.menu > li.menu-item > a')->each(
-            static function (Crawler $menuElementLink) {
-                if (Str\contains($menuElementLink->attr('class') ?? '', 'submenu-toggle')) {
-                    return [
-                        'label' => $menuElementLink->text(normalizeWhitespace: true),
-                        'submenu' => $menuElementLink->ancestors()->first()->filter('ul.submenu > li.menu-item > a')->each(
-                            static fn (Crawler $menuElementLink) => [
-                                'label' => $menuElementLink->text(normalizeWhitespace: true),
-                                'url' => $menuElementLink->attr('href'),
-                            ],
-                        ),
-                    ];
-                }
-
-                return [
-                    'label' => $menuElementLink->text(normalizeWhitespace: true),
-                    'url' => $menuElementLink->attr('href'),
-                ];
-            },
-        );
+        $mainMenu = $crawler->filter('#main-menu');
+        /** @var list<array{label: string, url?: string, submenu?: list<array{label: string, url: string}>}> $actualMenuItems */
+        $actualMenuItems = $mainMenu->matches('.ea-sidebar-content')
+            ? $this->extractMenuItems($mainMenu)
+            : $this->extractEasyAdmin4MenuItems($mainMenu);
 
         $this->assertArrayMatchesExpectedJson($actualMenuItems);
         $this->assertMenuItems($actualMenuItems);
@@ -103,6 +87,63 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
             ->setAll(Dict\sort_by_key($routeParameters))
             ->setDashboard($this->dashboardControllerFqcn())
             ->generateUrl();
+    }
+
+    /**
+     * @return list<array{label: string, url?: string|null, submenu?: list<array{label: string, url: string|null}>}>
+     */
+    private function extractMenuItems(Crawler $mainMenu): array
+    {
+        return $mainMenu->filter('ul.ea-sidebar-group-items > li.ea-sidebar-item')->each(
+            static function (Crawler $menuItem) {
+                $link  = $menuItem->children('.ea-sidebar-item-link');
+                $label = $link->filter('.ea-sidebar-item-label')->text(normalizeWhitespace: true);
+
+                if ($menuItem->matches('.has-submenu')) {
+                    return [
+                        'label' => $label,
+                        'submenu' => $menuItem->filter('ul.ea-sidebar-submenu-items > li.ea-sidebar-item > a.ea-sidebar-item-link')->each(
+                            static fn (Crawler $submenuLink) => [
+                                'label' => $submenuLink->filter('.ea-sidebar-item-label')->text(normalizeWhitespace: true),
+                                'url' => $submenuLink->attr('href'),
+                            ],
+                        ),
+                    ];
+                }
+
+                return [
+                    'label' => $label,
+                    'url' => $link->attr('href'),
+                ];
+            },
+        );
+    }
+
+    /**
+     * @return list<array{label: string, url?: string|null, submenu?: list<array{label: string, url: string|null}>}>
+     */
+    private function extractEasyAdmin4MenuItems(Crawler $mainMenu): array
+    {
+        return $mainMenu->filter('ul.menu > li.menu-item > a')->each(
+            static function (Crawler $menuElementLink) {
+                if (Str\contains($menuElementLink->attr('class') ?? '', 'submenu-toggle')) {
+                    return [
+                        'label' => $menuElementLink->text(normalizeWhitespace: true),
+                        'submenu' => $menuElementLink->ancestors()->first()->filter('ul.submenu > li.menu-item > a')->each(
+                            static fn (Crawler $menuElementLink) => [
+                                'label' => $menuElementLink->text(normalizeWhitespace: true),
+                                'url' => $menuElementLink->attr('href'),
+                            ],
+                        ),
+                    ];
+                }
+
+                return [
+                    'label' => $menuElementLink->text(normalizeWhitespace: true),
+                    'url' => $menuElementLink->attr('href'),
+                ];
+            },
+        );
     }
 
     private function makeGetRequestAndFollowRedirects(string $url): Crawler
