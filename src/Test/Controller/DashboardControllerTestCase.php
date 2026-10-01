@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Psl\Dict;
 use Psl\Str;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_key_exists;
+use function version_compare;
 
 /**
  * @template TDashboardController of DashboardControllerInterface
@@ -29,10 +31,11 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
         );
 
         $mainMenu = $crawler->filter('#main-menu');
+        // EasyAdmin 5.3 replaced the menu markup with the sidebar component.
         /** @var list<array{label: string, url?: string, submenu?: list<array{label: string, url: string}>}> $actualMenuItems */
-        $actualMenuItems = $mainMenu->matches('.ea-sidebar-content')
-            ? $this->extractMenuItems($mainMenu)
-            : $this->extractEasyAdmin4MenuItems($mainMenu);
+        $actualMenuItems = version_compare(EasyAdminBundle::VERSION, '5.3.0', '<')
+            ? $this->extractMenuItemsBeforeEasyAdmin53($mainMenu)
+            : $this->extractMenuItems($mainMenu);
 
         $this->assertArrayMatchesExpectedJson($actualMenuItems);
         $this->assertMenuItems($actualMenuItems);
@@ -122,7 +125,7 @@ abstract class DashboardControllerTestCase extends AdminWebTestCase
     /**
      * @return list<array{label: string, url?: string|null, submenu?: list<array{label: string, url: string|null}>}>
      */
-    private function extractEasyAdmin4MenuItems(Crawler $mainMenu): array
+    private function extractMenuItemsBeforeEasyAdmin53(Crawler $mainMenu): array
     {
         return $mainMenu->filter('ul.menu > li.menu-item > a')->each(
             static function (Crawler $menuElementLink) {
