@@ -139,7 +139,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         }
 
         if ($cell->matches('.has-switch')) {
-            return $cell->filter('input.form-check-input:checked')->count() > 0;
+            return $cell->filter('input.form-check-input:checked, input.ea-switch-input:checked')->count() > 0;
         }
 
         return $this->extractDataFromElement($cell);
