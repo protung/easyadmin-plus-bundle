@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Controller;
 
 use BadMethodCallException;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -23,6 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\ActionFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
+use Generator;
 use Override;
 use Protung\EasyAdminPlusBundle\Dto\EntityDtoInstanceSetter;
 use Psl\Str;
@@ -54,9 +56,9 @@ abstract class BaseCrudDtoController extends BaseCrudController
     /**
      * @param TDto $dto
      *
-     * @return TEntity|null
+     * @return TEntity|Generator<TEntity>
      */
-    abstract public function createEntityFromDto(object $dto): object|null;
+    abstract public function createEntityFromDto(object $dto): object;
 
     #[Override]
     final public function createEntity(string $entityFqcn): never
@@ -295,8 +297,51 @@ abstract class BaseCrudDtoController extends BaseCrudController
             );
     }
 
+    /**
+     * @param TEntity|Generator<TEntity> $entityInstance
+     */
+    #[Override]
+    final public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($this->isGenerator($entityInstance)) {
+            foreach ($entityInstance as $item) {
+                parent::persistEntity($entityManager, $item);
+            }
+        } else {
+            parent::persistEntity($entityManager, $entityInstance);
+        }
+    }
+
+    /**
+     * @param TEntity|Generator<TEntity> $entityInstance
+     */
+    #[Override]
+    final public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($this->isGenerator($entityInstance)) {
+            foreach ($entityInstance as $item) {
+                parent::updateEntity($entityManager, $item);
+            }
+        } else {
+            parent::updateEntity($entityManager, $entityInstance);
+        }
+    }
+
     /** @param TDto $dto */
     protected function onPostSubmit(object $dto): void
     {
+    }
+
+    /**
+     * TEntity is only bound to object, so the analysers can't rule out that an entity is itself a Generator.
+     *
+     * @param TEntity|Generator<TEntity> $entityInstance
+     *
+     * @phpstan-assert-if-true Generator<TEntity> $entityInstance
+     * @phpstan-assert-if-false TEntity $entityInstance
+     */
+    private function isGenerator(object $entityInstance): bool
+    {
+        return $entityInstance instanceof Generator;
     }
 }

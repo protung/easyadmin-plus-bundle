@@ -43,15 +43,21 @@ message = 'Could not infer a precise return type for function `Protung\EasyAdmin
 count = 1
 
 [[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'unused-parameter'
+message = 'Parameter `$entityInstance` is never used.'
+count = 2
+
+[[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
 code = 'mixed-argument'
-message = 'Invalid argument type for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::persistEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
+message = 'Invalid argument type for argument #1 of `Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::persistEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
 count = 1
 
 [[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
 code = 'mixed-argument'
-message = 'Invalid argument type for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::updateEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
+message = 'Invalid argument type for argument #1 of `Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::updateEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
 count = 1
 
 [[issues]]
