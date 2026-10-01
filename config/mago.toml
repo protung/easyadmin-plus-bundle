@@ -47,4 +47,6 @@ ignore = [
     { code = "incompatible-parameter-name", in = ["src/ProtungEasyAdminPlusBundle.php"] }, # 2 errors on Symfony 6.4
     # Symfony 6.4 types the return of getSubscribedServices() as array<string>, so every class inheriting it from the FlashMessages trait is reported
     { code = "incompatible-return-type", in = ["tests/Controller/BaseCrudControllerTest.php"] }, # 1 error on Symfony 6.4
+    # Symfony 6.4 types the return of Crawler::each() as array, 7.4 and later as list<R>
+    { code = "invalid-return-statement", in = ["src/Test/Controller/DashboardControllerTestCase.php"] }, # 2 errors on Symfony 6.4
 ]

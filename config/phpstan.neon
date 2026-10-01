@@ -9,6 +9,12 @@ parameters:
     # The baseline covers the findings of every CI job, and some of them only occur with certain dependency
     # versions (e.g. Symfony 6.4). Report unmatched entries again once the baseline is empty.
     reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # Symfony 6.4 types the return of Crawler::each() as array, 7.4 and later as list<R>
+        -
+            message: '#^Method Protung\\EasyAdminPlusBundle\\Test\\Controller\\DashboardControllerTestCase::extract(EasyAdmin4)?MenuItems\(\) should return .+ but returns array\.$#'
+            identifier: return.type
+            path: ../src/Test/Controller/DashboardControllerTestCase.php
 
 includes:
     - phpstan-baseline.neon
