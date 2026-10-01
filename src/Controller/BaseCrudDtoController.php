@@ -305,22 +305,10 @@ abstract class BaseCrudDtoController extends BaseCrudController
     {
         if ($this->isGenerator($entityInstance)) {
             foreach ($entityInstance as $item) {
-                $entityManager->wrapInTransaction(
-                    function (EntityManagerInterface $entityManager) use ($item): void {
-                        $this->storeEntity($entityManager, $item);
-
-                        $this->afterCreate($item);
-                    },
-                );
+                parent::persistEntity($entityManager, $item);
             }
         } else {
-            $entityManager->wrapInTransaction(
-                function (EntityManagerInterface $entityManager) use ($entityInstance): void {
-                    $this->storeEntity($entityManager, $entityInstance);
-
-                    $this->afterCreate($entityInstance);
-                },
-            );
+            parent::persistEntity($entityManager, $entityInstance);
         }
     }
 
@@ -332,46 +320,11 @@ abstract class BaseCrudDtoController extends BaseCrudController
     {
         if ($this->isGenerator($entityInstance)) {
             foreach ($entityInstance as $item) {
-                $entityManager->wrapInTransaction(
-                    function (EntityManagerInterface $entityManager) use ($item): void {
-                        $this->storeEntity($entityManager, $item);
-
-                        $this->afterUpdate($item);
-                    },
-                );
+                parent::updateEntity($entityManager, $item);
             }
         } else {
-            $entityManager->wrapInTransaction(
-                function (EntityManagerInterface $entityManager) use ($entityInstance): void {
-                    $this->storeEntity($entityManager, $entityInstance);
-
-                    $this->afterUpdate($entityInstance);
-                },
-            );
+            parent::updateEntity($entityManager, $entityInstance);
         }
-    }
-
-    /**
-     * @param TEntity $entityInstance
-     */
-    protected function afterCreate(object $entityInstance): void
-    {
-    }
-
-    /**
-     * @param TEntity $entityInstance
-     */
-    protected function afterUpdate(object $entityInstance): void
-    {
-    }
-
-    /**
-     * @param TEntity $entityInstance
-     */
-    protected function storeEntity(EntityManagerInterface $entityManager, object $entityInstance): void
-    {
-        $entityManager->persist($entityInstance);
-        $entityManager->flush();
     }
 
     /** @param TDto $dto */

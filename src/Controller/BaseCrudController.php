@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -11,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Override;
 use Psl\Dict;
 use Psl\Iter;
 use Psl\Type;
@@ -88,6 +90,59 @@ abstract class BaseCrudController extends AbstractCrudController
         }
 
         return $actions;
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    #[Override]
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityManager->wrapInTransaction(
+            function (EntityManagerInterface $entityManager) use ($entityInstance): void {
+                $this->storeEntity($entityManager, $entityInstance);
+
+                $this->afterCreate($entityInstance);
+            },
+        );
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    #[Override]
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityManager->wrapInTransaction(
+            function (EntityManagerInterface $entityManager) use ($entityInstance): void {
+                $this->storeEntity($entityManager, $entityInstance);
+
+                $this->afterUpdate($entityInstance);
+            },
+        );
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    protected function afterCreate(object $entityInstance): void
+    {
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    protected function afterUpdate(object $entityInstance): void
+    {
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    protected function storeEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
     }
 
     /**

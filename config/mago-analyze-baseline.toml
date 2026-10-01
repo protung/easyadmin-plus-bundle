@@ -43,6 +43,12 @@ message = 'Could not infer a precise return type for function `Protung\EasyAdmin
 count = 1
 
 [[issues]]
+file = 'src/Controller/BaseCrudController.php'
+code = 'unused-parameter'
+message = 'Parameter `$entityInstance` is never used.'
+count = 2
+
+[[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
 code = 'mixed-argument'
 message = 'Invalid argument type for argument #1 of `Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController::persistEntity`: expected `Doctrine\ORM\EntityManagerInterface`, but found `mixed`.'
@@ -149,12 +155,6 @@ file = 'src/Controller/BaseCrudDtoController.php'
 code = 'unused-parameter'
 message = 'Parameter `$dto` is never used.'
 count = 1
-
-[[issues]]
-file = 'src/Controller/BaseCrudDtoController.php'
-code = 'unused-parameter'
-message = 'Parameter `$entityInstance` is never used.'
-count = 2
 
 [[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
