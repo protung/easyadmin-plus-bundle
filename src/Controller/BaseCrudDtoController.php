@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Controller;
 
 use BadMethodCallException;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -23,6 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\ActionFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
+use Generator;
 use Override;
 use Protung\EasyAdminPlusBundle\Dto\EntityDtoInstanceSetter;
 use Psl\Str;
@@ -54,9 +56,9 @@ abstract class BaseCrudDtoController extends BaseCrudController
     /**
      * @param TDto $dto
      *
-     * @return TEntity|null
+     * @return TEntity|Generator<TEntity>
      */
-    abstract public function createEntityFromDto(object $dto): object|null;
+    abstract public function createEntityFromDto(object $dto): object;
 
     #[Override]
     final public function createEntity(string $entityFqcn): never
@@ -293,6 +295,39 @@ abstract class BaseCrudDtoController extends BaseCrudController
                 },
                 priority: 100, // Must stay above Symfony's ValidationListener, which subscribes to POST_SUBMIT at the default priority of 0.
             );
+    }
+
+    #[Override]
+    final public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Generator) {
+            foreach ($entityInstance as $item) {
+                $this->storeEntity($entityManager, $item);
+            }
+        } else {
+            $this->storeEntity($entityManager, $entityInstance);
+        }
+    }
+
+    #[Override]
+    final public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Generator) {
+            foreach ($entityInstance as $item) {
+                $this->storeEntity($entityManager, $item);
+            }
+        } else {
+            $this->storeEntity($entityManager, $entityInstance);
+        }
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    protected function storeEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
     }
 
     /** @param TDto $dto */
