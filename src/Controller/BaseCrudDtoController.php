@@ -298,27 +298,57 @@ abstract class BaseCrudDtoController extends BaseCrudController
     }
 
     #[Override]
-    final public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    final public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof Generator) {
-            foreach ($entityInstance as $item) {
-                $this->storeEntity($entityManager, $item);
-            }
-        } else {
-            $this->storeEntity($entityManager, $entityInstance);
-        }
+        $entityManager->wrapInTransaction(
+            function (EntityManagerInterface $entityManager) use ($entityInstance): void {
+                if ($entityInstance instanceof Generator) {
+                    foreach ($entityInstance as $item) {
+                        $this->storeEntity($entityManager, $item);
+
+                        $this->afterCreate($item);
+                    }
+                } else {
+                    $this->storeEntity($entityManager, $entityInstance);
+
+                    $this->afterCreate($entityInstance);
+                }
+            },
+        );
     }
 
     #[Override]
-    final public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    final public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof Generator) {
-            foreach ($entityInstance as $item) {
-                $this->storeEntity($entityManager, $item);
-            }
-        } else {
-            $this->storeEntity($entityManager, $entityInstance);
-        }
+        $entityManager->wrapInTransaction(
+            function (EntityManagerInterface $entityManager) use ($entityInstance): void {
+                if ($entityInstance instanceof Generator) {
+                    foreach ($entityInstance as $item) {
+                        $this->storeEntity($entityManager, $item);
+
+                        $this->afterUpdate($item);
+                    }
+                } else {
+                    $this->storeEntity($entityManager, $entityInstance);
+
+                    $this->afterUpdate($entityInstance);
+                }
+            },
+        );
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    protected function afterCreate(object $entityInstance): void
+    {
+    }
+
+    /**
+     * @param TEntity $entityInstance
+     */
+    protected function afterUpdate(object $entityInstance): void
+    {
     }
 
     /**
