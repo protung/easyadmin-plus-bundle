@@ -175,7 +175,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @return array<string, string|null>
+     * @return array<string, mixed>
      */
     protected function extractField(Crawler $field): array
     {
@@ -184,8 +184,23 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
         return [
             'element' => 'field',
             'label' => $label !== '' ? $label : null,
-            'value' => $field->filter('div.field-value')->text(normalizeWhitespace: true),
+            'value' => $this->extractFieldValue($field),
         ];
+    }
+
+    /**
+     * @return string|array<mixed>
+     */
+    protected function extractFieldValue(Crawler $field): string|array
+    {
+        if ($field->matches('.field-country')) {
+            return [
+                'name' => $field->filter('div.field-value span')->innerText(),
+                'flag' => $field->filter('div.field-value span svg.country-flag title')->innerText(),
+            ];
+        }
+
+        return $field->filter('div.field-value')->text(normalizeWhitespace: true);
     }
 
     protected function fieldSelector(): string
