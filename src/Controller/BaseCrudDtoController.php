@@ -297,10 +297,13 @@ abstract class BaseCrudDtoController extends BaseCrudController
             );
     }
 
+    /**
+     * @param TEntity|Generator<TEntity> $entityInstance
+     */
     #[Override]
     final public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof Generator) {
+        if ($this->isGenerator($entityInstance)) {
             foreach ($entityInstance as $item) {
                 $entityManager->wrapInTransaction(
                     function (EntityManagerInterface $entityManager) use ($item): void {
@@ -321,10 +324,13 @@ abstract class BaseCrudDtoController extends BaseCrudController
         }
     }
 
+    /**
+     * @param TEntity|Generator<TEntity> $entityInstance
+     */
     #[Override]
     final public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        if ($entityInstance instanceof Generator) {
+        if ($this->isGenerator($entityInstance)) {
             foreach ($entityInstance as $item) {
                 $entityManager->wrapInTransaction(
                     function (EntityManagerInterface $entityManager) use ($item): void {
@@ -371,5 +377,18 @@ abstract class BaseCrudDtoController extends BaseCrudController
     /** @param TDto $dto */
     protected function onPostSubmit(object $dto): void
     {
+    }
+
+    /**
+     * TEntity is only bound to object, so the analysers can't rule out that an entity is itself a Generator.
+     *
+     * @param TEntity|Generator<TEntity> $entityInstance
+     *
+     * @phpstan-assert-if-true Generator<TEntity> $entityInstance
+     * @phpstan-assert-if-false TEntity $entityInstance
+     */
+    private function isGenerator(object $entityInstance): bool
+    {
+        return $entityInstance instanceof Generator;
     }
 }
