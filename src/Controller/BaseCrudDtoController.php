@@ -300,41 +300,49 @@ abstract class BaseCrudDtoController extends BaseCrudController
     #[Override]
     final public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $entityManager->wrapInTransaction(
-            function (EntityManagerInterface $entityManager) use ($entityInstance): void {
-                if ($entityInstance instanceof Generator) {
-                    foreach ($entityInstance as $item) {
+        if ($entityInstance instanceof Generator) {
+            foreach ($entityInstance as $item) {
+                $entityManager->wrapInTransaction(
+                    function (EntityManagerInterface $entityManager) use ($item): void {
                         $this->storeEntity($entityManager, $item);
 
                         $this->afterCreate($item);
-                    }
-                } else {
+                    },
+                );
+            }
+        } else {
+            $entityManager->wrapInTransaction(
+                function (EntityManagerInterface $entityManager) use ($entityInstance): void {
                     $this->storeEntity($entityManager, $entityInstance);
 
                     $this->afterCreate($entityInstance);
-                }
-            },
-        );
+                },
+            );
+        }
     }
 
     #[Override]
     final public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        $entityManager->wrapInTransaction(
-            function (EntityManagerInterface $entityManager) use ($entityInstance): void {
-                if ($entityInstance instanceof Generator) {
-                    foreach ($entityInstance as $item) {
+        if ($entityInstance instanceof Generator) {
+            foreach ($entityInstance as $item) {
+                $entityManager->wrapInTransaction(
+                    function (EntityManagerInterface $entityManager) use ($item): void {
                         $this->storeEntity($entityManager, $item);
 
                         $this->afterUpdate($item);
-                    }
-                } else {
+                    },
+                );
+            }
+        } else {
+            $entityManager->wrapInTransaction(
+                function (EntityManagerInterface $entityManager) use ($entityInstance): void {
                     $this->storeEntity($entityManager, $entityInstance);
 
                     $this->afterUpdate($entityInstance);
-                }
-            },
-        );
+                },
+            );
+        }
     }
 
     /**
