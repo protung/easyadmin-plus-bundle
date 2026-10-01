@@ -12,7 +12,7 @@ parameters:
     ignoreErrors:
         # Symfony 6.4 types the return of Crawler::each() as array, 7.4 and later as list<R>
         -
-            message: '#^Method Protung\\EasyAdminPlusBundle\\Test\\Controller\\DashboardControllerTestCase::extract(EasyAdmin4)?MenuItems\(\) should return .+ but returns array\.$#'
+            message: '#^Method Protung\\EasyAdminPlusBundle\\Test\\Controller\\DashboardControllerTestCase::extractMenuItems(BeforeEasyAdmin53)?\(\) should return .+ but returns array\.$#'
             identifier: return.type
             path: ../src/Test/Controller/DashboardControllerTestCase.php
 
