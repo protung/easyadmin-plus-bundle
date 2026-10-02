@@ -142,6 +142,13 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
             return $cell->filter('input.form-check-input:checked, input.ea-switch-input:checked')->count() > 0;
         }
 
+        if ($cell->matches('.field-country')) {
+            return [
+                'name' => $cell->filter('span')->innerText(),
+                'flag' => $cell->filter('span svg.country-flag title')->innerText(),
+            ];
+        }
+
         return $this->extractDataFromElement($cell);
     }
 
