@@ -6,12 +6,15 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
 use Psl\Type;
 use SensitiveParameter;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
+
+use function version_compare;
 
 /**
  * @template TEntity of object
@@ -77,7 +80,11 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
     ): void {
         $this->submitFormRequest($entityIds, $indexPageQueryParameters, $csrfToken, $server);
 
-        $expectedRedirectUrlParameters[EA::PAGE] ??= '1'; // Ensure we are redirected to the first page after a batch action.
+        // EasyAdmin 4 redirects to the first page after a batch action, EasyAdmin 5 leaves the page out of the URL.
+        if (version_compare(EasyAdminBundle::VERSION, '5.0.0', '<')) {
+            $expectedRedirectUrlParameters[EA::PAGE] ??= '1';
+        }
+
         $this->assertResponseIsRedirect($expectedRedirectUrlParameters);
     }
 
