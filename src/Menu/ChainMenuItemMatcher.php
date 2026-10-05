@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Menu;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher as EasyAdminMenuItemMatcher;
@@ -41,7 +42,8 @@ final readonly class ChainMenuItemMatcher implements MenuItemMatcherInterface
     #[Override]
     public function markSelectedMenuItem(array $menuItems, Request $request): array
     {
-        $currentController = $request->attributes->get('_controller');
+        // Fallback is to `_controller` attribute for EasyAdmin 4.x
+        $currentController = $request->attributes->get(EA::CRUD_CONTROLLER_FQCN, $request->attributes->get('_controller'));
         if ($currentController === null) {
             return $this->easyAdminMenuItemMatcher->markSelectedMenuItem($menuItems, $request);
         }
