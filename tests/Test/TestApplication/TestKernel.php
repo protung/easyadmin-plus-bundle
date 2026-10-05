@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Security\Core\User\InMemoryUser;
+use Symfony\UX\TwigComponent\TwigComponentBundle;
 
 use function dirname;
 
@@ -30,6 +31,7 @@ final class TestKernel extends SymfonyKernel
         yield new FrameworkBundle();
         yield new SecurityBundle();
         yield new TwigBundle();
+        yield new TwigComponentBundle();
         yield new DoctrineBundle();
         yield new EasyAdminBundle();
         yield new ProtungEasyAdminPlusBundle();
@@ -136,6 +138,11 @@ final class TestKernel extends SymfonyKernel
         $container->extension(
             'twig',
             [],
+        );
+
+        $container->extension(
+            'twig_component',
+            ['anonymous_template_directory' => 'components/'],
         );
     }
 }
