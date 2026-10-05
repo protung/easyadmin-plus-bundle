@@ -23,7 +23,7 @@ use function version_compare;
  */
 abstract class BatchActionTestCase extends AdminControllerWebTestCase
 {
-    abstract protected function getBatchActionName(): string;
+    abstract protected function batchActionName(): string;
 
     /**
      * @param array<string>        $entityIds
@@ -44,7 +44,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
         );
 
         $actionAnchorElement = $listingPageCrawler
-            ->filter('[data-action-name="' . $this->getBatchActionName() . '"]')
+            ->filter('[data-action-name="' . $this->batchActionName() . '"]')
             ->first();
 
         $actionRequestUrl = $actionAnchorElement->attr('data-action-url');
@@ -54,7 +54,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
                 Request::METHOD_POST,
                 Type\string()->coerce($actionRequestUrl),
                 [
-                    EA::BATCH_ACTION_NAME => $this->getBatchActionName(),
+                    EA::BATCH_ACTION_NAME => $this->batchActionName(),
                     EA::ENTITY_FQCN => $actionAnchorElement->attr('data-entity-fqcn'),
                     EA::BATCH_ACTION_ENTITY_IDS => $entityIds,
                     EA::BATCH_ACTION_CSRF_TOKEN => $csrfToken ?? $actionAnchorElement->attr('data-action-csrf-token'),
