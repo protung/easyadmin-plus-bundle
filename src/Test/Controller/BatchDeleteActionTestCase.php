@@ -35,7 +35,7 @@ abstract class BatchDeleteActionTestCase extends BatchActionTestCase
                 Request::METHOD_POST,
                 $this->prepareAdminUrl($queryParameters),
                 [
-                    EA::BATCH_ACTION_NAME => $this->getBatchActionName(),
+                    EA::BATCH_ACTION_NAME => $this->batchActionName(),
                     EA::ENTITY_FQCN => $this->controllerUnderTest()::getEntityFqcn(),
                     EA::BATCH_ACTION_ENTITY_IDS => $entityIds,
                 ],
@@ -47,7 +47,7 @@ abstract class BatchDeleteActionTestCase extends BatchActionTestCase
     }
 
     #[Override]
-    protected function getBatchActionName(): string
+    protected function batchActionName(): string
     {
         return Action::BATCH_DELETE;
     }
