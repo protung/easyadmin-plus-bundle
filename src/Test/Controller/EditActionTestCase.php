@@ -69,7 +69,7 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
     /**
      * @param array<array-key, mixed> $queryParameters
      */
-    public function assertShowingEntityToEditRespondsWithStatusCodeForbidden(array $queryParameters = []): void
+    protected function assertShowingEntityToEditRespondsWithStatusCodeForbidden(array $queryParameters = []): void
     {
         if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
             $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();

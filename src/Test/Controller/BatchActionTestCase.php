@@ -31,7 +31,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
      * @param string|null          $csrfToken                The CSRF token to submit instead of the one from the index page.
      * @param array<string, mixed> $server                   Server parameters for the batch action request (e.g. HTTP_REFERER).
      */
-    public function submitFormRequest(
+    protected function submitFormRequest(
         array $entityIds,
         array $indexPageQueryParameters = [],
         #[SensitiveParameter]
@@ -70,7 +70,7 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
      * @param string|null          $csrfToken                     The CSRF token to submit instead of the one from the index page.
      * @param array<string, mixed> $server                        Server parameters for the batch action request (e.g. HTTP_REFERER).
      */
-    public function assertBatchActionForEntityIds(
+    protected function assertBatchActionForEntityIds(
         array $entityIds,
         array $indexPageQueryParameters = [],
         array $expectedRedirectUrlParameters = [],
