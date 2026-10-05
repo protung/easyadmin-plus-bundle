@@ -22,7 +22,7 @@ abstract class BatchDeleteActionTestCase extends BatchActionTestCase
      * @param array<string|int>       $entityIds
      * @param array<array-key, mixed> $queryParameters
      */
-    public function assertBatchDeleteRespondsWithStatusCodeForbidden(array $entityIds, array $queryParameters = []): void
+    protected function assertBatchDeleteRespondsWithStatusCodeForbidden(array $entityIds, array $queryParameters = []): void
     {
         if (static::usePrettyUrls()) {
             // when using pretty URLs the batch action has its own route, while in legacy mode
