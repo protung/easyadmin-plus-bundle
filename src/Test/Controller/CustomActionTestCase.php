@@ -7,6 +7,7 @@ namespace Protung\EasyAdminPlusBundle\Test\Controller;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
+use LogicException;
 use Override;
 use Psl\Str;
 use Psl\Type;
@@ -19,7 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @template TCrudController of CrudControllerInterface
+ * @template TEntity of object
+ * @template TCrudController of CrudControllerInterface<TEntity>
  * @template-extends AdminControllerWebTestCase<TCrudController>
  */
 abstract class CustomActionTestCase extends AdminControllerWebTestCase
@@ -43,6 +45,42 @@ abstract class CustomActionTestCase extends AdminControllerWebTestCase
     protected function entityIdUnderTest(): string|int|null
     {
         return null;
+    }
+
+    /**
+     * @return TEntity|null
+     */
+    protected function findEntityUnderTest(): object|null
+    {
+        $entityIdUnderTest = $this->entityIdUnderTest();
+        if ($entityIdUnderTest === null) {
+            throw new LogicException(
+                Str\format(
+                    <<<'MSG'
+                        Entity ID under test was not set.
+                        Please overwrite %s::entityIdUnderTest() method in your test.
+                    MSG,
+                    self::class,
+                ),
+            );
+        }
+
+        return $this->getObjectManager()->find(
+            $this->controllerUnderTest()::getEntityFqcn(),
+            $entityIdUnderTest,
+        );
+    }
+
+    /**
+     * @return TEntity
+     */
+    protected function getEntityUnderTest(): object
+    {
+        $entity = $this->findEntityUnderTest();
+
+        self::assertNotNull($entity);
+
+        return $entity;
     }
 
     /**
