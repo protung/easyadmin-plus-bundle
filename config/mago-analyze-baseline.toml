@@ -189,7 +189,7 @@ count = 1
 [[issues]]
 file = 'src/Field/AdvancedDisplayField.php'
 code = 'non-existent-method'
-message = 'Method `setcustomoption` does not exist on type `Protung\EasyAdminPlusBundle\Field\AdvancedDisplayField`.'
+message = 'Method `setCustomOption` does not exist on type `Protung\EasyAdminPlusBundle\Field\AdvancedDisplayField`.'
 count = 1
 
 [[issues]]
@@ -201,7 +201,7 @@ count = 1
 [[issues]]
 file = 'src/Field/CallbackConfigurableField.php'
 code = 'non-existent-method'
-message = 'Method `setcustomoption` does not exist on type `Protung\EasyAdminPlusBundle\Field\CallbackConfigurableField`.'
+message = 'Method `setCustomOption` does not exist on type `Protung\EasyAdminPlusBundle\Field\CallbackConfigurableField`.'
 count = 3
 
 [[issues]]
