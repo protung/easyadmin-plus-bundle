@@ -15,6 +15,12 @@ parameters:
             message: '#^Method Protung\\EasyAdminPlusBundle\\Test\\Controller\\DashboardControllerTestCase::extractMenuItems(BeforeEasyAdmin53)?\(\) should return .+ but returns array\.$#'
             identifier: return.type
             path: ../src/Test/Controller/DashboardControllerTestCase.php
+        # EasyAdmin's ActionsExtensionInterface leaves out the types of the generic AdminContext, so an implementation
+        # can neither specify them (not contravariant) nor leave them out
+        -
+            identifier: missingType.generics
+            path: ../src/Action/ConfirmationModalActionsExtension.php
+            count: 2
 
 includes:
     - phpstan-baseline.neon

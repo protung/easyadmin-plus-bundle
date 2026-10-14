@@ -25,6 +25,22 @@ return [
 ];
 ```
 
+## Confirmation modal with a title and a body
+
+Since EasyAdmin 5.7, a custom message passed to `askConfirmation()` is shown as body text and the modal's title is hidden, while the delete confirmation keeps a title and a description. To give another action's confirmation a title and a body like the delete one's, pass a `ConfirmationModal`:
+
+```php
+use Protung\EasyAdminPlusBundle\Action\ConfirmationModal;
+
+use function Symfony\Component\Translation\t;
+
+Action::new('close')
+    ->linkToCrudAction('close')
+    ->askConfirmation(new ConfirmationModal(t('close.confirmation_modal.title'), t('close.confirmation_modal.content')));
+```
+
+A label for the confirmation button can still be passed as `askConfirmation()`'s second argument. Before EasyAdmin 5.7, and for the delete action, the title and the body are shown joined as a single message. Batch actions keep EasyAdmin's batch confirmation.
+
 ## License
 
 This package is licensed using the MIT License.
