@@ -31,11 +31,11 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    public function testPageLoadsWithEmptyList(array $queryParameters = []): void
+    public function testPageLoadsWithEmptyList(array $urlParameters = []): void
     {
-        $crawler = $this->assertRequestGet($queryParameters);
+        $crawler = $this->assertRequestGet($urlParameters);
 
         self::assertSame(
             Vec\concat(Vec\fill(3, 'empty-row'), ['no-results'], Vec\fill(11, 'empty-row')),
@@ -44,11 +44,11 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertPage(array $queryParameters = []): void
+    protected function assertPage(array $urlParameters = []): void
     {
-        $this->assertRequestGet($queryParameters);
+        $this->assertRequestGet($urlParameters);
 
         $actual = [
             'page_title' => $this->extractPageTitle(),
@@ -61,12 +61,12 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertSearch(string $searchQuery, array $queryParameters = []): void
+    protected function assertSearch(string $searchQuery, array $urlParameters = []): void
     {
-        $queryParameters[EA::QUERY] = $searchQuery;
-        $this->assertListOfIds($queryParameters);
+        $urlParameters[EA::QUERY] = $searchQuery;
+        $this->assertListOfIds($urlParameters);
 
         self::assertCount(
             1,
@@ -77,22 +77,22 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
 
     /**
      * @param array<array-key, mixed> $filters
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertFilters(array $filters, array $queryParameters = []): void
+    protected function assertFilters(array $filters, array $urlParameters = []): void
     {
-        $queryParameters[EA::FILTERS] = $filters;
-        $this->assertListOfIds($queryParameters);
+        $urlParameters[EA::FILTERS] = $filters;
+        $this->assertListOfIds($urlParameters);
     }
 
     /**
      * @param array<array-key, mixed> $sorting
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertSorting(array $sorting, array $queryParameters = []): void
+    protected function assertSorting(array $sorting, array $urlParameters = []): void
     {
-        $queryParameters[EA::SORT] = $sorting;
-        $this->assertListOfIds($queryParameters);
+        $urlParameters[EA::SORT] = $sorting;
+        $this->assertListOfIds($urlParameters);
     }
 
     protected function extractPageTitle(): string|null
@@ -182,11 +182,11 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters
      */
-    private function assertListOfIds(array $queryParameters): void
+    private function assertListOfIds(array $urlParameters): void
     {
-        $this->assertRequestGet($queryParameters);
+        $this->assertRequestGet($urlParameters);
 
         $rows = $this->getClient()->getCrawler()->filter($this->datagridRowSelector())->each(
             static fn (Crawler $row): string => $row->attr('data-id') ?? '',

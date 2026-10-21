@@ -16,7 +16,7 @@ count = 1
 file = "src/Test/Controller/AdminControllerWebTestCase.php"
 code = "psl-array-functions"
 message = "Use the Psl array function instead of the PHP counterpart."
-count = 3
+count = 2
 
 [[issues]]
 file = "src/Test/Controller/AdminWebTestCase.php"

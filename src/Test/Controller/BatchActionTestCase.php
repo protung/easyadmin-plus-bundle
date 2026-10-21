@@ -27,20 +27,20 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
 
     /**
      * @param array<string>        $entityIds
-     * @param array<string, mixed> $indexPageQueryParameters
-     * @param string|null          $csrfToken                The CSRF token to submit instead of the one from the index page.
-     * @param array<string, mixed> $server                   Server parameters for the batch action request (e.g. HTTP_REFERER).
+     * @param array<string, mixed> $indexPageUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
+     * @param string|null          $csrfToken              The CSRF token to submit instead of the one from the index page.
+     * @param array<string, mixed> $server                 Server parameters for the batch action request (e.g. HTTP_REFERER).
      */
     protected function submitFormRequest(
         array $entityIds,
-        array $indexPageQueryParameters = [],
+        array $indexPageUrlParameters = [],
         #[SensitiveParameter]
         string|null $csrfToken = null,
         array $server = [],
     ): Crawler {
         $listingPageCrawler = $this->getClient()->request(
             Request::METHOD_GET,
-            $this->prepareAdminUrl($indexPageQueryParameters),
+            $this->prepareAdminUrl($indexPageUrlParameters),
         );
 
         $actionAnchorElement = $listingPageCrawler
@@ -65,20 +65,20 @@ abstract class BatchActionTestCase extends AdminControllerWebTestCase
 
     /**
      * @param array<string>        $entityIds
-     * @param array<string, mixed> $indexPageQueryParameters
-     * @param array<string, mixed> $expectedRedirectUrlParameters
+     * @param array<string, mixed> $indexPageUrlParameters        With pretty URLs, an entry named like a route placeholder fills it.
+     * @param array<string, mixed> $expectedRedirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      * @param string|null          $csrfToken                     The CSRF token to submit instead of the one from the index page.
      * @param array<string, mixed> $server                        Server parameters for the batch action request (e.g. HTTP_REFERER).
      */
     protected function assertBatchActionForEntityIds(
         array $entityIds,
-        array $indexPageQueryParameters = [],
+        array $indexPageUrlParameters = [],
         array $expectedRedirectUrlParameters = [],
         #[SensitiveParameter]
         string|null $csrfToken = null,
         array $server = [],
     ): void {
-        $this->submitFormRequest($entityIds, $indexPageQueryParameters, $csrfToken, $server);
+        $this->submitFormRequest($entityIds, $indexPageUrlParameters, $csrfToken, $server);
 
         // EasyAdmin 4 redirects to the first page after a batch action, EasyAdmin 5 leaves the page out of the URL.
         if (version_compare(EasyAdminBundle::VERSION, '5.0.0', '<')) {

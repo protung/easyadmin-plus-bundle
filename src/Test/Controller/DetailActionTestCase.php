@@ -50,7 +50,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @return array<array-key, mixed> $routeParameters
+     * @return array<array-key, mixed>
      */
     #[Override]
     protected function prepareAdminUrlRouteParameters(): array
@@ -63,27 +63,27 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertRespondsWithStatusCodeForbidden(array $queryParameters = []): void
+    protected function assertRespondsWithStatusCodeForbidden(array $urlParameters = []): void
     {
-        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
-            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $urlParameters)) {
+            $urlParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
-        $this->assertRequestGet($queryParameters, Response::HTTP_FORBIDDEN);
+        $this->assertRequestGet($urlParameters, Response::HTTP_FORBIDDEN);
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertPage(array $queryParameters = []): void
+    protected function assertPage(array $urlParameters = []): void
     {
-        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
-            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $urlParameters)) {
+            $urlParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
-        $this->assertRequestGet($queryParameters);
+        $this->assertRequestGet($urlParameters);
 
         $actual = [
             'page_title' => $this->extractPageTitle(),

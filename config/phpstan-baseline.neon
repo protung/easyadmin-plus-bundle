@@ -577,12 +577,6 @@ parameters:
 			path: ../src/Test/Controller/AdminControllerWebTestCase.php
 
 		-
-			rawMessage: 'Method Protung\EasyAdminPlusBundle\Test\Controller\AdminWebTestCase::generateAdminPrettyUrl() has parameter $crudControllerFqcn with generic interface EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface but does not specify its types: TEntity'
-			identifier: missingType.generics
-			count: 1
-			path: ../src/Test/Controller/AdminWebTestCase.php
-
-		-
 			rawMessage: Unsafe access to private property Protung\EasyAdminPlusBundle\Test\Controller\AdminWebTestCase::$authentication through static::.
 			identifier: staticClassAccess.privateProperty
 			count: 2
