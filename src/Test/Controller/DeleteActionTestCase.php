@@ -29,74 +29,74 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
     protected static string|int $expectedEntityIdUnderTest;
 
     /**
-     * @param array<array-key, mixed> $queryParameters
-     * @param array<array-key, mixed> $redirectQueryParameters
+     * @param array<array-key, mixed> $urlParameters         With pretty URLs, an entry named like a route placeholder fills it.
+     * @param array<array-key, mixed> $redirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
     protected function assertRemovingEntityFromIndexPageAndRedirectingToIndexAction(
-        array $queryParameters = [],
-        array $redirectQueryParameters = [],
+        array $urlParameters = [],
+        array $redirectUrlParameters = [],
     ): void {
-        $indexPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::INDEX]);
-        $crawler                  = $this->assertRequestGet($indexPageQueryParameters);
+        $indexPageUrlParameters = array_merge($urlParameters, [EA::CRUD_ACTION => Action::INDEX]);
+        $crawler                = $this->assertRequestGet($indexPageUrlParameters);
 
         $form = $this->findForm($crawler);
-        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
-            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $urlParameters)) {
+            $urlParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
         $this->getClient()->request(
             Request::METHOD_POST,
-            $this->prepareAdminUrl($queryParameters),
+            $this->prepareAdminUrl($urlParameters),
             $form->getValues(),
         );
 
-        $redirectQueryParameters[EA::CRUD_ACTION] ??= Action::INDEX;
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+        $redirectUrlParameters[EA::CRUD_ACTION] ??= Action::INDEX;
+        $this->assertResponseIsRedirect($redirectUrlParameters);
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
-     * @param array<array-key, mixed> $redirectQueryParameters
+     * @param array<array-key, mixed> $urlParameters         With pretty URLs, an entry named like a route placeholder fills it.
+     * @param array<array-key, mixed> $redirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
     protected function assertRemovingEntityFromDetailPageAndRedirectingToIndexAction(
-        array $queryParameters = [],
-        array $redirectQueryParameters = [],
+        array $urlParameters = [],
+        array $redirectUrlParameters = [],
     ): void {
-        $detailPageQueryParameters = array_merge($queryParameters, [EA::CRUD_ACTION => Action::DETAIL]);
+        $detailPageUrlParameters = array_merge($urlParameters, [EA::CRUD_ACTION => Action::DETAIL]);
         if (! static::usePrettyUrls()) {
             // when using pretty URLs the entity ID is part of the route path, not a query parameter.
-            $detailPageQueryParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
+            $detailPageUrlParameters[EA::ENTITY_ID] ??= $this->entityIdUnderTest();
         }
 
-        $crawler = $this->assertRequestGet($detailPageQueryParameters);
+        $crawler = $this->assertRequestGet($detailPageUrlParameters);
 
         $form = $this->findForm($crawler);
-        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
-            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $urlParameters)) {
+            $urlParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
         $this->getClient()->request(
             Request::METHOD_POST,
-            $this->prepareAdminUrl($queryParameters),
+            $this->prepareAdminUrl($urlParameters),
             $form->getValues(),
         );
 
-        $redirectQueryParameters[EA::CRUD_ACTION] ??= Action::INDEX;
-        $this->assertResponseIsRedirect($redirectQueryParameters);
+        $redirectUrlParameters[EA::CRUD_ACTION] ??= Action::INDEX;
+        $this->assertResponseIsRedirect($redirectUrlParameters);
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertDeleteEntityRespondsWithStatusCodeForbidden(array $queryParameters = []): void
+    protected function assertDeleteEntityRespondsWithStatusCodeForbidden(array $urlParameters = []): void
     {
-        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $queryParameters)) {
-            $queryParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        if (! static::usePrettyUrls() && ! array_key_exists(EA::ENTITY_ID, $urlParameters)) {
+            $urlParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
         }
 
         $this->getClient()->request(
             Request::METHOD_POST,
-            $this->prepareAdminUrl($queryParameters),
+            $this->prepareAdminUrl($urlParameters),
         );
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_FORBIDDEN);
@@ -133,7 +133,7 @@ abstract class DeleteActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @return array<array-key, mixed> $routeParameters
+     * @return array<array-key, mixed>
      */
     #[Override]
     protected function prepareAdminUrlRouteParameters(): array

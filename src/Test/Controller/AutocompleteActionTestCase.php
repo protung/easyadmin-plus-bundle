@@ -37,8 +37,8 @@ abstract class AutocompleteActionTestCase extends CustomActionTestCase
         return Crud::PAGE_INDEX; // This is the page for filters and is the fallback in the entity field configurator.
     }
 
-    /** @param array<array-key, mixed> $queryParameters */
-    protected function assertPage(array $queryParameters = [], string $searchQuery = ''): void
+    /** @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it. */
+    protected function assertPage(array $urlParameters = [], string $searchQuery = ''): void
     {
         $this->assertRequestGet(
             array_merge(
@@ -51,7 +51,7 @@ abstract class AutocompleteActionTestCase extends CustomActionTestCase
                     ],
                     'query' => $searchQuery,
                 ],
-                $queryParameters,
+                $urlParameters,
             ),
         );
 

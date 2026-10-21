@@ -21,7 +21,6 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use function array_key_exists;
 use function array_merge;
 use function is_array;
 use function iterator_to_array;
@@ -52,14 +51,14 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters              With pretty URLs, an entry named like a route placeholder fills it.
      * @param positive-int            $expectedResponseStatusCode
      */
     protected function assertRequestGet(
-        array $queryParameters = [],
+        array $urlParameters = [],
         int $expectedResponseStatusCode = Response::HTTP_OK,
     ): Crawler {
-        $crawler = $this->getClient()->request(Request::METHOD_GET, $this->prepareAdminUrl($queryParameters));
+        $crawler = $this->getClient()->request(Request::METHOD_GET, $this->prepareAdminUrl($urlParameters));
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), $expectedResponseStatusCode);
 
@@ -67,42 +66,56 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * With pretty URLs, the {@see EA::CRUD_CONTROLLER_FQCN} and {@see EA::CRUD_ACTION} entries select the route,
+     * an entry named like a placeholder of that route (in its path or in its host) fills it,
+     * taking precedence over the same placeholder from {@see prepareAdminUrlRouteParameters()},
+     * and all the other entries are added to the query string.
+     * With legacy URLs, all the entries are added to the query string.
+     *
+     * @param array<array-key, mixed> $urlParameters
      */
-    protected function prepareAdminUrl(array $queryParameters, string|null $fragment = null): string
+    protected function prepareAdminUrl(array $urlParameters, string|null $fragment = null): string
     {
         if (! static::usePrettyUrls()) {
-            return $this->prepareLegacyAdminUrl($queryParameters, $fragment);
+            return $this->prepareLegacyAdminUrl($urlParameters, $fragment);
         }
 
-        // when using pretty URLs every action has its own route, so an explicitly requested CRUD action
+        // when using pretty URLs every action has its own route, so an explicitly requested CRUD controller or action
         // selects the route to generate instead of being passed along as a query parameter.
+        $crudControllerFqcn = $this->controllerUnderTest();
+        if (Iter\contains_key($urlParameters, EA::CRUD_CONTROLLER_FQCN)) {
+            $crudControllerFqcn = Type\class_string(CrudControllerInterface::class)->assert($urlParameters[EA::CRUD_CONTROLLER_FQCN]);
+            unset($urlParameters[EA::CRUD_CONTROLLER_FQCN]);
+        }
+
         $actionName = $this->actionName();
-        if (array_key_exists(EA::CRUD_ACTION, $queryParameters)) {
-            $actionName = Type\non_empty_string()->assert($queryParameters[EA::CRUD_ACTION]);
-            unset($queryParameters[EA::CRUD_ACTION]);
+        if (Iter\contains_key($urlParameters, EA::CRUD_ACTION)) {
+            $actionName = Type\non_empty_string()->assert($urlParameters[EA::CRUD_ACTION]);
+            unset($urlParameters[EA::CRUD_ACTION]);
         }
 
         return $this->generateAdminPrettyUrl(
             dashboardFqcn: $this->dashboardControllerFqcn(),
-            crudControllerFqcn: $this->controllerUnderTest(),
+            crudControllerFqcn: $crudControllerFqcn,
             actionName: $actionName,
             routeParameters: $this->prepareAdminUrlRouteParameters(),
-            queryParameters: $queryParameters,
+            urlParameters: $urlParameters,
             fragment: $fragment,
         );
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters
      */
-    protected function prepareLegacyAdminUrl(array $queryParameters, string|null $fragment = null): string
+    protected function prepareLegacyAdminUrl(array $urlParameters, string|null $fragment = null): string
     {
-        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($queryParameters) . ($fragment ?? '');
+        return static::easyAdminRoutePath() . '?' . $this->prepareAdminUrlQueryParameters($urlParameters) . ($fragment ?? '');
     }
 
     /**
-     * @return array<array-key, mixed> $routeParameters
+     * The route parameters of the pretty URLs, for the placeholders the URL parameters given to a helper leave out.
+     *
+     * @return array<array-key, mixed>
      */
     protected function prepareAdminUrlRouteParameters(): array
     {
@@ -252,49 +265,36 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     /**
      * @param class-string<CrudControllerInterface> $crudControllerFqcn
      * @param non-empty-string                      $actionName
-     * @param array<array-key, mixed>               $redirectQueryParameters
+     * @param array<array-key, mixed>               $redirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
     protected function assertResponseRedirectsToCrudController(
         string $crudControllerFqcn,
         string $actionName,
         string|int|null $entityId = null,
-        array $redirectQueryParameters = [],
+        array $redirectUrlParameters = [],
         string|null $fragment = null,
     ): void {
-        if (static::usePrettyUrls()) {
-            $redirectRouteParameters = $this->prepareAdminUrlRouteParameters();
-            if ($entityId !== null) {
-                $redirectRouteParameters[EA::ENTITY_ID] = $entityId;
-            }
+        $redirectUrlParameters[EA::CRUD_CONTROLLER_FQCN] ??= $crudControllerFqcn;
+        $redirectUrlParameters[EA::CRUD_ACTION]          ??= $actionName;
 
-            $expectedRedirectUrl = 'http://' . static::serverHost() . $this->generateAdminPrettyUrl(
-                $this->dashboardControllerFqcn(),
-                $crudControllerFqcn,
-                $actionName,
-                $redirectRouteParameters,
-                $redirectQueryParameters,
-                $fragment,
-            );
-
-            self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
-        } else {
-            $redirectQueryParameters[EA::CRUD_CONTROLLER_FQCN] ??= $crudControllerFqcn;
-            $redirectQueryParameters[EA::CRUD_ACTION]          ??= $actionName;
-
-            if ($entityId !== null) {
-                $redirectQueryParameters[EA::ENTITY_ID] = $entityId;
-            }
-
-            $this->assertResponseIsRedirect($redirectQueryParameters, $fragment);
+        if ($entityId !== null) {
+            $redirectUrlParameters[EA::ENTITY_ID] = $entityId;
         }
+
+        $this->assertResponseIsRedirect($redirectUrlParameters, $fragment);
     }
 
     /**
-     * @param array<array-key, mixed> $redirectQueryParameters
+     * @param array<array-key, mixed> $redirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertResponseIsRedirect(array $redirectQueryParameters, string|null $fragment = null): void
+    protected function assertResponseIsRedirect(array $redirectUrlParameters, string|null $fragment = null): void
     {
-        $expectedRedirectUrl = 'http://' . static::serverHost() . $this->prepareAdminUrl($redirectQueryParameters, $fragment);
+        $expectedRedirectUrl = $this->prepareAdminUrl($redirectUrlParameters, $fragment);
+
+        // the URL of a route on another host than the current one is generated with that host, without the scheme.
+        $expectedRedirectUrl = Str\starts_with($expectedRedirectUrl, '//')
+            ? 'http:' . $expectedRedirectUrl
+            : 'http://' . static::serverHost() . $expectedRedirectUrl;
 
         self::assertResponseRedirectsToUrl($this->getClient()->getResponse(), $expectedRedirectUrl);
     }

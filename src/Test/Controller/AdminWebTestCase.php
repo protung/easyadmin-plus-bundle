@@ -153,20 +153,26 @@ abstract class AdminWebTestCase extends WebTestCase
     }
 
     /**
+     * A URL parameter named like a placeholder of the route (in its path or in its host) fills it, taking precedence over
+     * the same placeholder in $routeParameters. All the other URL parameters are added to the query string.
+     *
      * @param class-string<DashboardControllerInterface>|null $dashboardFqcn
-     * @param class-string<CrudControllerInterface>           $crudControllerFqcn
+     * @param class-string<CrudControllerInterface<*>>        $crudControllerFqcn
      * @param non-empty-string                                $actionName
-     * @param array<array-key, mixed>                         $routeParameters
-     * @param array<array-key, mixed>                         $queryParameters
+     * @param array<array-key, mixed>                         $routeParameters    Only the ones the route uses fill its placeholders.
+     * @param array<array-key, mixed>                         $urlParameters
      */
     protected function generateAdminPrettyUrl(
         string|null $dashboardFqcn,
         string $crudControllerFqcn,
         string $actionName,
         array $routeParameters = [],
-        array $queryParameters = [],
+        array $urlParameters = [],
         string|null $fragment = null,
     ): string {
+        // EasyAdmin caches the names of its routes while the router loads them, which has not happened yet with a cold cache.
+        $routes = $this->getContainerService(RouterInterface::class, 'router')->getRouteCollection();
+
         $routeName = Type\non_empty_string()->assert(
             $this->getContainerService(AdminRouteGenerator::class)->findRouteName(
                 dashboardFqcn: $dashboardFqcn,
@@ -175,42 +181,23 @@ abstract class AdminWebTestCase extends WebTestCase
             ),
         );
 
-        $path = $this->getContainerService(UrlGeneratorInterface::class)->generate(
-            $routeName,
-            $this->filterRouteParameters($routeName, $routeParameters),
+        // both the path and the host of a route can define placeholders and both are mandatory when generating it.
+        $routeVariables = Type\vec(Type\string())->coerce(
+            Type\instance_of(Route::class)->assert($routes->get($routeName))->compile()->getVariables(),
         );
 
-        $queryString = $this->prepareAdminUrlQueryParameters($queryParameters);
+        // the same route parameters are prepared for every action, but each action route defines its own placeholders,
+        // so keep only the ones the route actually uses, as the generator would append the others as stray query parameters.
+        $placeholderParameters = Dict\select_keys(Dict\merge($routeParameters, $urlParameters), $routeVariables);
+
+        $path = $this->getContainerService(UrlGeneratorInterface::class)->generate($routeName, $placeholderParameters);
+
+        $queryString = $this->prepareAdminUrlQueryParameters(Dict\diff_by_key($urlParameters, $placeholderParameters));
         if ($queryString !== '') {
             $path .= '?' . $queryString;
         }
 
         return $path . ($fragment ?? '');
-    }
-
-    /**
-     * Route parameters that are not placeholders of the route are appended to the generated URL as query parameters.
-     * The same route parameters are prepared for every action, but each action route defines its own placeholders,
-     * so keep only the ones the route actually uses to avoid generating stray query parameters.
-     *
-     * @param non-empty-string        $routeName
-     * @param array<array-key, mixed> $routeParameters
-     *
-     * @return array<array-key, mixed>
-     */
-    private function filterRouteParameters(string $routeName, array $routeParameters): array
-    {
-        $route = Type\instance_of(Route::class)->assert(
-            $this->getContainerService(RouterInterface::class, 'router')->getRouteCollection()->get($routeName),
-        );
-
-        // both the path and the host of a route can define placeholders and both are mandatory when generating it.
-        $routeVariables = $route->compile()->getVariables();
-
-        return Dict\filter_keys(
-            $routeParameters,
-            static fn (string|int $parameterName): bool => Iter\contains($routeVariables, $parameterName),
-        );
     }
 
     /**

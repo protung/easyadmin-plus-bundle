@@ -20,20 +20,20 @@ abstract class BatchDeleteActionTestCase extends BatchActionTestCase
 {
     /**
      * @param array<string|int>       $entityIds
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertBatchDeleteRespondsWithStatusCodeForbidden(array $entityIds, array $queryParameters = []): void
+    protected function assertBatchDeleteRespondsWithStatusCodeForbidden(array $entityIds, array $urlParameters = []): void
     {
         if (static::usePrettyUrls()) {
             // when using pretty URLs the batch action has its own route, while in legacy mode
             // it is submitted to the index URL and dispatched from the request payload.
-            $queryParameters[EA::CRUD_ACTION] ??= Action::BATCH_DELETE;
+            $urlParameters[EA::CRUD_ACTION] ??= Action::BATCH_DELETE;
         }
 
         $this->getClient()
             ->request(
                 Request::METHOD_POST,
-                $this->prepareAdminUrl($queryParameters),
+                $this->prepareAdminUrl($urlParameters),
                 [
                     EA::BATCH_ACTION_NAME => $this->batchActionName(),
                     EA::ENTITY_FQCN => $this->controllerUnderTest()::getEntityFqcn(),

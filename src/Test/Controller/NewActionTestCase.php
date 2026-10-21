@@ -31,11 +31,11 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     }
 
     /**
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
-    protected function assertShowingEntityDefaultData(array $queryParameters = []): void
+    protected function assertShowingEntityDefaultData(array $urlParameters = []): void
     {
-        $this->assertRequestGet($queryParameters);
+        $this->assertRequestGet($urlParameters);
 
         $actual = [
             'page_title' => $this->extractPageTitle(),
@@ -49,71 +49,71 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
-     * @param array<array-key, mixed> $queryParameters
-     * @param array<array-key, mixed> $redirectQueryParameters
+     * @param array<array-key, mixed> $urlParameters         With pretty URLs, an entry named like a route placeholder fills it.
+     * @param array<array-key, mixed> $redirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
     protected function assertSavingEntityAndRedirectingToIndexAction(
         array $data,
         array $files = [],
-        array $queryParameters = [],
-        array $redirectQueryParameters = [],
+        array $urlParameters = [],
+        array $redirectUrlParameters = [],
     ): void {
-        $this->submitFormRequest($data, $files, $queryParameters);
+        $this->submitFormRequest($data, $files, $urlParameters);
 
         if (static::usePrettyUrls()) {
             $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::INDEX,
                 null,
-                $redirectQueryParameters,
+                $redirectUrlParameters,
             );
         } else {
-            $redirectQueryParameters[EA::CRUD_ACTION] = Action::INDEX;
+            $redirectUrlParameters[EA::CRUD_ACTION] = Action::INDEX;
 
-            $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectUrlParameters);
         }
     }
 
     /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
-     * @param array<array-key, mixed> $queryParameters
-     * @param array<array-key, mixed> $redirectQueryParameters
+     * @param array<array-key, mixed> $urlParameters         With pretty URLs, an entry named like a route placeholder fills it.
+     * @param array<array-key, mixed> $redirectUrlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
     protected function assertSavingEntityAndRedirectingToDetailAction(
         array $data,
         array $files = [],
-        array $queryParameters = [],
-        array $redirectQueryParameters = [],
+        array $urlParameters = [],
+        array $redirectUrlParameters = [],
     ): void {
-        $this->submitFormRequest($data, $files, $queryParameters);
+        $this->submitFormRequest($data, $files, $urlParameters);
 
         if (static::usePrettyUrls()) {
             $this->assertResponseRedirectsToCrudController(
                 $this->controllerUnderTest(),
                 Action::DETAIL,
                 $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString(),
-                $redirectQueryParameters,
+                $redirectUrlParameters,
             );
         } else {
-            $redirectQueryParameters[EA::CRUD_ACTION] = Action::DETAIL;
-            $redirectQueryParameters[EA::ENTITY_ID]   = $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString();
+            $redirectUrlParameters[EA::CRUD_ACTION] = Action::DETAIL;
+            $redirectUrlParameters[EA::ENTITY_ID]   = $this->getAdminContextFromLastRequest()->getEntity()->getPrimaryKeyValueAsString();
 
-            $this->assertResponseIsRedirect($redirectQueryParameters);
+            $this->assertResponseIsRedirect($redirectUrlParameters);
         }
     }
 
     /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      */
     protected function assertSubmittingFormAndShowingValidationErrors(
         array $data,
         array $files = [],
-        array $queryParameters = [],
+        array $urlParameters = [],
     ): void {
-        $crawler = $this->submitFormRequest($data, $files, $queryParameters);
+        $crawler = $this->submitFormRequest($data, $files, $urlParameters);
 
         self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_UNPROCESSABLE_ENTITY);
 
@@ -150,16 +150,16 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
     /**
      * @param array<array-key, mixed> $data
      * @param array<array-key, mixed> $files
-     * @param array<array-key, mixed> $queryParameters
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
      * @param Action::SAVE_*          $submitButton
      */
     protected function submitFormRequest(
         array $data,
         array $files = [],
-        array $queryParameters = [],
+        array $urlParameters = [],
         string $submitButton = Action::SAVE_AND_RETURN,
     ): Crawler {
-        $crawler = $this->assertRequestGet($queryParameters);
+        $crawler = $this->assertRequestGet($urlParameters);
 
         $form     = $this->findForm($crawler);
         $formName = $form->getFormNode()->getAttribute('name');
@@ -176,7 +176,7 @@ abstract class NewActionTestCase extends AdminControllerWebTestCase
 
         return $this->getClient()->request(
             Request::METHOD_POST,
-            $this->prepareAdminUrl($queryParameters),
+            $this->prepareAdminUrl($urlParameters),
             $values,
             $files,
         );

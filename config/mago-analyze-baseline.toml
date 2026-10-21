@@ -80,6 +80,30 @@ count = 14
 
 [[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `dispatch()` on a non-object type (`mixed`).'
+count = 8
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `getManagerForClass()` on a non-object type (`mixed`).'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `processEntityActions()` on a non-object type (`mixed`).'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `processFields()` on a non-object type (`mixed`).'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
 code = 'possible-method-access-on-null'
 message = 'Attempting to call a method on `null`.'
 count = 6
@@ -419,9 +443,3 @@ file = 'src/Test/Controller/NewActionTestCase.php'
 code = 'mixed-assignment'
 message = 'Assigning `mixed` type to a variable may lead to unexpected behavior.'
 count = 2
-
-[[issues]]
-file = 'tests/Test/TestApplication/TestKernel.php'
-code = 'unused-parameter'
-message = 'Parameter `$routes` is never used.'
-count = 1

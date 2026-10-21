@@ -25,6 +25,11 @@ final class TestKernel extends SymfonyKernel
 {
     use MicroKernelTrait;
 
+    /**
+     * The environment in which the admin of each tenant is served from its own subdomain.
+     */
+    public const string ENVIRONMENT_TENANT = 'test_tenant';
+
     #[Override]
     public function registerBundles(): Generator
     {
@@ -65,6 +70,11 @@ final class TestKernel extends SymfonyKernel
 
     public function configureRoutes(RoutingConfigurator $routes): void
     {
+        $adminRoutes = $routes->import('.', 'easyadmin.routes');
+
+        if ($this->getEnvironment() === self::ENVIRONMENT_TENANT) {
+            $adminRoutes->host('{tenant}.localhost');
+        }
     }
 
     public function configureContainer(ContainerConfigurator $container): void
@@ -72,7 +82,8 @@ final class TestKernel extends SymfonyKernel
         $container->services()
             ->defaults()
             ->autowire()
-            ->autoconfigure();
+            ->autoconfigure()
+            ->load(__NAMESPACE__ . '\\Controller\\', __DIR__ . '/Controller');
         $container->parameters()->set('locale', 'en');
 
         $container->extension(
@@ -100,6 +111,14 @@ final class TestKernel extends SymfonyKernel
                 'orm' => [
                     'naming_strategy' => 'doctrine.orm.naming_strategy.underscore_number_aware',
                     'auto_mapping' => true,
+                    'mappings' => [
+                        'TestApplication' => [
+                            'type' => 'attribute',
+                            'is_bundle' => false,
+                            'dir' => '%kernel.project_dir%/Entity',
+                            'prefix' => __NAMESPACE__ . '\\Entity',
+                        ],
+                    ],
                 ],
             ],
         );
@@ -112,9 +131,10 @@ final class TestKernel extends SymfonyKernel
                     'test_users' => [
                         'memory' => [
                             'users' => [
-                                'admin' => [
+                                // the user the admin test cases log in as by default.
+                                'admin-test' => [
                                     // @mago-expect lint:no-literal-password The password of the in-memory test user.
-                                    'password' => '1234',
+                                    'password' => 'admin-test',
                                     'roles' => ['ROLE_ADMIN'],
                                 ],
                             ],
@@ -122,7 +142,8 @@ final class TestKernel extends SymfonyKernel
                     ],
                 ],
                 'firewalls' => [
-                    'main' => [
+                    // the firewall the admin test cases log in to by default.
+                    'easyadmin' => [
                         'pattern' => '^/',
                         'provider' => 'test_users',
                         'http_basic' => null,
