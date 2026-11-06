@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Tests\Resources\Views\Crud\Field;
 
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Protung\EasyAdminPlusBundle\Field\JsonField;
 use Speicher210\FunctionalTestBundle\Test\Twig\TemplateTestCase;
+
+use function version_compare;
 
 final class JsonFieldTest extends TemplateTestCase
 {
@@ -16,7 +19,12 @@ final class JsonFieldTest extends TemplateTestCase
      */
     public static function dataProviderTestOutput(): Generator
     {
-        yield 'no-data' => [[]];
+        // EasyAdmin 5.8 changed the CSS classes of the badge that the null label renders.
+        if (version_compare(EasyAdminBundle::VERSION, '5.8.0', '<')) {
+            yield 'no-data' => [[]];
+        } else {
+            yield 'no-data-since-easyadmin-5.8' => [[]];
+        }
 
         yield 'with-value' => [
             [

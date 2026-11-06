@@ -7,7 +7,6 @@ namespace Protung\EasyAdminPlusBundle;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Menu\MenuItemMatcherInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityPaginatorInterface;
-use EasyCorp\Bundle\EasyAdminBundle\DependencyInjection\EasyAdminExtension;
 use EasyCorp\Bundle\EasyAdminBundle\Menu\MenuItemMatcher;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\Configurator\CallbackConfigurableConfigurator;
@@ -24,6 +23,14 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 final class ProtungEasyAdminPlusBundle extends AbstractBundle
 {
     /**
+     * EasyAdmin's own constants can't be used in every supported version: the ones of EasyAdminExtension are
+     * deprecated since EasyAdmin 5.7.1, and the ones of EasyAdminBundle that replace them only exist since 5.8.
+     */
+    private const string TAG_FIELD_CONFIGURATOR = 'ea.field_configurator';
+
+    private const string TAG_FILTER_CONFIGURATOR = 'ea.filter_configurator';
+
+    /**
      * @param array<mixed> $config
      */
     #[Override]
@@ -32,7 +39,7 @@ final class ProtungEasyAdminPlusBundle extends AbstractBundle
         $services = $configurator->services();
 
         $services->defaults()->private()->autowire()->autoconfigure();
-        $services->instanceof(FieldConfiguratorInterface::class)->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR);
+        $services->instanceof(FieldConfiguratorInterface::class)->tag(self::TAG_FIELD_CONFIGURATOR);
         $services->instanceof(FormTypeInterface::class)->tag('form.type');
         $services->alias(MenuItemMatcherInterface::class, MenuItemMatcher::class);
 
@@ -44,7 +51,7 @@ final class ProtungEasyAdminPlusBundle extends AbstractBundle
             ->autowire()
             ->autoconfigure()
             ->private()
-            ->tag(EasyAdminExtension::TAG_FILTER_CONFIGURATOR, ['priority' => -1]); // must be after \EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\EntityConfigurator
+            ->tag(self::TAG_FILTER_CONFIGURATOR, ['priority' => -1]); // must be after \EasyCorp\Bundle\EasyAdminBundle\Filter\Configurator\EntityConfigurator
 
         $services->set(EntityPaginator::class)
             ->decorate(EntityPaginatorInterface::class)
@@ -61,18 +68,18 @@ final class ProtungEasyAdminPlusBundle extends AbstractBundle
             ->autowire()
             ->autoconfigure()
             ->private()
-            ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR, ['priority' => 10_000]); // must be before \EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CommonPostConfigurator
+            ->tag(self::TAG_FIELD_CONFIGURATOR, ['priority' => 10_000]); // must be before \EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CommonPostConfigurator
 
         $services->set(CallbackConfigurableConfigurator::class)
             ->autowire()
             ->autoconfigure()
             ->private()
-            ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR, ['priority' => 1]); // by design, we want this to kick in before any of the other field configurators with default priority
+            ->tag(self::TAG_FIELD_CONFIGURATOR, ['priority' => 1]); // by design, we want this to kick in before any of the other field configurators with default priority
 
         $services->set(CallbackConfigurableConfiguratorAfterCommonPostConfigurator::class)
             ->autowire()
             ->autoconfigure()
             ->private()
-            ->tag(EasyAdminExtension::TAG_FIELD_CONFIGURATOR, ['priority' => -10_000]); // must be after \EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CommonPreConfigurator
+            ->tag(self::TAG_FIELD_CONFIGURATOR, ['priority' => -10_000]); // must be after \EasyCorp\Bundle\EasyAdminBundle\Field\Configurator\CommonPreConfigurator
     }
 }
