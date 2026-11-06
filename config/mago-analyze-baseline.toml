@@ -75,8 +75,26 @@ count = 1
 [[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
 code = 'mixed-method-access'
-message = 'Attempting to access a method on a non-object type (`mixed`).'
-count = 14
+message = 'Attempting to call method `dispatch()` on a non-object type (`mixed`).'
+count = 8
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `getManagerForClass()` on a non-object type (`mixed`).'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `processEntityActions()` on a non-object type (`mixed`).'
+count = 2
+
+[[issues]]
+file = 'src/Controller/BaseCrudDtoController.php'
+code = 'mixed-method-access'
+message = 'Attempting to call method `processFields()` on a non-object type (`mixed`).'
+count = 2
 
 [[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
