@@ -235,6 +235,25 @@ abstract class AdminControllerWebTestCase extends AdminWebTestCase
     }
 
     /**
+     * Extracts the name and the flag of the first country in the value of a country field.
+     *
+     * @return array{name: string, flag: string}
+     */
+    protected function extractCountry(Crawler $countryValue): array
+    {
+        // Since EasyAdmin 5.10, the name next to the flag has an element of its own.
+        $name = $countryValue->filter('.country-flag-name');
+        if ($name->count() === 0) {
+            $name = $countryValue->filter('span');
+        }
+
+        return [
+            'name' => $name->innerText(),
+            'flag' => $countryValue->filter('span svg.country-flag title')->innerText(),
+        ];
+    }
+
+    /**
      * @return array<string, array<mixed>>
      */
     protected function mapActions(Crawler $actionsCrawler): array
