@@ -194,10 +194,7 @@ abstract class DetailActionTestCase extends AdminControllerWebTestCase
     protected function extractFieldValue(Crawler $field): string|array
     {
         if ($field->matches('.field-country')) {
-            return [
-                'name' => $field->filter('div.field-value span')->innerText(),
-                'flag' => $field->filter('div.field-value span svg.country-flag title')->innerText(),
-            ];
+            return $this->extractCountry($field->filter('div.field-value'));
         }
 
         return $field->filter('div.field-value')->text(normalizeWhitespace: true);

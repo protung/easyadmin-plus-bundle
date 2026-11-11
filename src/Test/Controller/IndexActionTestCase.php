@@ -143,10 +143,7 @@ abstract class IndexActionTestCase extends AdminControllerWebTestCase
         }
 
         if ($cell->matches('.field-country')) {
-            return [
-                'name' => $cell->filter('span')->innerText(),
-                'flag' => $cell->filter('span svg.country-flag title')->innerText(),
-            ];
+            return $this->extractCountry($cell);
         }
 
         return $this->extractDataFromElement($cell);
