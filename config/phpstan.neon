@@ -21,6 +21,12 @@ parameters:
             identifier: missingType.generics
             path: ../src/Action/ConfirmationModalActionsExtension.php
             count: 2
+        # askConfirmation() only takes a closure since EasyAdmin 5.10, so its closures are reported before
+        -
+            message: '#^Parameter \#1 \$confirmation of method EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Action::askConfirmation\(\) expects bool\|string\|Symfony\\Contracts\\Translation\\TranslatableInterface, Closure given\.$#'
+            identifier: argument.type
+            path: ../tests/Test/TestApplication/Controller/ConfirmationModalCrudController.php
+            count: 2
         # BaseCrudDtoController::handleFormRequest() is a byte-identical copy of EasyAdmin's, so it keeps EasyAdmin's
         # untyped form and nested access to the posted data
         -

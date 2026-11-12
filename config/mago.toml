@@ -49,4 +49,6 @@ ignore = [
     { code = "incompatible-return-type", in = ["tests/Controller/BaseCrudControllerTest.php"] }, # 1 error on Symfony 6.4
     # Symfony 6.4 types the return of Crawler::each() as array, 7.4 and later as list<R>
     { code = "invalid-return-statement", in = ["src/Test/Controller/DashboardControllerTestCase.php"] }, # 2 errors on Symfony 6.4
+    # askConfirmation() only takes a closure since EasyAdmin 5.10, so its closures are reported before
+    { code = "possibly-invalid-argument", in = ["tests/Test/TestApplication/Controller/ConfirmationModalCrudController.php"] }, # 2 errors before EasyAdmin 5.10
 ]
