@@ -13,9 +13,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Override;
+use Protung\EasyAdminPlusBundle\Action\ActionsWalker;
 use Psl\Dict;
-use Psl\Iter;
-use Psl\Type;
 use Psl\Vec;
 use RuntimeException;
 
@@ -85,11 +84,7 @@ abstract class BaseCrudController extends AbstractCrudController
      */
     final protected function applyToAllActions(Actions $actions, callable $apply): Actions
     {
-        foreach (Type\mixed_dict()->coerce($actions->getAsDto(null)->getActions()) as $pageActions) {
-            Iter\apply($pageActions, $apply);
-        }
-
-        return $actions;
+        return ActionsWalker::applyToAllActions($actions, $apply);
     }
 
     /**

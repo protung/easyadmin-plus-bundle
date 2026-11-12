@@ -13,18 +13,6 @@ parameters:
 			path: ../src/Controller/BaseController.php
 
 		-
-			rawMessage: 'Parameter #1 $iterable of function Psl\Iter\apply expects iterable, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: ../src/Controller/BaseCrudController.php
-
-		-
-			rawMessage: 'Parameter #2 $function of function Psl\Iter\apply expects Closure(mixed): mixed, callable(EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto|EasyCorp\Bundle\EasyAdminBundle\Dto\ActionGroupDto): void given.'
-			identifier: argument.type
-			count: 1
-			path: ../src/Controller/BaseCrudController.php
-
-		-
 			rawMessage: 'Return type (array<string|Symfony\Contracts\Service\Attribute\SubscribedService>) of method Protung\EasyAdminPlusBundle\Controller\BaseCrudController::getSubscribedServices() should be covariant with return type (array<string>) of method EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController<TEntity of object>::getSubscribedServices()'
 			identifier: method.childReturnType
 			count: 1
