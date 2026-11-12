@@ -54,7 +54,7 @@
   "require-dev": {
     "carthage-software/mago": "^1.59.0",
     "doctrine/coding-standard": "^14.0.0",
-    "ergebnis/composer-normalize": "^2.56.0",
+    "ergebnis/composer-normalize": "^2.56.1",
     "php-standard-library/phpstan-extension": "^2.1.0",
     "phpstan/phpstan": "^2.3.5",
     "phpstan/phpstan-deprecation-rules": "^2.0.5",
