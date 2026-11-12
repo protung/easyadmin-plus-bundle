@@ -41,6 +41,16 @@ Action::new('close')
 
 A label for the confirmation button can still be passed as `askConfirmation()`'s second argument. Before EasyAdmin 5.7, and for the delete action, the title and the body are shown joined as a single message. Batch actions keep EasyAdmin's batch confirmation.
 
+Since EasyAdmin 5.10, `askConfirmation()` also takes a closure, which EasyAdmin calls for each entity. It can return a `ConfirmationModal` too, which is shown the same way:
+
+```php
+Action::new('close')
+    ->linkToCrudAction('close')
+    ->askConfirmation(static fn (Order $order): ConfirmationModal|false => $order->isOpen()
+        ? new ConfirmationModal(t('close.confirmation_modal.title'), t('close.confirmation_modal.content'))
+        : false);
+```
+
 ## License
 
 This package is licensed using the MIT License.

@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Security\Core\User\InMemoryUser;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 use function dirname;
 
@@ -37,6 +38,7 @@ final class TestKernel extends SymfonyKernel
         yield new SecurityBundle();
         yield new TwigBundle();
         yield new TwigComponentBundle();
+        yield new TwigExtraBundle();
         yield new DoctrineBundle();
         yield new EasyAdminBundle();
         yield new ProtungEasyAdminPlusBundle();

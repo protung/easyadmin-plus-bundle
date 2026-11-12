@@ -11,6 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * Passed to `askConfirmation()`, it gives an action's modal a title and a body, like the delete confirmation's.
  * {@see ConfirmationModalActionsExtension} sends the two to EasyAdmin, which only takes a single message.
+ * {@see ConfirmationModalClosureSubscriber} does the same for one returned by a closure passed instead (EasyAdmin 5.10).
  */
 final readonly class ConfirmationModal implements TranslatableInterface
 {
