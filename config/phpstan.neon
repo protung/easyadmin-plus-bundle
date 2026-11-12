@@ -21,6 +21,18 @@ parameters:
             identifier: missingType.generics
             path: ../src/Action/ConfirmationModalActionsExtension.php
             count: 2
+        # BaseCrudDtoController::handleFormRequest() is a byte-identical copy of EasyAdmin's, so it keeps EasyAdmin's
+        # untyped form and nested access to the posted data
+        -
+            message: '#^Method Protung\\EasyAdminPlusBundle\\Controller\\BaseCrudDtoController::handleFormRequest\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types: TData$#'
+            identifier: missingType.generics
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
+        -
+            message: "#^Cannot access offset 'btn' on mixed\\.$#"
+            identifier: offsetAccess.nonOffsetAccessible
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
 
 includes:
     - phpstan-baseline.neon

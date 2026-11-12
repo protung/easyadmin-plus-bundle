@@ -32,6 +32,8 @@ use Psl\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -97,6 +99,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
     /**
      * This method should be identical to the parent edit() method except that:
      *  - it uses updateEntityFromDto($originalEntity, $dto) to update the entity from the DTO.
+     *  - it handles the form request like EasyAdmin 5.10 does, on every EasyAdmin version (see handleFormRequest()).
      */
     #[Override]
     public function edit(AdminContext $context): KeyValueStore|Response
@@ -158,7 +161,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
         }
 
         $editForm = $this->createEditForm($context->getEntity(), $context->getCrud()->getEditFormOptions(), $context);
-        $editForm->handleRequest($context->getRequest());
+        $this->handleFormRequest($editForm, $context->getRequest());
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->processUploadedFiles($editForm);
 
@@ -197,6 +200,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
      * This method should be identical to the parent new() method except that:
      *  - it uses the createDto() method to create a new instance of the DTO instead of the entity.
      *  - it uses createEntityFromDto($dto) to convert the DTO to the entity before persisting it.
+     *  - it handles the form request like EasyAdmin 5.10 does, on every EasyAdmin version (see handleFormRequest()).
      *
      * In some scenarios, the entityId query param will get left in the generated urls when :
      *  - you click around the admin
@@ -228,7 +232,7 @@ abstract class BaseCrudDtoController extends BaseCrudController
         $this->container->get(ActionFactory::class)->processEntityActions($context->getEntity(), $context->getCrud()->getActionsConfig());
 
         $newForm = $this->createNewForm($context->getEntity(), $context->getCrud()->getNewFormOptions(), $context);
-        $newForm->handleRequest($context->getRequest());
+        $this->handleFormRequest($newForm, $context->getRequest());
 
         /** @var TDto $entityInstance */
         $entityInstance = $newForm->getData();
@@ -344,4 +348,29 @@ abstract class BaseCrudDtoController extends BaseCrudController
     {
         return $entityInstance instanceof Generator;
     }
+
+    // phpcs:disable
+    /**
+     * A byte-identical copy of the private AbstractCrudController::handleFormRequest() of EasyAdmin 5.10, so copy it
+     * again when EasyAdmin changes it. It is used on every EasyAdmin version: the buttons that save a form have the
+     * same name in all of them. phpstan.neon ignores the errors of its EasyAdmin code.
+     */
+    private function handleFormRequest(FormInterface $form, Request $request): void
+    {
+        $form->handleRequest($request);
+
+        // browsers don't send disabled fields nor unchecked checkboxes, so a form without a CSRF token
+        // and only those fields posts nothing under its name and Symfony doesn't consider it submitted;
+        // the button that saves the form is outside of it, so use it to detect the submission (see #7819)
+        if ($form->isSubmitted() || $request->getMethod() !== $form->getConfig()->getMethod()) {
+            return;
+        }
+
+        if (null === ($request->request->all()['ea']['newForm']['btn'] ?? null)) {
+            return;
+        }
+
+        $form->submit([], 'PATCH' !== $request->getMethod());
+    }
+    // phpcs:enable
 }
