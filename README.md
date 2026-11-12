@@ -51,6 +51,10 @@ Action::new('close')
         : false);
 ```
 
+## Applying a callback to all actions
+
+`ActionsWalker::applyToAllActions($actions, $apply)` calls `$apply` with every action of every page, and passes an action group as a whole, without opening it. Outside a controller, an `ActionsExtensionInterface` for example can use it. In a controller extending `BaseCrudController`, it is `$this->applyToAllActions()`.
+
 ## License
 
 This package is licensed using the MIT License.
