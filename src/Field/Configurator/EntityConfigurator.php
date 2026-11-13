@@ -16,7 +16,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Override;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator\EntityMetadata;
@@ -35,6 +37,7 @@ use Twig\Environment;
 use function is_bool;
 use function is_callable;
 use function Psl\invariant;
+use function version_compare;
 
 final readonly class EntityConfigurator implements FieldConfiguratorInterface
 {
@@ -46,6 +49,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         private Environment $twig,
         private PropertyAccessorInterface $propertyAccessor,
         private EntityManagerInterface $entityManager,
+        private AdminRouteGenerator $adminRouteGenerator,
     ) {
     }
 
@@ -78,10 +82,17 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         invariant(Class\exists($targetEntityFqcn), 'Could not determine target entity for set CRUD controller.');
         invariant(Class\exists($targetCrudControllerFqcn), 'Could not determine target CRUD controller.');
 
+        $currentDashboardControllerFqcn = Type\class_string(DashboardControllerInterface::class)->coerce($context->getDashboardControllerFqcn());
+        $linkDashboardControllerFqcn    = $this->linkDashboardControllerFqcn($context, $currentDashboardControllerFqcn, $targetCrudControllerFqcn);
+        if ($linkDashboardControllerFqcn === null) {
+            // a link through a dashboard without a route for the detail page would point to the dashboard itself
+            $field->setCustomOption(EntityField::OPTION_LINK_TO_ENTITY, false);
+        }
+
         $entityMetadata = new EntityMetadata(
             $entityDto->getPrimaryKeyValue(),
             $sourceCrudControllerFqcn,
-            Type\class_string(DashboardControllerInterface::class)->coerce($context->getDashboardControllerFqcn()),
+            $linkDashboardControllerFqcn ?? $currentDashboardControllerFqcn,
             $targetCrudControllerFqcn,
             $targetEntityFqcn,
             $field->getValue(),
@@ -260,6 +271,31 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
             ->setAction(Action::DETAIL)
             ->setEntityId($entityId)
             ->generateUrl();
+    }
+
+    /**
+     * @param AdminContext<object>                       $context
+     * @param class-string<DashboardControllerInterface> $currentDashboardControllerFqcn
+     * @param class-string<CrudControllerInterface<*>>   $targetCrudControllerFqcn
+     *
+     * @return class-string<DashboardControllerInterface>|null The current dashboard when it has a route for the detail page of
+     *                                                         the target, otherwise the first dashboard that has one, if any.
+     */
+    private function linkDashboardControllerFqcn(AdminContext $context, string $currentDashboardControllerFqcn, string $targetCrudControllerFqcn): string|null
+    {
+        // EasyAdmin 5 only has pretty URLs, EasyAdmin 4 has them when the application imports its routes.
+        // Without them, every dashboard links to every CRUD controller.
+        if (version_compare(EasyAdminBundle::VERSION, '5.0.0', '<') && ! $this->adminRouteGenerator->usesPrettyUrls()) {
+            return $currentDashboardControllerFqcn;
+        }
+
+        foreach ([$currentDashboardControllerFqcn, ...$context->getAdminControllers()->getAllDashboards()] as $dashboardControllerFqcn) {
+            if ($this->adminRouteGenerator->findRouteName($dashboardControllerFqcn, $targetCrudControllerFqcn, Action::DETAIL) !== null) {
+                return Type\class_string(DashboardControllerInterface::class)->coerce($dashboardControllerFqcn);
+            }
+        }
+
+        return null;
     }
 
     private function configureOnChange(FieldDto $field, EntityMetadata $entityMetadata): void

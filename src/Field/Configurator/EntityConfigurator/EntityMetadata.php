@@ -64,6 +64,9 @@ final class EntityMetadata
     }
 
     /**
+     * The dashboard that the link to the target goes through: the current one when it has a route for the detail page of the target CRUD controller,
+     * otherwise the first dashboard that has one. When none has, the current one.
+     *
      * @return class-string<DashboardControllerInterface>
      */
     public function targetDashboardControllerFqcn(): string

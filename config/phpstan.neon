@@ -27,6 +27,12 @@ parameters:
             identifier: argument.type
             path: ../tests/Test/TestApplication/Controller/ConfirmationModalCrudController.php
             count: 2
+        # AdminRouteGenerator::usesPrettyUrls() only exists in EasyAdmin 4, EasyAdmin 5 always uses pretty URLs
+        -
+            message: '#^Call to an undefined method EasyCorp\\Bundle\\EasyAdminBundle\\Router\\AdminRouteGenerator::usesPrettyUrls\(\)\.$#'
+            identifier: method.notFound
+            path: ../src/Field/Configurator/EntityConfigurator.php
+            count: 1
         # BaseCrudDtoController::handleFormRequest() is a byte-identical copy of EasyAdmin's, so it keeps EasyAdmin's
         # untyped form and nested access to the posted data
         -
