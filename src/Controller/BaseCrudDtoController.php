@@ -173,8 +173,12 @@ abstract class BaseCrudDtoController extends BaseCrudController
 
             $this->updateEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entityInstance);
 
-            $this->container->get('event_dispatcher')->dispatch(new AfterEntityUpdatedEvent($entityInstance));
+            $event = new AfterEntityUpdatedEvent($entityInstance);
+            $this->container->get('event_dispatcher')->dispatch($event);
             EntityDtoInstanceSetter::setInstance($entityDto, $entityInstance);
+            if ($event->isPropagationStopped()) {
+                return $event->getResponse();
+            }
 
             return $this->getRedirectResponseAfterSave($context, Action::EDIT);
         }
@@ -248,8 +252,12 @@ abstract class BaseCrudDtoController extends BaseCrudController
 
             $this->persistEntity($this->container->get('doctrine')->getManagerForClass($context->getEntity()->getFqcn()), $entityInstance);
 
-            $this->container->get('event_dispatcher')->dispatch(new AfterEntityPersistedEvent($entityInstance));
+            $event = new AfterEntityPersistedEvent($entityInstance);
+            $this->container->get('event_dispatcher')->dispatch($event);
             EntityDtoInstanceSetter::setInstance($context->getEntity(), $entityInstance);
+            if ($event->isPropagationStopped()) {
+                return $event->getResponse();
+            }
 
             return $this->getRedirectResponseAfterSave($context, Action::NEW);
         }
