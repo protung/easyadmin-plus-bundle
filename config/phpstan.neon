@@ -33,6 +33,12 @@ parameters:
             identifier: method.notFound
             path: ../src/Field/Configurator/EntityConfigurator.php
             count: 1
+        # CrudPermissionCheckerInterface only exists since EasyAdmin 5.9, EntityConfigurator links every target before
+        -
+            message: '#^.+ EasyCorp\\Bundle\\EasyAdminBundle\\Contracts\\Security\\CrudPermissionCheckerInterface( as its type)?\.$#'
+            identifier: class.notFound
+            path: ../src/Field/Configurator/EntityConfigurator.php
+            count: 3
         # BaseCrudDtoController::handleFormRequest() is a byte-identical copy of EasyAdmin's, so it keeps EasyAdmin's
         # untyped form and nested access to the posted data
         -
