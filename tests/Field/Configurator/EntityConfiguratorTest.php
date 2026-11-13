@@ -6,6 +6,7 @@ namespace Protung\EasyAdminPlusBundle\Tests\Field\Configurator;
 
 use Doctrine\ORM\Tools\SchemaTool;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Protung\EasyAdminPlusBundle\Field\Configurator\EntityConfigurator;
@@ -14,6 +15,8 @@ use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Controller\ReportLink
 use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Controller\ReportLinkDashboardController;
 use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Entity\Report;
 use Symfony\Component\DomCrawler\Crawler;
+
+use function version_compare;
 
 /**
  * The links of entity fields to the detail page of the linked entity.
@@ -87,6 +90,43 @@ final class EntityConfiguratorTest extends DetailActionTestCase
         $field = $this->renderedField('Unrouted report');
         self::assertSame('1', $this->extractFieldValue($field));
         self::assertCount(0, $field->filter('a'));
+    }
+
+    public function testNoLinkWhenTheUserMayNotOpenTheDetailPageOfTheTarget(): void
+    {
+        self::skipBeforeEasyAdmin59();
+
+        $this->assertRequestGet();
+
+        $field = $this->renderedField('Detail forbidden report');
+        self::assertSame('1', $this->extractFieldValue($field));
+        self::assertCount(0, $field->filter('a'));
+    }
+
+    public function testListLinksEachTargetToItsDetailPage(): void
+    {
+        $this->assertRequestGet();
+
+        $field = $this->renderedField('Reports');
+        self::assertSame(['http://localhost/admin/report/1'], $field->filter('li a')->extract(['href']));
+    }
+
+    public function testListHasNoLinksWhenTheUserMayNotOpenTheDetailPageOfTheTargets(): void
+    {
+        self::skipBeforeEasyAdmin59();
+
+        $this->assertRequestGet();
+
+        $field = $this->renderedField('Detail forbidden reports');
+        self::assertSame(['1'], $field->filter('li')->each(static fn (Crawler $item): string => $item->text(normalizeWhitespace: true)));
+        self::assertCount(0, $field->filter('a'));
+    }
+
+    private static function skipBeforeEasyAdmin59(): void
+    {
+        if (version_compare(EasyAdminBundle::VERSION, '5.9.0', '<')) {
+            self::markTestSkipped('EasyAdmin can only tell whether the user may open the detail page of a target since 5.9.');
+        }
     }
 
     private function renderedField(string $label): Crawler

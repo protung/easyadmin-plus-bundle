@@ -53,4 +53,7 @@ ignore = [
     { code = "possibly-invalid-argument", in = ["tests/Test/TestApplication/Controller/ConfirmationModalCrudController.php"] }, # 2 errors before EasyAdmin 5.10
     # AdminRouteGenerator::usesPrettyUrls() only exists in EasyAdmin 4, EasyAdmin 5 always uses pretty URLs
     { code = "non-existent-method", in = ["src/Field/Configurator/EntityConfigurator.php"] }, # 1 error on EasyAdmin 5
+    # CrudPermissionCheckerInterface only exists since EasyAdmin 5.9, EntityConfigurator links every target before
+    { code = "non-existent-class-like", in = ["src/Field/Configurator/EntityConfigurator.php"] }, # 1 error before EasyAdmin 5.9
+    { code = "invalid-method-access", in = ["src/Field/Configurator/EntityConfigurator.php"] }, # 1 error before EasyAdmin 5.9
 ]

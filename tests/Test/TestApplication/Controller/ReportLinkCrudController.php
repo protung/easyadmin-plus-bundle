@@ -10,8 +10,8 @@ use Protung\EasyAdminPlusBundle\Field\EntityField;
 use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Entity\Report;
 
 /**
- * Entity fields that link each report to itself, through a CRUD controller that only the main dashboard has routes for
- * and through one that no dashboard has routes for.
+ * Entity fields that link each report to itself, through a CRUD controller that only the main dashboard has routes for,
+ * through one that no dashboard has routes for and through one whose detail page the user may not open.
  *
  * @template-extends AbstractCrudController<Report>
  */
@@ -34,6 +34,23 @@ final class ReportLinkCrudController extends AbstractCrudController
 
         yield EntityField::new('id', 'Unrouted report')
             ->setCrudController(UnroutedReportCrudController::class)
+            ->setEntityDisplayField('id');
+
+        yield EntityField::new('id', 'Detail forbidden report')
+            ->setCrudController(DetailForbiddenReportCrudController::class)
+            ->setEntityDisplayField('id');
+
+        // as a to-many association the reports whose ID is the ID of this one, so the report itself
+        yield EntityField::new('id', 'Reports')
+            ->setCrudController(ReportCrudController::class)
+            ->setAssociationToMany()
+            ->renderAsList()
+            ->setEntityDisplayField('id');
+
+        yield EntityField::new('id', 'Detail forbidden reports')
+            ->setCrudController(DetailForbiddenReportCrudController::class)
+            ->setAssociationToMany()
+            ->renderAsList()
             ->setEntityDisplayField('id');
     }
 }

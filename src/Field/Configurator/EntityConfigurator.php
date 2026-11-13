@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\CrudControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Security\CrudPermissionCheckerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
@@ -50,6 +51,8 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         private PropertyAccessorInterface $propertyAccessor,
         private EntityManagerInterface $entityManager,
         private AdminRouteGenerator $adminRouteGenerator,
+        // since EasyAdmin 5.9, before it every link is generated
+        private CrudPermissionCheckerInterface|null $crudPermissionChecker = null,
     ) {
     }
 
@@ -204,6 +207,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
                 $this->generateLinkToAssociatedEntity(
                     $entityMetadata,
                     $targetEntityDto,
+                    $context,
                 ),
             );
         }
@@ -241,6 +245,7 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
                                 $entityMetadata->targetEntityFqcn(),
                                 $this->propertyAccessor->getValue($entity, $targetSingleIdentifierFieldName),
                             ),
+                            $context,
                         );
                     }
 
@@ -257,10 +262,16 @@ final readonly class EntityConfigurator implements FieldConfiguratorInterface
         $field->setFormattedValue($formattedValue);
     }
 
-    private function generateLinkToAssociatedEntity(EntityMetadata $entityMetadata, EntityDto $entityDto): string|null
+    /** @param AdminContext<object> $context */
+    private function generateLinkToAssociatedEntity(EntityMetadata $entityMetadata, EntityDto $entityDto, AdminContext $context): string|null
     {
         $entityId = $entityDto->getPrimaryKeyValue();
         if ($entityId === null) {
+            return null;
+        }
+
+        // no link to a detail page the user may not open, like EasyAdmin's AssociationConfigurator
+        if ($this->crudPermissionChecker?->isGranted($context, $entityMetadata->targetCrudControllerFqcn(), Action::DETAIL, $entityDto) === false) {
             return null;
         }
 
