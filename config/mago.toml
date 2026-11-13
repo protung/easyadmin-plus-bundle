@@ -51,4 +51,6 @@ ignore = [
     { code = "invalid-return-statement", in = ["src/Test/Controller/DashboardControllerTestCase.php"] }, # 2 errors on Symfony 6.4
     # askConfirmation() only takes a closure since EasyAdmin 5.10, so its closures are reported before
     { code = "possibly-invalid-argument", in = ["tests/Test/TestApplication/Controller/ConfirmationModalCrudController.php"] }, # 2 errors before EasyAdmin 5.10
+    # AdminRouteGenerator::usesPrettyUrls() only exists in EasyAdmin 4, EasyAdmin 5 always uses pretty URLs
+    { code = "non-existent-method", in = ["src/Field/Configurator/EntityConfigurator.php"] }, # 1 error on EasyAdmin 5
 ]
