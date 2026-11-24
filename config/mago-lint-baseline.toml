@@ -1,12 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "src/Controller/BaseCrudDtoController.php"
-code = "psl-string-functions"
-message = "Use the Psl string function instead of the PHP counterpart."
-count = 1
-
-[[issues]]
 file = "src/Menu/ChainMenuItemMatcher.php"
 code = "psl-array-functions"
 message = "Use the Psl array function instead of the PHP counterpart."

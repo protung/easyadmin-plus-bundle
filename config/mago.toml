@@ -31,8 +31,9 @@ trait-name = { enabled = false }
 yoda-conditions = { enabled = false }
 assertion-style = { style = "self" }
 psl-datetime = { enabled = false }
-# BaseCrudDtoController copies EasyAdmin's edit(), which silences its deprecation
+# BaseCrudDtoController copies EasyAdmin's edit() and new(), which silence a deprecation and use PHP's string functions
 no-error-control-operator = { exclude = ["src/Controller/BaseCrudDtoController.php"] }
+psl-string-functions = { exclude = ["src/Controller/BaseCrudDtoController.php"] }
 
 [analyzer]
 plugins = ["psl"]
@@ -48,7 +49,7 @@ ignore = [
     # Symfony 6.4 names the parameters of AbstractBundle::loadExtension() $container and $builder, 7.4 and later $configurator and $container
     { code = "incompatible-parameter-name", in = ["src/ProtungEasyAdminPlusBundle.php"] }, # 2 errors on Symfony 6.4
     # Symfony 6.4 types the return of getSubscribedServices() as array<string>, so every class inheriting it from the FlashMessages trait is reported
-    { code = "incompatible-return-type", in = ["tests/Controller/BaseCrudControllerTest.php", "tests/Test/TestApplication/Controller/NoteCrudController.php", "tests/Test/TestApplication/Controller/SaveForbiddenNoteCrudController.php", "tests/Test/TestApplication/Controller/SwitchNoteCrudController.php"] }, # 4 errors on Symfony 6.4
+    { code = "incompatible-return-type", in = ["tests/Controller/BaseCrudControllerTest.php", "tests/Test/TestApplication/Controller/EmptyFormNoteCrudController.php", "tests/Test/TestApplication/Controller/NoteCrudController.php", "tests/Test/TestApplication/Controller/SaveForbiddenNoteCrudController.php", "tests/Test/TestApplication/Controller/SwitchNoteCrudController.php"] }, # 5 errors on Symfony 6.4
     # Symfony 6.4 types the return of Crawler::each() as array, 7.4 and later as list<R>
     { code = "invalid-return-statement", in = ["src/Test/Controller/DashboardControllerTestCase.php"] }, # 2 errors on Symfony 6.4
     # askConfirmation() only takes a closure since EasyAdmin 5.10, so its closures are reported before
@@ -61,6 +62,8 @@ ignore = [
     # BaseCrudDtoController copies EasyAdmin's edit(), new() and isAnySaveActionGranted(), which don't check for null
     { code = "possible-method-access-on-null", in = ["src/Controller/BaseCrudDtoController.php"] }, # 8 errors
     { code = "possibly-null-operand", in = ["src/Controller/BaseCrudDtoController.php"] }, # 2 errors
+    # BaseCrudDtoController copies EasyAdmin's new(), which narrows the type of $entityFqcn
+    { pattern = "entityFqcn", code = "redundant-docblock-type", in = ["src/Controller/BaseCrudDtoController.php"] }, # 1 error
     # Symfony 6.4 types the query parameters that EasyAdmin's edit() reads as bool|float|int|string|null, 7.4 and later as string|null
     { code = "invalid-operand", in = ["src/Controller/BaseCrudDtoController.php"] }, # 1 error on Symfony 6.4
     { pattern = "isCsrfTokenValid", code = "possibly-invalid-argument", in = ["src/Controller/BaseCrudDtoController.php"] }, # 2 errors on Symfony 6.4

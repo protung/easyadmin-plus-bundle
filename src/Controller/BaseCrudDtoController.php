@@ -226,6 +226,8 @@ abstract class BaseCrudDtoController extends BaseCrudController
      *  - it uses the createDto() method to create a new instance of the DTO instead of the entity.
      *  - it uses createEntityFromDto($dto) to convert the DTO to the entity before persisting it.
      *  - it handles the form request like EasyAdmin 5.10 does, on every EasyAdmin version (see handleFormRequest()).
+     *  - it refuses a form that has no data after submitting it like EasyAdmin 5.8 does, on every EasyAdmin version, naming
+     *    createDto() instead of createEntity().
      *
      * In some scenarios, the entityId query param will get left in the generated urls when :
      *  - you click around the admin
@@ -251,6 +253,8 @@ abstract class BaseCrudDtoController extends BaseCrudController
             throw new InsufficientEntityPermissionException($context);
         }
 
+        /** @var class-string<TEntity> $entityFqcn */
+        $entityFqcn = $context->getEntity()->getFqcn();
         EntityDtoInstanceSetter::setInstance($context->getEntity(), $this->createDto());
         $this->container->get(FieldFactory::class)->processFields($context->getEntity(), new FieldCollection($this->configureFields(Crud::PAGE_NEW)), Crud::PAGE_NEW);
         $context->getCrud()->setFieldAssets($this->getFieldAssets($context->getEntity()->getFields()));
@@ -259,11 +263,15 @@ abstract class BaseCrudDtoController extends BaseCrudController
         $newForm = $this->createNewForm($context->getEntity(), $context->getCrud()->getNewFormOptions(), $context);
         $this->handleFormRequest($newForm, $context->getRequest());
 
-        /** @var TDto $entityInstance */
+        /** @var TDto|null $entityInstance */
         $entityInstance = $newForm->getData();
         EntityDtoInstanceSetter::setInstance($context->getEntity(), $entityInstance);
 
         if ($newForm->isSubmitted() && $newForm->isValid()) {
+            if (null === $entityInstance) {
+                throw new \LogicException(sprintf('The "new" form of the "%s" entity has no data after submitting it. When "%s::createDto()" returns null, define the "empty_data" option of the form (e.g. with "Crud::setFormOptions()") to create the entity using the submitted values.', $entityFqcn, static::class));
+            }
+
             $this->processUploadedFiles($newForm);
 
             $entityInstance = $this->createEntityFromDto($entityInstance);

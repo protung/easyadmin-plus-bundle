@@ -39,6 +39,12 @@ parameters:
             identifier: class.notFound
             path: ../src/Field/Configurator/EntityConfigurator.php
             count: 3
+        # PHPStan's stubs make Symfony's form interfaces generic, Mago doesn't know them, so the type can't be specified
+        -
+            message: '#^Method Protung\\EasyAdminPlusBundle\\Tests\\Test\\TestApplication\\Controller\\EmptyFormNoteCrudController::createNewForm\(\) return type with generic interface Symfony\\Component\\Form\\FormInterface does not specify its types: TData$#'
+            identifier: missingType.generics
+            path: ../tests/Test/TestApplication/Controller/EmptyFormNoteCrudController.php
+            count: 1
         # BaseCrudDtoController copies EasyAdmin's edit(), new() and isAnySaveActionGranted(), so it keeps EasyAdmin's use of
         # its own internals and of a CRUD that may be null
         -

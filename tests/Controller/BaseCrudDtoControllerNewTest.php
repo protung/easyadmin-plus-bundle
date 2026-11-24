@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace Protung\EasyAdminPlusBundle\Tests\Controller;
 
 use Doctrine\ORM\Tools\SchemaTool;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
+use LogicException;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController;
 use Protung\EasyAdminPlusBundle\Test\Controller\NewActionCrudDtoTestCase;
+use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Controller\EmptyFormNoteCrudController;
 use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Controller\NoteCrudController;
 use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Dto\NoteDto;
 use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Entity\Note;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -71,6 +75,20 @@ final class BaseCrudDtoControllerNewTest extends NewActionCrudDtoTestCase
         self::assertSame('Answered by the listener', $response->getContent());
 
         $this->assertNoteWasCreated();
+    }
+
+    public function testSavingIsRefusedWhenTheFormHasNoData(): void
+    {
+        $this->getClient()->catchExceptions(false);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessageIsOrContains('The "new" form of the "' . Note::class . '" entity has no data after submitting it.');
+
+        $this->getClient()->request(
+            Request::METHOD_POST,
+            $this->prepareAdminUrl([EA::CRUD_CONTROLLER_FQCN => EmptyFormNoteCrudController::class]),
+            ['form' => ['title' => '']],
+        );
     }
 
     private function assertNoteWasCreated(): void
