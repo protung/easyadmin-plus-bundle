@@ -17,7 +17,8 @@ final class EnumFilter
     public static function new(string $property, string $enum, TranslatableInterface|string|false|null $label = null): ChoiceFilter
     {
         return ChoiceFilter::new($property, $label)
-            ->setChoices($enum::cases())
+            // Not setChoices(): since EasyAdmin 5.10.3 it turns enum cases into their values, which EnumType refuses.
+            ->setFormTypeOption('value_type_options.choices', $enum::cases())
             ->setFormTypeOption('value_type', EnumType::class)
             ->setFormTypeOption('value_type_options.class', $enum);
     }
