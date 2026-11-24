@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Controller;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudDtoController;
@@ -15,7 +16,8 @@ use Protung\EasyAdminPlusBundle\Tests\Test\TestApplication\Entity\Note;
  *
  * @template-extends BaseCrudDtoController<Note, NoteDto>
  */
-final class NoteCrudController extends BaseCrudDtoController
+// @mago-expect lint:final-controller Extended by SwitchNoteCrudController.
+class NoteCrudController extends BaseCrudDtoController
 {
     #[Override]
     public static function getEntityFqcn(): string
@@ -29,18 +31,20 @@ final class NoteCrudController extends BaseCrudDtoController
         return NoteDto::class;
     }
 
-    /** @return iterable<TextField> */
+    /** @return iterable<BooleanField|TextField> */
     #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('title');
+        yield BooleanField::new('pinned')->renderAsSwitch();
     }
 
     #[Override]
     public function createEntityFromDto(object $dto): Note
     {
-        $note        = new Note();
-        $note->title = $dto->title ?? '';
+        $note         = new Note();
+        $note->title  = $dto->title ?? '';
+        $note->pinned = $dto->pinned;
 
         return $note;
     }
@@ -48,9 +52,10 @@ final class NoteCrudController extends BaseCrudDtoController
     #[Override]
     public function createDtoFromEntity(object $entity): NoteDto
     {
-        $dto        = new NoteDto();
-        $dto->id    = $entity->id;
-        $dto->title = $entity->title;
+        $dto         = new NoteDto();
+        $dto->id     = $entity->id;
+        $dto->title  = $entity->title;
+        $dto->pinned = $entity->pinned;
 
         return $dto;
     }
@@ -58,6 +63,7 @@ final class NoteCrudController extends BaseCrudDtoController
     #[Override]
     public function updateEntityFromDto(object $entity, object $dto): void
     {
-        $entity->title = $dto->title ?? '';
+        $entity->title  = $dto->title ?? '';
+        $entity->pinned = $dto->pinned;
     }
 }

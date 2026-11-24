@@ -79,21 +79,9 @@ parameters:
 			path: ../src/Controller/BaseCrudDtoController.php
 
 		-
-			rawMessage: Access to internal constant EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField::CSRF_TOKEN_NAME from outside its root namespace EasyCorp.
-			identifier: classConstant.internal
-			count: 1
-			path: ../src/Controller/BaseCrudDtoController.php
-
-		-
 			rawMessage: 'Cannot call method dispatch() on mixed.'
 			identifier: method.nonObject
 			count: 8
-			path: ../src/Controller/BaseCrudDtoController.php
-
-		-
-			rawMessage: 'Cannot call method getActionsConfig() on EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto|null.'
-			identifier: method.nonObject
-			count: 2
 			path: ../src/Controller/BaseCrudDtoController.php
 
 		-

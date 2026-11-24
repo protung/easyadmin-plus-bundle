@@ -39,6 +39,44 @@ parameters:
             identifier: class.notFound
             path: ../src/Field/Configurator/EntityConfigurator.php
             count: 3
+        # BaseCrudDtoController copies EasyAdmin's edit(), new() and isAnySaveActionGranted(), so it keeps EasyAdmin's use of
+        # its own internals and of a CRUD that may be null
+        -
+            message: '#^Access to internal constant EasyCorp\\Bundle\\EasyAdminBundle\\Field\\BooleanField::CSRF_TOKEN_NAME from outside its root namespace EasyCorp\.$#'
+            identifier: classConstant.internal
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 4
+        -
+            message: '#^Cannot call method getActionsConfig\(\) on EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\CrudDto\|null\.$#'
+            identifier: method.nonObject
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 3
+        -
+            message: '#^Cannot call method getControllerFqcn\(\) on EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\CrudDto\|null\.$#'
+            identifier: method.nonObject
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
+        # ActionConfigDto::getSaveActionNames() is internal and only exists since EasyAdmin 5.10.3, so whether it exists is
+        # known for each EasyAdmin version
+        -
+            message: '#^Call to function method_exists\(\) with ''EasyCorp.+ActionConfigDto'' and ''getSaveActionNames'' will always evaluate to (true|false)\.$#'
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
+        -
+            message: '#^Call to internal method EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\ActionConfigDto::getSaveActionNames\(\) from outside its root namespace EasyCorp\.$#'
+            identifier: method.internal
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
+        -
+            message: '#^Call to an undefined method EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\ActionConfigDto::getSaveActionNames\(\)\.$#'
+            identifier: method.notFound
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
+        -
+            message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+            identifier: foreach.nonIterable
+            path: ../src/Controller/BaseCrudDtoController.php
+            count: 1
         # BaseCrudDtoController::handleFormRequest() is a byte-identical copy of EasyAdmin's, so it keeps EasyAdmin's
         # untyped form and nested access to the posted data
         -

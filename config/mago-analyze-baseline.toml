@@ -104,12 +104,6 @@ count = 2
 
 [[issues]]
 file = 'src/Controller/BaseCrudDtoController.php'
-code = 'possible-method-access-on-null'
-message = 'Attempting to call a method on `null`.'
-count = 6
-
-[[issues]]
-file = 'src/Controller/BaseCrudDtoController.php'
 code = 'possibly-invalid-argument'
 message = 'Possible argument type mismatch for argument #1 of `EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection::__construct`: expected `array<array-key, EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface|string>`, but possibly received `iterable<mixed, EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface|string>`.'
 count = 2
@@ -124,12 +118,6 @@ count = 1
 file = 'src/Controller/BaseCrudDtoController.php'
 code = 'possibly-invalid-argument'
 message = 'Possible argument type mismatch for argument #2 of `EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController::ajaxEdit`: expected `null|string`, but possibly received `bool|float|int|null|string`.'
-count = 1
-
-[[issues]]
-file = 'src/Controller/BaseCrudDtoController.php'
-code = 'possibly-invalid-argument'
-message = 'Possible argument type mismatch for argument #2 of `Symfony\Bundle\FrameworkBundle\Controller\AbstractController::isCsrfTokenValid`: expected `null|string`, but possibly received `bool|float|int|null|string`.'
 count = 1
 
 [[issues]]

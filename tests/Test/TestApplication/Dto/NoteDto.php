@@ -12,4 +12,6 @@ final class NoteDto
     public int|null $id = null;
 
     public string|null $title = null;
+
+    public bool $pinned = false;
 }

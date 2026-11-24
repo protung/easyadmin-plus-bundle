@@ -11,7 +11,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionConfigDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterCrudActionEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityUpdatedEvent;
@@ -39,7 +41,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 
-use function class_exists;
+use function method_exists;
+use function trigger_deprecation;
+use function version_compare;
 
 /**
  * Original inspiration from https://gist.github.com/ragboyjr/2ed5734eb839483ca22892f6955b2792
@@ -100,6 +104,12 @@ abstract class BaseCrudDtoController extends BaseCrudController
      * This method should be identical to the parent edit() method except that:
      *  - it uses updateEntityFromDto($originalEntity, $dto) to update the entity from the DTO.
      *  - it handles the form request like EasyAdmin 5.10 does, on every EasyAdmin version (see handleFormRequest()).
+     *  - it handles boolean switches like EasyAdmin 5.10.3 does, on every EasyAdmin version, except that it only deprecates
+     *    the CSRF token ID shared by all switches and only checks the save actions (see isAnySaveActionGranted()) on the
+     *    versions where EasyAdmin does.
+     *
+     * A boolean switch on a list saves nothing unless the controller overrides ajaxEdit(): EasyAdmin's refuses the DTO,
+     * as it's not an instance of the entity. Use renderAsSwitch(false) to show the value without a switch.
      */
     #[Override]
     public function edit(AdminContext $context): KeyValueStore|Response
@@ -136,15 +146,26 @@ abstract class BaseCrudDtoController extends BaseCrudController
                 throw new MethodNotAllowedHttpException(['PATCH']);
             }
 
-            if (!$this->isCsrfTokenValid(BooleanField::CSRF_TOKEN_NAME, $context->getRequest()->query->get('csrfToken'))) {
-                if (class_exists(InvalidCsrfTokenException::class)) {
-                    throw new InvalidCsrfTokenException();
-                }
-
-                return new Response('Invalid CSRF token.', 400);
+            // the switch saves the entity, so it's only allowed to users who can save the edit form
+            if (!$this->isAnySaveActionGranted($context)) {
+                throw new ForbiddenActionException($context);
             }
 
             $fieldName = $context->getRequest()->query->get('fieldName');
+            $csrfToken = $context->getRequest()->query->get('csrfToken');
+
+            // the token ID includes the CRUD controller and the property, so the token
+            // of a switch is not valid for other fields or other CRUD controllers
+            if (!$this->isCsrfTokenValid(BooleanField::CSRF_TOKEN_NAME.'-'.$context->getCrud()->getControllerFqcn().'-'.$fieldName, $csrfToken)) {
+                if (!$this->isCsrfTokenValid(BooleanField::CSRF_TOKEN_NAME, $csrfToken)) {
+                    throw new InvalidCsrfTokenException();
+                }
+
+                if (version_compare(EasyAdminBundle::VERSION, '5.10.1', '>=')) {
+                    @trigger_deprecation('easycorp/easyadmin-bundle', '5.10.1', 'Using the "%s" CSRF token ID in boolean switches is deprecated and it will not be valid in EasyAdmin 6.0. Use "%s-<crud-controller-fqcn>-<property-name>" instead.', BooleanField::CSRF_TOKEN_NAME, BooleanField::CSRF_TOKEN_NAME);
+                }
+            }
+
             $newValue = 'true' === mb_strtolower($context->getRequest()->query->get('newValue'));
 
             try {
@@ -379,6 +400,33 @@ abstract class BaseCrudDtoController extends BaseCrudController
         }
 
         $form->submit([], 'PATCH' !== $request->getMethod());
+    }
+
+    /**
+     * A copy of the private AbstractCrudController::isAnySaveActionGranted() of EasyAdmin 5.10.3, so copy it again when
+     * EasyAdmin changes it, except that it checks nothing on the EasyAdmin versions that don't either, which have no
+     * ActionConfigDto::getSaveActionNames(). phpstan.neon and mago.toml ignore the errors of its EasyAdmin code.
+     *
+     * Save actions don't have their own URL (the entity is saved by the action that renders their buttons),
+     * so the permissions and the disabled state of the ones added to the edit page are checked here.
+     * When the page has none of them (e.g. they were replaced by custom actions) nothing is checked.
+     *
+     * @param AdminContext<TEntity> $context
+     */
+    private function isAnySaveActionGranted(AdminContext $context): bool
+    {
+        if (!method_exists(ActionConfigDto::class, 'getSaveActionNames')) {
+            return true;
+        }
+
+        $saveActionNames = $context->getCrud()->getActionsConfig()->getSaveActionNames(Crud::PAGE_EDIT);
+        foreach ($saveActionNames as $actionName) {
+            if ($this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => $actionName, 'entity' => $context->getEntity(), 'entityFqcn' => $context->getEntity()->getFqcn()])) {
+                return true;
+            }
+        }
+
+        return [] === $saveActionNames;
     }
     // phpcs:enable
 }

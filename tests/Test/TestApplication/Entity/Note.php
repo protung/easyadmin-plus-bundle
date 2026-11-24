@@ -16,4 +16,7 @@ class Note
 
     #[ORM\Column]
     public string $title = '';
+
+    #[ORM\Column]
+    public bool $pinned = false;
 }
