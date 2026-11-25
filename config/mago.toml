@@ -59,6 +59,8 @@ ignore = [
     # CrudPermissionCheckerInterface only exists since EasyAdmin 5.9, EntityConfigurator links every target before
     { code = "non-existent-class-like", in = ["src/Field/Configurator/EntityConfigurator.php"] }, # 1 error before EasyAdmin 5.9
     { code = "invalid-method-access", in = ["src/Field/Configurator/EntityConfigurator.php"] }, # 1 error before EasyAdmin 5.9
+    # FieldFactory::getFieldsOfDeniedLayoutContainers() only exists since EasyAdmin 4.29.18 and 5.10.4, EntityPaginator doesn't need it before
+    { pattern = "getFieldsOfDeniedLayoutContainers", code = "non-existent-method", in = ["src/Orm/EntityPaginator.php"] }, # 1 error on EasyAdmin 5 before 5.10.4
     # BaseCrudDtoController copies EasyAdmin's edit(), new() and isAnySaveActionGranted(), which don't check for null
     { code = "possible-method-access-on-null", in = ["src/Controller/BaseCrudDtoController.php"] }, # 8 errors
     { code = "possibly-null-operand", in = ["src/Controller/BaseCrudDtoController.php"] }, # 2 errors

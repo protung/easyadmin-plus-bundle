@@ -39,6 +39,17 @@ parameters:
             identifier: class.notFound
             path: ../src/Field/Configurator/EntityConfigurator.php
             count: 3
+        # FieldFactory::getFieldsOfDeniedLayoutContainers() is internal and only exists since EasyAdmin 4.29.18 and 5.10.4, so
+        # whether it exists is known for each EasyAdmin version
+        -
+            message: '#^Call to function method_exists\(\) with ''EasyCorp.+FieldFactory'' and ''getFieldsOfDeniedLa…'' will always evaluate to (true|false)\.$#'
+            path: ../src/Orm/EntityPaginator.php
+            count: 1
+        -
+            message: '#^Call to internal static method EasyCorp\\Bundle\\EasyAdminBundle\\Factory\\FieldFactory::getFieldsOfDeniedLayoutContainers\(\) from outside its root namespace EasyCorp\.$#'
+            identifier: staticMethod.internal
+            path: ../src/Orm/EntityPaginator.php
+            count: 1
         # PHPStan's stubs make Symfony's form interfaces generic, Mago doesn't know them, so the type can't be specified
         -
             message: '#^Method Protung\\EasyAdminPlusBundle\\Tests\\Test\\TestApplication\\Controller\\EmptyFormNoteCrudController::createNewForm\(\) return type with generic interface Symfony\\Component\\Form\\FormInterface does not specify its types: TData$#'
