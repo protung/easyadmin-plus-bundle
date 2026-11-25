@@ -17,6 +17,7 @@ use Twig\Environment;
 
 use function htmlspecialchars;
 use function is_callable;
+use function is_string;
 
 use const ENT_QUOTES;
 use const ENT_SUBSTITUTE;
@@ -26,7 +27,7 @@ trait AdvancedDisplayField
     public const string OPTION_ENTITY_DISPLAY_FIELD = 'entityDisplayField';
 
     /**
-     * @param string|(callable(TEntity, AdminContextInterface):string|TranslatableInterface) $entityDisplayField
+     * @param string|(callable(TEntity, AdminContextInterface):string|TranslatableInterface) $entityDisplayField A property path or a callable other than the name of a function.
      *
      * @template TEntity of object
      */
@@ -45,7 +46,8 @@ trait AdvancedDisplayField
         /** @var string|(callable(object, AdminContextInterface):string|TranslatableInterface)|null $value */
         $value = $field->getCustomOption(self::OPTION_ENTITY_DISPLAY_FIELD);
 
-        if (is_callable($value)) {
+        // strings are always property paths, even if they match the name of a PHP function (e.g. 'date')
+        if (! is_string($value) && is_callable($value)) {
             return $value;
         }
 
@@ -60,7 +62,7 @@ trait AdvancedDisplayField
 
         $targetEntityDisplayField = self::getEntityDisplayField($field);
         if ($targetEntityDisplayField !== null) {
-            if (is_callable($targetEntityDisplayField)) {
+            if (! is_string($targetEntityDisplayField)) {
                 $displayValue = $targetEntityDisplayField($entityInstance, $adminContext);
 
                 return $displayValue instanceof TranslatableInterface ? $displayValue->trans($translator) : $displayValue;

@@ -205,12 +205,6 @@ message = 'Method `setCustomOption` does not exist on type `Protung\EasyAdminPlu
 count = 1
 
 [[issues]]
-file = 'src/Field/AdvancedDisplayField.php'
-code = 'possibly-invalid-argument'
-message = 'Possible argument type mismatch for argument #2 of `Symfony\Component\PropertyAccess\PropertyAccessor::getValue`: expected `Symfony\Component\PropertyAccess\PropertyPathInterface|string`, but possibly received `Symfony\Contracts\Translation\TranslatableInterface|string`.'
-count = 1
-
-[[issues]]
 file = 'src/Field/CallbackConfigurableField.php'
 code = 'non-existent-method'
 message = 'Method `setCustomOption` does not exist on type `Protung\EasyAdminPlusBundle\Field\CallbackConfigurableField`.'
