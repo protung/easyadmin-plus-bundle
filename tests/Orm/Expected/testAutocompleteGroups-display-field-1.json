@@ -1,0 +1,10 @@
+{
+    "results": [
+        {
+            "entityId": "1",
+            "entityAsString": "Display field 1",
+            "entityGroup": "Group 1"
+        }
+    ],
+    "next_page": null
+}

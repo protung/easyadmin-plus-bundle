@@ -25,6 +25,7 @@ use Psl\Iter;
 use Psl\Type;
 use Psl\Type\Exception\CoercionException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -144,16 +145,16 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
     }
 
     #[Override]
-    public function getResultsAsJson(callable|null $callback = null, string|null $twigTemplate = null, bool $renderAsHtml = false): string
+    public function getResultsAsJson(callable|null $callback = null, string|null $twigTemplate = null, bool $renderAsHtml = false, callable|string|PropertyPathInterface|null $groupBy = null): string
     {
         if ($callback !== null) {
-            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml, $groupBy);
         }
 
         $context = $this->adminContextProvider->getContext();
 
         if ($context === null) {
-            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml, $groupBy);
         }
 
         try {
@@ -166,7 +167,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
                 ],
             )->coerce($context->getRequest()->query->all(AssociationField::PARAM_AUTOCOMPLETE_CONTEXT));
         } catch (CoercionException) {
-            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml, $groupBy);
         }
 
         $controller = $this->controllerFactory->getCrudControllerInstance(
@@ -182,7 +183,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
         }
 
         if ($field === null) {
-            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml);
+            return $this->decoratedPaginator->getResultsAsJson($callback, $twigTemplate, $renderAsHtml, $groupBy);
         }
 
         return $this->decoratedPaginator->getResultsAsJson(
@@ -195,6 +196,7 @@ final readonly class EntityPaginator implements EntityPaginatorInterface
             ),
             $twigTemplate,
             $renderAsHtml,
+            $groupBy,
         );
     }
 
