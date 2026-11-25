@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use LogicException;
 use Override;
 use Protung\EasyAdminPlusBundle\Controller\BaseCrudController;
+use Psl\Iter;
 use Psl\Str;
 use Psl\Type;
 use ReflectionProperty;
@@ -153,6 +154,31 @@ abstract class EditActionTestCase extends AdminControllerWebTestCase
 
             $this->assertResponseIsRedirect($redirectUrlParameters);
         }
+    }
+
+    /**
+     * Saves the form as the page shows it and asserts that the page still shows the same values afterwards.
+     *
+     * @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it.
+     */
+    protected function assertSubmittingFormWithoutChangeKeepsValues(array $urlParameters = []): void
+    {
+        if (! static::usePrettyUrls() && ! Iter\contains_key($urlParameters, EA::ENTITY_ID)) {
+            $urlParameters[EA::ENTITY_ID] = $this->entityIdUnderTest();
+        }
+
+        $this->assertRequestGet($urlParameters);
+
+        $originalFormData = $this->extractFormData();
+
+        $this->submitFormRequest($originalFormData, [], $urlParameters, Action::SAVE_AND_CONTINUE);
+
+        self::assertResponseStatusCode($this->getClient()->getResponse(), Response::HTTP_FOUND);
+
+        // not by following the redirect, as the controller may redirect to another page
+        $this->assertRequestGet($urlParameters);
+
+        self::assertSame($originalFormData, $this->extractFormData());
     }
 
     /**
