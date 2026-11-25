@@ -37,18 +37,34 @@ abstract class AutocompleteActionTestCase extends CustomActionTestCase
         return Crud::PAGE_INDEX; // This is the page for filters and is the fallback in the entity field configurator.
     }
 
+    /**
+     * The ID of the entity on the originating page. EasyAdmin needs it since 4.29.18 and 5.10.4 to check whether the user may
+     * open that page when it depends on the entity.
+     */
+    protected function autocompleteContextEntityId(): string|int|null
+    {
+        return null; // The index and new pages have no entity.
+    }
+
     /** @param array<array-key, mixed> $urlParameters With pretty URLs, an entry named like a route placeholder fills it. */
     protected function assertPage(array $urlParameters = [], string $searchQuery = ''): void
     {
+        $autocompleteContext = [
+            'crudControllerFqcn' => $this->autocompleteContextCrudControllerFqcn(),
+            'propertyName' => $this->autocompleteContextPropertyName(),
+            'originatingPage' => $this->autocompleteContextOriginatingPage(),
+            'entityDisplayField' => '1',
+        ];
+
+        $entityId = $this->autocompleteContextEntityId();
+        if ($entityId !== null) {
+            $autocompleteContext['entityId'] = (string) $entityId;
+        }
+
         $this->assertRequestGet(
             array_merge(
                 [
-                    'autocompleteContext' => [
-                        'crudControllerFqcn' => $this->autocompleteContextCrudControllerFqcn(),
-                        'propertyName' => $this->autocompleteContextPropertyName(),
-                        'originatingPage' => $this->autocompleteContextOriginatingPage(),
-                        'entityDisplayField' => '1',
-                    ],
+                    'autocompleteContext' => $autocompleteContext,
                     'query' => $searchQuery,
                 ],
                 $urlParameters,

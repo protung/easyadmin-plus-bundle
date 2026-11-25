@@ -85,7 +85,8 @@ final class TestKernel extends SymfonyKernel
             ->defaults()
             ->autowire()
             ->autoconfigure()
-            ->load(__NAMESPACE__ . '\\Controller\\', __DIR__ . '/Controller');
+            ->load(__NAMESPACE__ . '\\Controller\\', __DIR__ . '/Controller')
+            ->load(__NAMESPACE__ . '\\Security\\', __DIR__ . '/Security');
         $container->parameters()->set('locale', 'en');
 
         $container->extension(
